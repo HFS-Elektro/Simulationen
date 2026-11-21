@@ -1,0 +1,274 @@
+<!doctype html><html><head><meta charset=utf8>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="zeiger-auf-zeiger|sim|979505201682">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Zeiger auf Zeiger">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="hfs-app.css">
+</head><body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Zeiger auf Zeiger</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<title>Zeiger auf Zeiger</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* Layout: Messplatz – Zeigerkette links, Liniendiagramm rechts, darunter Regler pro Schwingung wie Kanäle eines Netzanalysators */
+:root {
+  --bg: #F6F4F2; --panel: #FFFFFF; --line: #E0D9D3; --fg: #1F1A17; --muted: #6E645C;
+  --i1: #E39AA3; --h1: #2F6FD6; --h2: #2E9C6A; --sum: #C0182E; --nn: #7A3FB8; --accent: #C0182E; --grid: #EEE8E3;
+  --f-disp: "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif;
+  --f-body: "Barlow", "Segoe UI", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151110; --panel: #201A18; --line: #3A302B; --fg: #F2ECE7; --muted: #A99D94;
+  --i1: #8E4E57; --h1: #6FA4FF; --h2: #5CD39A; --sum: #FF5C70; --nn: #C49BFF; --accent: #FF5C70; --grid: #2A2220; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #151110; --panel: #201A18; --line: #3A302B; --fg: #F2ECE7; --muted: #A99D94;
+  --i1: #8E4E57; --h1: #6FA4FF; --h2: #5CD39A; --sum: #FF5C70; --nn: #C49BFF; --accent: #FF5C70; --grid: #2A2220; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 20px 32px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; }
+h1 { font-family: var(--f-disp); font-weight: 700; font-size: clamp(1.6rem, 3.4vw, 2.3rem); margin: 0; text-wrap: balance; }
+.eyebrow { font-family: var(--f-disp); font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--accent); font-size: .8rem; }
+.lead { margin: 0; color: var(--muted); max-width: 64ch; }
+.stage { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+canvas { display: block; width: 100%; height: auto; }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.presets span { font-family: var(--f-disp); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; font-size: .85rem; margin-right: 4px; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.box h2 { font-family: var(--f-disp); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin: 0; display: flex; align-items: center; gap: 8px; }
+.sw { width: 22px; height: 4px; border-radius: 2px; display: inline-block; }
+button { font: 600 .95rem var(--f-disp); letter-spacing: .04em; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; }
+button.on, button.primary { background: var(--accent); color: var(--panel); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.lab { display: flex; justify-content: space-between; gap: 8px; }
+.val { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: .9rem; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent); }
+select { font: 500 1rem var(--f-body); padding: 5px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); }
+.meter { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: .95rem; }
+.meter dt { color: var(--muted); }
+.meter dd { margin: 0; text-align: right; }
+.note { font-size: .92rem; color: var(--muted); margin: 0; }
+sub { font-size: .7em; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Ausblick · Oberschwingungen</div>
+      <h1>Zeiger auf Zeiger</h1>
+    </div>
+    <p class="lead">Am Ende des 50-Hz-Zeigers dreht sich ein kleinerer Zeiger dreimal, fünfmal oder siebenmal so schnell. Die Spitze der Kette zeichnet den verzerrten Strom – genau so setzt ein Netzanalysator ein Signal aus Grund- und Oberschwingungen zusammen.</p>
+  </header>
+
+  <div class="presets" role="group" aria-label="Beispiele">
+    <span>Beispiele</span>
+    <button type="button" data-p="sinus">Reiner Sinus</button>
+    <button type="button" data-p="led" class="on">LED-Netzteil</button>
+    <button type="button" data-p="fu">Frequenzumrichter</button>
+    <button type="button" data-p="rechteck">Richtung Rechteck</button>
+  </div>
+
+  <div class="stage"><canvas id="cv" aria-label="Zeigerkette und Liniendiagramm des verzerrten Stroms"></canvas></div>
+
+  <div class="controls">
+    <section class="box">
+      <h2><span class="sw" style="background:var(--i1)"></span>Grundschwingung 50 Hz</h2>
+      <div class="row" style="display:flex;gap:10px;flex-wrap:wrap">
+        <button id="play" class="primary" type="button">Pause</button>
+      </div>
+      <div class="lab"><label for="speed">Tempo</label><span class="val" id="speedv"></span></div>
+      <input id="speed" type="range" min="4" max="60" value="22">
+      <label><input id="trace" type="checkbox" checked> Bahn der Zeigerspitze zeigen</label>
+    </section>
+
+    <section class="box">
+      <h2><span class="sw" style="background:var(--h1)"></span>Oberschwingung A</h2>
+      <label for="nA">Ordnung <select id="nA"><option>2</option><option selected>3</option><option>5</option><option>7</option><option>9</option><option>11</option></select> <span class="val" id="fA"></span></label>
+      <div class="lab"><label for="aA">Amplitude</label><span class="val" id="aAv"></span></div>
+      <input id="aA" type="range" min="0" max="80" value="45">
+      <div class="lab"><label for="pA">Phasenlage</label><span class="val" id="pAv"></span></div>
+      <input id="pA" type="range" min="0" max="355" step="5" value="180">
+    </section>
+
+    <section class="box">
+      <h2><span class="sw" style="background:var(--h2)"></span>Oberschwingung B</h2>
+      <label for="nB">Ordnung <select id="nB"><option>3</option><option selected>5</option><option>7</option><option>9</option><option>11</option><option>13</option></select> <span class="val" id="fB"></span></label>
+      <div class="lab"><label for="aB">Amplitude</label><span class="val" id="aBv"></span></div>
+      <input id="aB" type="range" min="0" max="80" value="20">
+      <div class="lab"><label for="pB">Phasenlage</label><span class="val" id="pBv"></span></div>
+      <input id="pB" type="range" min="0" max="355" step="5" value="0">
+    </section>
+
+    <section class="box">
+      <h2>Messwerte</h2>
+      <dl class="meter" id="meter"></dl>
+      <label><input id="nl" type="checkbox"> N-Leiterstrom im Drehstromnetz zeigen</label>
+      <p class="note" id="nlnote">Alle drei Außenleiter führen denselben verzerrten Strom, nur um 120° verschoben. Im N-Leiter heben sich die 50-Hz-Anteile auf – die 3., 9., 15. … Oberschwingung addiert sich.</p>
+    </section>
+  </div>
+  <section class="box" style="margin-top:16px">
+    <h2>Arbeitsaufträge</h2>
+    <ol>
+      <li>Wähle zuerst „Reiner Sinus“ und dann „LED-Netzteil“ und schalte „Bahn der Zeigerspitze zeigen“ ein. Beschreibe, wie sich die Bahn der Zeigerspitze und der Stromverlauf verändern.</li>
+      <li>Lies beim LED-Netzteil den THD<sub>I</sub> ab und bestätige ihn mit der Formel THD<sub>I</sub> = √(I<sub>3</sub>² + I<sub>5</sub>²) / I<sub>1</sub>. Was bedeutet der Wert I<sub>eff</sub> / I<sub>1,eff</sub>?</li>
+      <li>Schalte „N-Leiterstrom im Drehstromnetz zeigen“ ein. Vergleiche I<sub>N</sub> / I<sub>L</sub> beim LED-Netzteil und beim Frequenzumrichter und erkläre den Unterschied.</li>
+      <li>Welche Folgerung ergibt sich für den Neutralleiter in Gebäuden mit vielen LED-Leuchten, Netzteilen und PCs?</li>
+    </ol>
+    <details><summary>Lösungen anzeigen</summary>
+      <p>1. Beim reinen Sinus läuft die Zeigerspitze auf einem Kreis, der Strom ist sinusförmig. Beim LED-Netzteil drehen sich am Ende des 50-Hz-Zeigers zusätzlich ein 150-Hz-Zeiger (3. Oberschwingung, 45 %) und ein 250-Hz-Zeiger (5. Oberschwingung, 20 %). Die Bahn wird zu einer Schleifenform, der Strom wird spitz und schmal – typisch für Netzteile mit Gleichrichter und Ladekondensator, die nur im Scheitel der Spannung Strom ziehen.
+      2. THD<sub>I</sub> = √(0,45² + 0,20²) = √0,2425 ≈ 0,49 = 49 %. I<sub>eff</sub> / I<sub>1,eff</sub> = √(1 + 0,2425) ≈ 1,11: Der Effektivwert des Stroms ist um 11 % größer als der der Grundschwingung. Leitungen und Sicherungen werden stärker belastet, obwohl nur die Grundschwingung Wirkleistung überträgt.
+      3. LED-Netzteil: I<sub>N</sub> / I<sub>L</sub> ≈ 1,2 – der Neutralleiter führt mehr Strom als ein Außenleiter. Die 3. Oberschwingungen der drei Außenleiter sind um 3 · 120° = 360° verschoben, also gleichphasig, und addieren sich im N-Leiter: 3 · 45 % = 135 % der Grundschwingung. Frequenzumrichter: Er erzeugt vor allem die 5. und 7. Oberschwingung. Diese heben sich im N-Leiter wie die Grundschwingung auf, I<sub>N</sub> ≈ 0.
+      4. Der N-Leiter darf nicht kleiner als die Außenleiter gewählt werden. Bei einem hohen Anteil der 3. Oberschwingung muss der Querschnitt nach dem N-Leiterstrom bemessen werden (Reduktionsfaktoren nach DIN VDE 0100-520, Anhang E), sonst wird der N-Leiter überlastet, ohne dass eine Sicherung auslöst.</p>
+    </details>
+  </section>
+</div>
+
+<script>
+(() => {
+  const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+  const $ = (id) => document.getElementById(id);
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const rad = (d) => d * Math.PI / 180;
+  let wt = 0, playing = true, last = null, trail = [];
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { playing = false; $("play").textContent = "Start"; }
+
+  const P = {
+    sinus:    { nA: 3, aA: 0,  pA: 0,   nB: 5, aB: 0,  pB: 0 },
+    led:      { nA: 3, aA: 45, pA: 180, nB: 5, aB: 20, pB: 0 },
+    fu:       { nA: 5, aA: 30, pA: 180, nB: 7, aB: 15, pB: 0 },
+    rechteck: { nA: 3, aA: 33, pA: 0,   nB: 5, aB: 20, pB: 0 },
+  };
+  function setPreset(k) {
+    const p = P[k];
+    for (const id of ["nA", "aA", "pA", "nB", "aB", "pB"]) $(id).value = p[id];
+    document.querySelectorAll("[data-p]").forEach((b) => b.classList.toggle("on", b.dataset.p === k));
+    trail = [];
+  }
+  document.querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => setPreset(b.dataset.p)));
+
+  const par = () => ({ nA: +$("nA").value, aA: $("aA").value / 100, pA: +$("pA").value, nB: +$("nB").value, aB: $("aB").value / 100, pB: +$("pB").value });
+  // Momentanwert eines Außenleiters k (0,1,2): jede Komponente n wird um n·120° verschoben
+  function i(d, p, k = 0) {
+    const s = 120 * k;
+    return Math.sin(rad(d - s)) + p.aA * Math.sin(rad(p.nA * (d - s) + p.pA)) + p.aB * Math.sin(rad(p.nB * (d - s) + p.pB));
+  }
+
+  let W = 0, H = 0, wide = true;
+  function resize() {
+    const w = cv.parentElement.clientWidth; wide = w > 720;
+    W = w; H = wide ? Math.round(w * 0.44) : Math.round(w * 1.8);
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + "px"; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); trail = [];
+  }
+  function arrow(x1, y1, x2, y2, col, lw) {
+    const a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1), h = Math.min(7 + lw * 2, L * 0.5);
+    ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = lw; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - h * 0.7 * Math.cos(a), y2 - h * 0.7 * Math.sin(a)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - h * Math.cos(a) + h * 0.45 * Math.sin(a), y2 - h * Math.sin(a) - h * 0.45 * Math.cos(a));
+    ctx.lineTo(x2 - h * Math.cos(a) - h * 0.45 * Math.sin(a), y2 - h * Math.sin(a) + h * 0.45 * Math.cos(a));
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+  function text(s, x, y, col, size = 12, align = "left") { ctx.fillStyle = col; ctx.font = `600 ${size}px ${css("--f-mono")}`; ctx.textAlign = align; ctx.textBaseline = "middle"; ctx.fillText(s, x, y); }
+
+  function draw() {
+    const C = { i1: css("--i1"), h1: css("--h1"), h2: css("--h2"), sum: css("--sum"), nn: css("--nn"), fg: css("--fg"), mu: css("--muted"), grid: css("--grid"), line: css("--line") };
+    const p = par(), showN = $("nl").checked;
+    ctx.clearRect(0, 0, W, H);
+    const amax = 1 + p.aA + p.aB;
+    let pc, R, gx0, gx1, gy, gh;
+    if (wide) { pc = { x: H / 2 + 10, y: H / 2 }; R = H * 0.42 / amax; gx0 = H + 46; gx1 = W - 20; gy = H / 2; gh = H * 0.42; }
+    else { pc = { x: W / 2, y: W * 0.5 }; R = W * 0.4 / amax; gx0 = 44; gx1 = W - 14; gy = W + (H - W) / 2; gh = (H - W) / 2 - 18; }
+    const vmax = showN ? Math.max(amax, 3 * Math.max(p.nA % 3 === 0 ? p.aA : 0, 0) + 3 * (p.nB % 3 === 0 ? p.aB : 0), 1) : amax;
+    const sc = gh / vmax;
+    const X = (d) => gx0 + (gx1 - gx0) * d / 360, Y = (v) => gy - v * sc;
+
+    // Zeigerkette
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(pc.x, pc.y, R, 0, 2 * Math.PI); ctx.stroke();
+    ctx.strokeStyle = C.line; ctx.beginPath(); ctx.moveTo(pc.x - R * amax - 8, pc.y); ctx.lineTo(pc.x + R * amax + 8, pc.y); ctx.moveTo(pc.x, pc.y - R * amax - 8); ctx.lineTo(pc.x, pc.y + R * amax + 8); ctx.stroke();
+    const t1 = { x: pc.x + R * Math.cos(rad(wt)), y: pc.y - R * Math.sin(rad(wt)) };
+    const aA = rad(p.nA * wt + p.pA), aB = rad(p.nB * wt + p.pB);
+    const t2 = { x: t1.x + R * p.aA * Math.cos(aA), y: t1.y - R * p.aA * Math.sin(aA) };
+    const t3 = { x: t2.x + R * p.aB * Math.cos(aB), y: t2.y - R * p.aB * Math.sin(aB) };
+    if (p.aA > 0) { ctx.strokeStyle = C.grid; ctx.beginPath(); ctx.arc(t1.x, t1.y, R * p.aA, 0, 2 * Math.PI); ctx.stroke(); }
+    if (p.aB > 0) { ctx.strokeStyle = C.grid; ctx.beginPath(); ctx.arc(t2.x, t2.y, R * p.aB, 0, 2 * Math.PI); ctx.stroke(); }
+    // Bahn der Spitze (eine ganze Periode, berechnet)
+    if ($("trace").checked) {
+      ctx.strokeStyle = C.sum; ctx.globalAlpha = 0.28; ctx.lineWidth = 1.5; ctx.beginPath();
+      for (let d = 0; d <= 360; d += 1) {
+        const x = pc.x + R * (Math.cos(rad(d)) + p.aA * Math.cos(rad(p.nA * d + p.pA)) + p.aB * Math.cos(rad(p.nB * d + p.pB)));
+        const y = pc.y - R * (Math.sin(rad(d)) + p.aA * Math.sin(rad(p.nA * d + p.pA)) + p.aB * Math.sin(rad(p.nB * d + p.pB)));
+        d ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      }
+      ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    arrow(pc.x, pc.y, t1.x, t1.y, C.i1, 3.2);
+    if (p.aA > 0.005) arrow(t1.x, t1.y, t2.x, t2.y, C.h1, 2.6);
+    if (p.aB > 0.005) arrow(t2.x, t2.y, t3.x, t3.y, C.h2, 2.4);
+    ctx.fillStyle = C.sum; ctx.beginPath(); ctx.arc(t3.x, t3.y, 5, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = C.fg; ctx.beginPath(); ctx.arc(pc.x, pc.y, 3.5, 0, 2 * Math.PI); ctx.fill();
+
+    // Liniendiagramm
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+    for (let d = 0; d <= 360; d += 30) { ctx.beginPath(); ctx.moveTo(X(d), gy - gh - 6); ctx.lineTo(X(d), gy + gh + 6); ctx.stroke(); }
+    ctx.strokeStyle = C.fg; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(gx0, gy); ctx.lineTo(gx1, gy); ctx.moveTo(gx0, gy - gh - 10); ctx.lineTo(gx0, gy + gh + 10); ctx.stroke();
+    for (let d = 0; d <= 360; d += 90) text(d + "°", X(d) + (d ? 0 : 10), gy + 12, C.mu, 11, "center");
+    text("i", gx0 + 8, gy - gh - 4, C.mu, 12);
+    const curve = (f, col, lw, dash) => {
+      ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.setLineDash(dash || []);
+      ctx.beginPath(); for (let d = 0; d <= 360; d += 1) { const x = X(d), y = Y(f(d)); d ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.setLineDash([]);
+    };
+    curve((d) => Math.sin(rad(d)), C.i1, 2, [7, 5]);
+    if (p.aA > 0.005) curve((d) => p.aA * Math.sin(rad(p.nA * d + p.pA)), C.h1, 1.4);
+    if (p.aB > 0.005) curve((d) => p.aB * Math.sin(rad(p.nB * d + p.pB)), C.h2, 1.4);
+    curve((d) => i(d, p), C.sum, 3);
+    if (showN) curve((d) => i(d, p, 0) + i(d, p, 1) + i(d, p, 2), C.nn, 2.6);
+
+    const cx = X(wt), cy = Y(i(wt, p));
+    ctx.strokeStyle = C.mu; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(cx, gy - gh - 8); ctx.lineTo(cx, gy + gh + 8); ctx.stroke();
+    if (wide) { ctx.strokeStyle = C.sum; ctx.globalAlpha = 0.5; ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(t3.x, t3.y); ctx.lineTo(cx, cy); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1; }
+    ctx.fillStyle = C.sum; ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2 * Math.PI); ctx.fill();
+
+    // Legende
+    const lx = gx1 - 150, ly = gy - gh;
+    ctx.strokeStyle = C.sum; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx + 22, ly); ctx.stroke(); text("i (L1)", lx + 28, ly, C.fg, 11);
+    if (showN) { ctx.strokeStyle = C.nn; ctx.beginPath(); ctx.moveTo(lx + 80, ly); ctx.lineTo(lx + 102, ly); ctx.stroke(); text("iN", lx + 108, ly, C.fg, 11); }
+    // Messwerte
+    const thd = Math.sqrt(p.aA ** 2 + (p.nB === p.nA ? 0 : p.aB ** 2) + (p.nB === p.nA ? (p.aA + p.aB) ** 2 - p.aA ** 2 : 0));
+    let rms = 0, rmsN = 0; for (let d = 0; d < 360; d++) { rms += i(d, p) ** 2; rmsN += (i(d, p, 0) + i(d, p, 1) + i(d, p, 2)) ** 2; }
+    rms = Math.sqrt(rms / 360); rmsN = Math.sqrt(rmsN / 360);
+    const pct = (v) => (v * 100).toFixed(0) + " %";
+    let html = `<dt>Grundschwingung</dt><dd>50 Hz · 100 %</dd>`;
+    html += `<dt>${p.nA}. Oberschw.</dt><dd>${p.nA * 50} Hz · ${pct(p.aA)}</dd>`;
+    html += `<dt>${p.nB}. Oberschw.</dt><dd>${p.nB * 50} Hz · ${pct(p.aB)}</dd>`;
+    html += `<dt>THD<sub>I</sub></dt><dd>${(Math.sqrt(p.aA ** 2 + p.aB ** 2) * 100).toFixed(1)} %</dd>`;
+    html += `<dt>I<sub>eff</sub> / I<sub>1,eff</sub></dt><dd>${(rms / (1 / Math.SQRT2)).toFixed(2)}</dd>`;
+    if (showN) html += `<dt>I<sub>N</sub> / I<sub>L</sub></dt><dd>${(rmsN / rms).toFixed(2)}</dd>`;
+    $("meter").innerHTML = html;
+    $("fA").textContent = "= " + p.nA * 50 + " Hz"; $("fB").textContent = "= " + p.nB * 50 + " Hz";
+    $("aAv").textContent = pct(p.aA); $("aBv").textContent = pct(p.aB);
+    $("pAv").textContent = p.pA + "°"; $("pBv").textContent = p.pB + "°";
+    $("speedv").textContent = $("speed").value + " °/s";
+  }
+  function loop(ts) {
+    if (last !== null && playing) wt = (wt + (ts - last) / 1000 * +$("speed").value) % 360;
+    last = ts; draw(); requestAnimationFrame(loop);
+  }
+  $("play").addEventListener("click", () => { playing = !playing; $("play").textContent = playing ? "Pause" : "Start"; });
+  ["nA", "aA", "pA", "nB", "aB", "pB"].forEach((id) => $(id).addEventListener("input", () => document.querySelectorAll("[data-p]").forEach((b) => b.classList.remove("on"))));
+  window.addEventListener("resize", () => { resize(); draw(); });
+  resize(); requestAnimationFrame(loop);
+})();
+</script>
+
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span></footer>
+<script src="hfs-app.js"></script>
+</body></html>

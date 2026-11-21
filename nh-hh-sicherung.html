@@ -1,0 +1,810 @@
+<!doctype html><html><head><meta charset=utf8>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="nh-hh-sicherung|sim|73edfce6b384">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="NH- und HH-Sicherung im ">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="hfs-app.css">
+</head><body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">NH- und HH-Sicherung im Schnitt</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<title>NH- und HH-Sicherung im Schnitt</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* Layout: Werkbank – 3D-Halbschnitt links mit Ablauf und Kennlinien darunter; Bedienpult rechts; unten Bauteile, Farbcode und Merksätze */
+:root{
+  --bg:#E8EBE6; --surface:#F6F7F4; --raised:#FFFFFF; --ink:#1B211F; --muted:#56615C; --line:#C8CFC9;
+  --accent:#0F5F8A; --accent-ink:#FFFFFF; --accent-soft:#D6E7F1;
+  --heat:#BF3F0B; --heat-soft:#F6E1D6; --short:#3644A8; --short-soft:#DFE2F6; --ok:#26734A; --off:#8A5A00; --bad:#C42B22;
+  --stage-a:#F3F4F0; --stage-b:#CDD4CC; --tag-bg:rgba(255,255,255,.9); --tag-ink:#1B211F; --shadow:0 1px 2px rgba(20,30,25,.08),0 6px 18px rgba(20,30,25,.06);
+  --f-display:'Barlow Semi Condensed','Arial Narrow',system-ui,sans-serif;
+  --f-body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1311; --surface:#161B19; --raised:#1D2320; --ink:#E3E8E4; --muted:#9AA59F; --line:#2D3632;
+  --accent:#62B4E0; --accent-ink:#04202F; --accent-soft:#16303F;
+  --heat:#FF8B52; --heat-soft:#3A2218; --short:#98A6FF; --short-soft:#1F2442; --ok:#6FCB95; --off:#E2B24A; --bad:#FF6B62;
+  --stage-a:#252C29; --stage-b:#0B0E0D; --tag-bg:rgba(22,27,25,.88); --tag-ink:#E3E8E4; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.3);
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0F1311; --surface:#161B19; --raised:#1D2320; --ink:#E3E8E4; --muted:#9AA59F; --line:#2D3632;
+  --accent:#62B4E0; --accent-ink:#04202F; --accent-soft:#16303F;
+  --heat:#FF8B52; --heat-soft:#3A2218; --short:#98A6FF; --short-soft:#1F2442; --ok:#6FCB95; --off:#E2B24A; --bad:#FF6B62;
+  --stage-a:#252C29; --stage-b:#0B0E0D; --tag-bg:rgba(22,27,25,.88); --tag-ink:#E3E8E4; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.3);
+  color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1360px;margin:0 auto;padding-inline:20px;padding-block:22px 40px;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(1.7rem,3vw,2.4rem);line-height:1.05;margin:4px 0 0;text-wrap:balance}
+.sub{color:var(--muted);max-width:66ch;margin:6px 0 0}
+.marking{font-family:var(--f-mono);font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;color:var(--muted)}
+.marking b{font-weight:500;color:var(--ink);border:1px solid var(--line);padding:2px 6px;border-radius:3px;background:var(--surface)}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;align-items:start}
+.stagecol{display:flex;flex-direction:column;gap:12px;min-width:0}
+.stage{position:relative;height:min(70vh,660px);min-height:440px;border-radius:10px;overflow:hidden;
+  background:radial-gradient(120% 90% at 45% 35%,var(--stage-a),var(--stage-b));border:1px solid var(--line)}
+.stage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.tags{position:absolute;inset:0;pointer-events:none}
+.tag{position:absolute;left:0;top:0;pointer-events:auto;display:flex;align-items:center;gap:6px;border:0;padding:0;background:none;cursor:pointer;font:inherit;color:var(--tag-ink)}
+.tag .n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:11.5px;font-weight:500;
+  background:var(--tag-bg);border:1.5px solid var(--accent);color:var(--tag-ink);box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.tag .nm{font-family:var(--f-display);font-weight:600;font-size:13px;background:var(--tag-bg);padding:2px 7px;border-radius:4px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.14);display:none}
+.stage.names .tag .nm,.tag:hover .nm,.tag.on .nm{display:block}
+.tag.on .n{background:var(--accent);color:var(--accent-ink)}
+.tag:focus-visible .n{outline:2px solid var(--accent);outline-offset:2px}
+.wl{position:absolute;left:0;top:0;pointer-events:none;font-family:var(--f-mono);font-size:11px;color:var(--muted);background:var(--tag-bg);padding:1px 6px;border-radius:3px;white-space:nowrap}
+.callout{position:absolute;left:0;top:0;pointer-events:none;font-family:var(--f-display);font-weight:600;font-size:13px;line-height:1.25;
+  background:var(--raised);color:var(--ink);border:1px solid var(--line);border-left:3px solid var(--off);padding:5px 9px;border-radius:4px;max-width:240px;box-shadow:var(--shadow)}
+.callout.bad{border-left-color:var(--bad)}
+.hover{position:absolute;pointer-events:none;font-family:var(--f-display);font-weight:600;font-size:13px;background:var(--tag-bg);padding:3px 8px;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--muted);background:var(--tag-bg);padding:3px 8px;border-radius:4px;pointer-events:none}
+.speedtag{position:absolute;right:12px;top:12px;font-family:var(--f-mono);font-size:12px;padding:4px 9px;border-radius:4px;background:var(--tag-bg);border:1px solid var(--line)}
+.narr{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px}
+.narr .ph{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.narr h2{font-family:var(--f-display);font-size:1.3rem;font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+.narr p{margin:4px 0 0;max-width:74ch;min-width:0}
+.clock{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.clock .t{font-size:1.35rem;font-weight:500}
+.clock .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.steps{grid-column:1/-1;display:flex;gap:4px;margin-top:8px}
+.steps i{flex:1;height:5px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.steps i b{position:absolute;inset:0;width:0;background:var(--accent)}
+.narr .act{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.narr .act button.b{flex:0 0 auto}
+.diag{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.card svg{width:100%;height:auto;display:block}
+.card .cap{font-size:12px;color:var(--muted)}
+.ch text{font-family:var(--f-mono);font-size:9px;fill:var(--muted)}
+.panel{display:flex;flex-direction:column;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.grp{display:flex;flex-direction:column;gap:8px}
+.grp + .grp{border-top:1px solid var(--line);padding-top:14px}
+.lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.chip{background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:6px 9px;display:flex;flex-direction:column;min-width:0}
+.chip span{font-size:11.5px;color:var(--muted)}
+.chip strong{font-family:var(--f-display);font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.dot.ok{background:var(--ok)} .dot.off{background:var(--off)} .dot.bad{background:var(--bad)}
+.sw{width:12px;height:12px;border-radius:3px;border:1px solid rgba(0,0,0,.25);flex:none;display:inline-block}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button.b{font:inherit;font-family:var(--f-display);font-weight:600;font-size:15px;border-radius:7px;border:1px solid var(--line);background:var(--raised);color:var(--ink);
+  padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:9px;flex:1;min-width:0;justify-content:center;transition:background .15s,border-color .15s,transform .05s}
+button.b:hover:not(:disabled){border-color:var(--accent)}
+button.b:active:not(:disabled){transform:translateY(1px)}
+button.b:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.b:disabled{opacity:.45;cursor:not-allowed}
+button.b.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.b.th{background:var(--heat-soft);border-color:color-mix(in srgb,var(--heat) 40%,var(--line))}
+button.b.mg{background:var(--short-soft);border-color:color-mix(in srgb,var(--short) 40%,var(--line))}
+.sym{font-family:var(--f-mono);font-size:12px;font-weight:500;padding:1px 5px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.th .sym{color:var(--heat)} .mg .sym{color:var(--short)}
+.seg{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{flex:1;font:inherit;font-family:var(--f-mono);font-size:12.5px;border:0;background:var(--raised);color:var(--ink);padding:7px 4px;cursor:pointer;border-right:1px solid var(--line);line-height:1.25}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.seg button:disabled{opacity:.5;cursor:not-allowed}
+.seg.big button{font-family:var(--f-display);font-size:15px;font-weight:600;padding:9px 4px}
+.seg.big small{display:block;font-family:var(--f-mono);font-size:11px;font-weight:400;opacity:.8}
+.small{font-size:12.5px;color:var(--muted);margin:0}
+label.tg{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+label.tg input{accent-color:var(--accent);width:16px;height:16px}
+.lower{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+.legend{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.legend h3,.colors h3{font-family:var(--f-display);font-size:1.15rem;margin:0 0 10px;font-weight:700}
+.leg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px;list-style:none;margin:0;padding:0}
+.leg li button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;padding:7px 6px;border-radius:6px;cursor:pointer}
+.leg li button:hover,.leg li button.on{background:var(--accent-soft)}
+.leg li button:focus-visible{outline:2px solid var(--accent)}
+.leg .n{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--accent);display:grid;place-items:center;font-family:var(--f-mono);font-size:11px}
+.leg b{font-family:var(--f-display);font-weight:600;font-size:15px;display:block;line-height:1.2}
+.leg small{color:var(--muted);font-size:13px;line-height:1.35;display:block;margin-top:2px}
+.notes{display:flex;flex-direction:column;gap:10px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.note h4{margin:0 0 4px;font-family:var(--f-display);font-size:1.05rem;font-weight:700}
+.note p{margin:0;font-size:14px}
+.colors{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.ctab{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.ctab div{display:flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:12.5px;background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:5px 7px;min-width:0}
+.ctab .sw{width:14px;height:14px}
+.err{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted)}
+@media (max-width:980px){.bench{grid-template-columns:minmax(0,1fr)}.lower{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.diag{grid-template-columns:minmax(0,1fr)}.ctab{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.wrap{padding-inline:16px}.stage{height:60vh;min-height:380px}.leg{grid-template-columns:minmax(0,1fr)}.narr{grid-template-columns:minmax(0,1fr)}.clock{text-align:left}.hint{display:none}}
+@media (prefers-reduced-motion:reduce){button.b{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow" id="eyebrow">Lernsimulation · Hochleistungssicherungen NH und HH</div>
+      <h1>NH- und HH-Sicherung im Schnitt</h1>
+      <p class="sub" id="sub"></p>
+    </div>
+    <div class="marking" id="marking" aria-label="Gerätedaten"></div>
+  </header>
+
+  <div class="bench">
+    <div class="stagecol">
+      <div class="stage" id="stage">
+        <canvas id="cv" aria-label="3D-Schnittmodell einer Hochleistungssicherung. Mit der Maus drehen, mit dem Mausrad zoomen."></canvas>
+        <div class="tags" id="tags"></div>
+        <div class="wl" id="wl1"></div>
+        <div class="wl" id="wl2"></div>
+        <div class="hover" id="hover" hidden></div>
+        <div class="callout" id="callout" hidden></div>
+        <div class="speedtag" id="speedtag" hidden></div>
+        <div class="hint">Ziehen: drehen · Mausrad: zoomen · Rechte Maustaste oder Umschalt: verschieben</div>
+      </div>
+      <section class="narr" aria-live="polite">
+        <div style="min-width:0">
+          <div class="ph" id="nPh">Betriebszustand</div>
+          <h2 id="nTitle"></h2>
+          <p id="nText"></p>
+        </div>
+        <div class="clock"><div class="l" id="cL">Echtzeit</div><div class="t" id="cT">–</div></div>
+        <div class="steps" id="steps"></div>
+        <div class="act" id="nAct"></div>
+      </section>
+      <div class="diag">
+        <div class="card ch">
+          <div class="lbl" id="klTitle">Zeit-Strom-Kennlinie</div>
+          <svg id="kl" viewBox="0 0 290 190" role="img" aria-label="Schmelzzeit über Strom"></svg>
+          <div class="cap" id="klCap"></div>
+        </div>
+        <div class="card ch">
+          <div class="lbl">Strombegrenzung im Kurzschluss</div>
+          <svg id="lim" viewBox="0 0 290 190" role="img" aria-label="Stromverlauf mit und ohne Strombegrenzung"></svg>
+          <div class="cap">Gestrichelt: Kurzschlussstrom ohne Sicherung. Durchgezogen: Durchlassstrom der Sicherung.</div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel" aria-label="Bedienung">
+      <div class="grp">
+        <div class="lbl">System</div>
+        <div class="seg big" id="segSys" role="group" aria-label="Sicherungssystem">
+          <button type="button" data-s="NH" class="on">NH<small>NH00 · 500 V</small></button><button type="button" data-s="HH">HH<small>12 kV · 40 A</small></button>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Zustand</div>
+        <div class="chips">
+          <div class="chip"><span id="l1"></span><strong id="c1"></strong></div>
+          <div class="chip"><span id="l2"></span><strong id="c2"></strong></div>
+          <div class="chip"><span id="l3"></span><strong id="c3"></strong></div>
+          <div class="chip"><span>Strom</span><strong id="c4"></strong></div>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Fehler auslösen</div>
+        <button class="b th" id="bOL" type="button"></button>
+        <button class="b mg" id="bSC" type="button"></button>
+      </div>
+      <div class="grp">
+        <div class="lbl">Sicherungseinsatz</div>
+        <button class="b pri" id="bChange" type="button">Sicherung wechseln</button>
+        <p class="small" id="chHint"></p>
+      </div>
+      <div class="grp">
+        <div class="lbl">Ablauf</div>
+        <div class="row" style="align-items:center">
+          <button class="b" id="bPause" type="button" style="flex:0 0 auto;min-width:104px">Pause</button>
+          <div class="seg" id="segSpeed" role="group" aria-label="Tempo" style="flex:1">
+            <button type="button" data-v="0.5">0,5×</button><button type="button" data-v="1" class="on">1×</button><button type="button" data-v="2">2×</button>
+          </div>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Ansicht</div>
+        <div class="seg" id="segCam" role="group" aria-label="Kameraposition">
+          <button type="button" data-c="gesamt" class="on">Gesamt</button><button type="button" data-c="einsatz">Einsatz</button><button type="button" data-c="kontakte">Kontakte</button><button type="button" data-c="melder" id="camMelder">Melder</button>
+        </div>
+        <label class="tg"><input type="checkbox" id="cCut" checked> Schnittansicht</label>
+        <label class="tg"><input type="checkbox" id="cNames"> Bauteilnamen anzeigen</label>
+        <label class="tg"><input type="checkbox" id="cFlow" checked> Stromfluss anzeigen</label>
+        <label class="tg"><input type="checkbox" id="cFollow" checked> Kamera folgt dem Ablauf</label>
+      </div>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+      <section class="legend">
+        <h3>Bauteile</h3>
+        <ul class="leg" id="leg"></ul>
+      </section>
+      <section class="colors">
+        <h3 id="tabTitle"></h3>
+        <div class="ctab" id="ctab"></div>
+      </section>
+    </div>
+    <section class="notes" id="notes"></section>
+  </div>
+</div>
+
+<script src="three-r128.min.js"></script>
+<script>
+(function(){
+'use strict';
+const stageEl=document.getElementById('stage');
+if(!window.THREE){stageEl.insertAdjacentHTML('beforeend','<div class="err">Das 3D-Modell konnte nicht geladen werden. Bitte die Seite neu laden.</div>');return;}
+const $=s=>document.querySelector(s);
+const D=Math.PI/180;
+const lerp=(a,b,t)=>a+(b-a)*t, clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2, eOut=t=>1-Math.pow(1-t,3), eIn=t=>t*t*t;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=(n,d=1)=>n.toFixed(d).replace('.',',');
+
+/* ---------- Systemdaten ---------- */
+const SYS={
+ NH:{key:'NH',eyebrow:'Lernsimulation · NH-Sicherung (Niederspannungs-Hochleistungssicherung) nach DIN VDE 0636-2',
+   sub:'Schnitt durch einen NH00-Sicherungseinsatz im Sicherungsunterteil. Lass ihn bei Überlast oder Kurzschluss auslösen und wechsle ihn mit dem Aufsteckgriff.',
+   marking:['NH00','gG','160 A','500 V~','I<sub>1</sub> 120 kA'],ratings:[100,160,250],rating:160,Inorm:80,
+   ol:{lbl:'<span class="sym">2·I<sub>n</sub></span>Überlast',mult:2},sc:{lbl:'<span class="sym">20 kA</span>Kurzschluss'},
+   chips:['Sicherungseinsatz','Kennmelder','Baugröße'],camMelder:'Kennmelder',
+   chHint:'Beim Wechsel siehst du, welche Einsätze ins NH00-Unterteil passen und welche nicht.',
+   wl:['Zuleitung vom Netz','Abgang zum Verbraucher'],
+   lim:{ipk:28.3,tm:1.1,te:3.0,unit:'kA',label:'î ≈ 28 kA ohne Sicherung'},
+   klTitle:'Zeit-Strom-Kennlinie gG',klCap:'Schematisch. Hervorgehoben: der eingesetzte Einsatz. Der Punkt zeigt Strom und vergangene Zeit.',
+   tabTitle:'Baugrößen NH (gG, 500 V)',tab:[['NH000','bis 100 A'],['NH00','bis 160 A'],['NH0','bis 160 A'],['NH1','bis 250 A'],['NH2','bis 400 A'],['NH3','bis 630 A'],['NH4a','bis 1250 A']],
+   notes:[['Aufbau','Mehrere parallele Schmelzleiter aus Silber oder Kupfer mit Reihen von Engstellen liegen in Quarzsand. Ein Lotdepot sorgt für den M-Effekt bei Überlast. Der Kennmelderdraht hält den Kennmelder und schmilzt nach dem Auslösen.'],
+     ['Bedienen nur mit Aufsteckgriff','NH-Einsätze dürfen nur Elektrofachkräfte oder elektrotechnisch unterwiesene Personen wechseln: mit NH-Aufsteckgriff mit Stulpe und Gesichtsschutz. Nie unter Last ziehen oder stecken. Unter Spannung nur, wenn die Gefährdungsbeurteilung das zulässt.'],
+     ['Keine Unverwechselbarkeit','Innerhalb einer Baugröße passt jeder Bemessungsstrom ins Unterteil. Die Fachkraft muss den richtigen Einsatz wählen. Nur eine größere Baugröße passt mechanisch nicht.'],
+     ['Betriebsklassen','gG: Ganzbereichsschutz für Kabel und Leitungen. aM: Teilbereichsschutz für Motoren (Kurzschlussschutz). gTr: Transformatorschutz. gR/aR: Halbleiterschutz.']]},
+ HH:{key:'HH',eyebrow:'Lernsimulation · HH-Sicherung (Hochspannungs-Hochleistungssicherung) nach DIN EN 60282-1',
+   sub:'Halbschnitt durch eine HH-Sicherung im Lasttrennschalter eines Ortsnetztrafos. Verfolge, wie der Schlagbolzen alle drei Pole abschaltet, und setze einen neuen Einsatz richtig herum ein.',
+   marking:['HH','12 kV','40 A','Teilbereich (Back-up)','e = 292 mm'],ratings:[40],rating:40,Inorm:23,
+   ol:{lbl:'<span class="sym">1,5·I<sub>n</sub></span>Kleiner Überstrom',mult:1.5},sc:{lbl:'<span class="sym">10 kA</span>Kurzschluss'},
+   chips:['Sicherungseinsatz','Schlagbolzen','Lasttrennschalter'],camMelder:'Schlagbolzen',
+   chHint:'Beim Wechsel entscheidest du, wie herum der Einsatz eingesetzt wird.',
+   wl:['vom 10-kV-Netz','zum Transformator 400 kVA'],
+   lim:{ipk:14.1,tm:.4,te:2.4,unit:'kA',label:'î ≈ 14 kA ohne Sicherung'},
+   klTitle:'Teilbereichsschutz HH 40 A',klCap:'Schematisch. Unterhalb von I₃ schaltet die Sicherung nicht sicher ab. Dort löst der Thermostriker den Lasttrennschalter aus.',
+   tabTitle:'Bemessungsspannung und Länge e (DIN 43625)',tab:[['3,6/7,2 kV','192 mm'],['7,2/12 kV','292 mm'],['12/24 kV','442 mm'],['36 kV','537 mm'],['Ø','45 bis 88 mm']],
+   notes:[['Aufbau','Der Schmelzleiter muss bei Hochspannung sehr lang sein. Deshalb ist er auf einen Sternkörper aus Keramik gewickelt. Viele Engstellen in Reihe bauen beim Abschalten die Lichtbogenspannung stufenweise auf und begrenzen so die Schaltüberspannung.'],
+     ['Teilbereichsschutz (Back-up)','Eine HH-Sicherung schaltet sicher erst ab ihrem Mindestausschaltstrom I₃ ab, oft dem 2,5- bis 4-fachen von I<sub>n</sub>. Kleinere Überströme schaltet der Lasttrennschalter ab, ausgelöst vom Schlagbolzen oder vom Thermostriker.'],
+     ['Schlagbolzen und allpolige Abschaltung','Nach dem Auslösen schießt der Schlagbolzen heraus und dreht die Auslösewelle. Der Lasttrennschalter öffnet alle drei Pole. So läuft der Trafo nie auf zwei Phasen weiter. Nach einer Auslösung werden alle drei Einsätze getauscht.'],
+     ['Wechseln','Nur Elektrofachkräfte, nach den fünf Sicherheitsregeln, mit HH-Sicherungszange. Der Schlagbolzen muss zur Auslösevorrichtung zeigen. Ein Pfeil auf dem Einsatz zeigt die Seite.']]}
+};
+let P=SYS.NH;
+
+/* ---------- Zustand ---------- */
+const S={};
+function resetState(){Object.assign(S,{I:P.Inorm,flowVis:1,heat:0,notch:[],ng:[],arcs:[],fulg:[],solder:1,wire:1,wireGlow:0,ind:0,blown:false,lift:0,shiftX:0,present:true,
+  handle:-1,handleOn:false,flip:false,sw:0,therm:0,tReal:-1,rating:P.rating,small:false})}
+
+/* ---------- Three.js ---------- */
+const canvas=$('#cv');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));renderer.setClearColor(0x000000,0);renderer.localClippingEnabled=true;
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(30,1,1,4000);
+scene.add(new THREE.HemisphereLight(0xffffff,0x7d837c,0.8));
+const dl=new THREE.DirectionalLight(0xffffff,0.7);dl.position.set(60,120,150);scene.add(dl);
+const dl2=new THREE.DirectionalLight(0xdfe8ff,0.32);dl2.position.set(-90,20,70);scene.add(dl2);
+scene.add(new THREE.AmbientLight(0xffffff,0.12));
+const arcLight=new THREE.PointLight(0xffd0a0,0,90,2);scene.add(arcLight);
+const CLIP=new THREE.Plane(new THREE.Vector3(0,0,-1),0);
+
+const hatchTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,64,64);x.strokeStyle='rgba(0,0,0,.22)';x.lineWidth=3;
+  for(let i=-64;i<128;i+=16){x.beginPath();x.moveTo(i,64);x.lineTo(i+64,0);x.stroke()}const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(.25,.25);return t})();
+const sandTex=(()=>{const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');let s=11;const r=()=>{s=(s*16807)%2147483647;return s/2147483647};
+  x.fillStyle='#E7DCC0';x.fillRect(0,0,128,128);for(let i=0;i<1400;i++){const g=190+r()*60|0;x.fillStyle=`rgb(${g},${g-12},${g-40})`;x.beginPath();x.arc(r()*128,r()*128,.6+r()*1.6,0,7);x.fill()}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(.1,.1);return t})();
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.5,metalness:0,side:THREE.DoubleSide},o));
+const MAT={porc:M(0xF1EFE8,{roughness:.35}),porcBrown:M(0x7A3E22,{roughness:.3}),ceramic:M(0xF4F1E6,{roughness:.6}),brass:M(0xC9A24A,{metalness:.5,roughness:.35}),
+  copper:M(0xC97D4C,{metalness:.45,roughness:.38}),silver:M(0xE3E6E8,{metalness:.65,roughness:.2}),silverCu:M(0xD9DCDD,{metalness:.6,roughness:.25}),tin:M(0xA9AEB2,{metalness:.6,roughness:.3}),
+  steel:M(0x9CA5AB,{metalness:.5,roughness:.38}),zinc:M(0xBCC3B6,{metalness:.5,roughness:.35}),base:M(0x3A4045,{roughness:.6}),cable:M(0x2B2E31,{roughness:.6}),
+  handle:M(0x7A2E22,{roughness:.45}),stulpe:new THREE.MeshStandardMaterial({color:0x5A2018,transparent:true,opacity:.55,side:THREE.DoubleSide,roughness:.5,depthWrite:false}),
+  red:M(0xD9342B,{roughness:.4}),sand:M(0xE7DCC0,{roughness:.9}),iso:M(0x8A4B2A,{roughness:.25}),frame:M(0x8E979C,{metalness:.4,roughness:.45}),
+  fulg:new THREE.MeshStandardMaterial({color:0x8E9C86,transparent:true,opacity:0,roughness:.15,metalness:.1,depthWrite:false})};
+const cutOf=(m,tex)=>{const c=m.clone();c.map=tex||hatchTex;c.side=THREE.FrontSide;c.polygonOffset=true;c.polygonOffsetFactor=1;c.polygonOffsetUnits=1;return c};
+const clipOf=m=>{const c=m.clone();c.clippingPlanes=[CLIP];return c};
+
+/* ---------- Registry ---------- */
+let PARTS=[],PM={},pickables=[];
+function reg(id,mesh){mesh.material=mesh.material.clone();mesh.material.userData.dyn=new THREE.Color(0,0,0);mesh.userData.part=id;PM[id].meshes.push(mesh);return mesh}
+
+/* ---------- Geometrie-Helfer ---------- */
+const V3=(x,y,z=0)=>new THREE.Vector3(x,y,z);
+function shapeOf(pts){const s=new THREE.Shape();pts.forEach((p,i)=>i?s.lineTo(p[0],p[1]):s.moveTo(p[0],p[1]));s.closePath();return s}
+function bx(x0,x1,y0,y1,z0,z1,mat){const m=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),mat);m.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2);return m}
+function cylX(y,z,x0,x1,r,mat){const g=new THREE.CylinderGeometry(r,r,x1-x0,24);g.rotateZ(Math.PI/2);const m=new THREE.Mesh(g,mat);m.position.set((x0+x1)/2,y,z);return m}
+function cylY(x,z,y0,y1,r,mat,seg=24){const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,y1-y0,seg),mat);m.position.set(x,(y0+y1)/2,z);return m}
+function cylZ(x,y,z0,z1,r,mat){const g=new THREE.CylinderGeometry(r,r,z1-z0,24);g.rotateX(Math.PI/2);const m=new THREE.Mesh(g,mat);m.position.set(x,y,(z0+z1)/2);return m}
+function tubeOf(pts,r,mat,seg){return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),seg||pts.length*8,r,8,false),mat)}
+function helixY(cx,cz,r,y0,y1,turns,tr,mat){const pts=[];const N=Math.round(turns*30);for(let i=0;i<=N;i++){const t=i/N,a=t*turns*2*Math.PI;pts.push(V3(cx+r*Math.cos(a),lerp(y0,y1,t),cz+r*Math.sin(a)))}return tubeOf(pts,tr,mat,N*2)}
+function helixX(cy,cz,r,x0,x1,turns,tr,mat){const pts=[];const N=Math.round(turns*30);for(let i=0;i<=N;i++){const t=i/N,a=t*turns*2*Math.PI;pts.push(V3(lerp(x0,x1,t),cy+r*Math.cos(a),cz+r*Math.sin(a)))}return tubeOf(pts,tr,mat,N*2)}
+/* Quader mit Schnitt in z=0: hinten bleibt, vorne schraffierte Schnittfläche */
+function cbox(x0,x1,y0,y1,z0,z1,mat,id,parent,capTex){
+  if(z0<0){const zc=Math.min(z1,0);const g=new THREE.BoxGeometry(x1-x0,y1-y0,zc-z0);const mats=[mat,mat,mat,mat,z1>0?cutOf(mat,capTex):mat,mat];
+    const h=new THREE.Mesh(g,mats);h.position.set((x0+x1)/2,(y0+y1)/2,(z0+zc)/2);h.userData.cut=true;parent.add(h);if(id)regMulti(id,h)}
+  const f=bx(x0,x1,y0,y1,z0,z1,mat);f.userData.full=true;f.visible=false;parent.add(f);if(id)reg(id,f);return f}
+function regMulti(id,mesh){mesh.material=mesh.material.map(m=>{const c=m.clone();c.userData.dyn=new THREE.Color(0,0,0);return c});mesh.userData.part=id;PM[id].meshes.push(mesh);return mesh}
+/* Rotationskörper (Achse y) mit Halbschnitt */
+function lathe(prof,mat,id,parent,opt={}){const pts=prof.map(p=>new THREE.Vector2(Math.max(0,p[0]),p[1]));pts.push(pts[0].clone());
+  const g=new THREE.Group();parent.add(g);
+  if(!opt.fullOnly){const half=new THREE.Mesh(new THREE.LatheGeometry(pts,48,0,Math.PI),mat);half.rotation.y=Math.PI/2;half.userData.cut=true;
+    const cm=cutOf(mat,opt.capTex);const c1=new THREE.Mesh(new THREE.ShapeGeometry(shapeOf(prof)),cm),c2=new THREE.Mesh(new THREE.ShapeGeometry(shapeOf(prof.map(p=>[-p[0],p[1]]))),cm);c1.userData.cut=c2.userData.cut=true;
+    [half,c1,c2].forEach(m=>{g.add(m);if(id)reg(id,m)})}
+  const full=new THREE.Mesh(new THREE.LatheGeometry(pts,64),mat);if(!opt.fullOnly&&!opt.always){full.userData.full=true;full.visible=false}g.add(full);if(id)reg(id,full);return g}
+const ring=(ri,ro,y0,y1)=>[[ri,y0],[ro,y0],[ro,y1],[ri,y1]];
+function disposeAll(o){o.traverse(m=>{if(m.geometry)m.geometry.dispose();if(m.material){(Array.isArray(m.material)?m.material:[m.material]).forEach(x=>x.dispose())}})}
+function arcPair(parent,clip){const cm=new THREE.MeshBasicMaterial({color:0xFFF6E0,transparent:true,depthWrite:false}),gm=new THREE.MeshBasicMaterial({color:0xFF9A3C,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending});
+  if(clip){cm.clippingPlanes=[CLIP];gm.clippingPlanes=[CLIP]}
+  const core=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),cm),glow=new THREE.Mesh(new THREE.SphereGeometry(1,16,12),gm);core.userData.cut=glow.userData.cut=true;core.visible=glow.visible=false;parent.add(core);parent.add(glow);return {core,glow}}
+
+/* ---------- Modell ---------- */
+let root=null,R={};
+function buildModel(){
+  if(root){scene.remove(root);disposeAll(root)}
+  root=new THREE.Group();scene.add(root);R={};PARTS=[];PM={};
+  if(P.key==='NH')buildNH();else buildHH();
+  PARTS.forEach((p,i)=>{p.i=i+1});
+  refreshPick();buildTags();applyCut()}
+function defParts(list){PARTS=list.map(([id,n,d,cam])=>({id,n,d,cam,meshes:[]}));PM={};PARTS.forEach(p=>PM[p.id]=p)}
+function refreshPick(){pickables=[];PARTS.forEach(p=>p.meshes.forEach(m=>pickables.push(m)))}
+
+/* ===== NH ===== */
+const NHG={notchX:[-14,-7,0,7,14],stripY:[19,27,35]};
+function buildNH(){
+  defParts([['einsatz','Keramikkörper','Rechteckiger Isolierkörper aus Steatit oder Keramik. Nimmt den Druck beim Abschalten auf.','einsatz'],
+   ['leiter','Schmelzleiter, drei parallel','Silberbänder mit je fünf Reihen von Engstellen. Parallel, damit der Bemessungsstrom auf mehrere Bänder verteilt wird.','einsatz'],
+   ['lot','Lotdepot (M-Effekt)','Zinnauftrag in der Mitte jedes Bandes. Bei Überlast trennt das Band an dieser Stelle.','einsatz'],
+   ['sand','Quarzsand','Füllt den Körper vollständig. Kühlt und löscht die Lichtbögen.','einsatz'],
+   ['melder','Kennmelder','Springt nach dem Auslösen aus dem Deckel. So erkennt man den ausgelösten Einsatz in der Verteilung.','melder'],
+   ['mdraht','Kennmelderdraht','Dünner Draht parallel zu den Schmelzleitern. Hält den Kennmelder und schmilzt zuletzt.','melder'],
+   ['deckel','Deckplatten','Verschließen den Körper an beiden Enden und verbinden Schmelzleiter und Messer.','einsatz'],
+   ['messer','Messerkontakte','Versilberte Kupfermesser. Sie werden in die Federkontakte des Unterteils gesteckt.','kontakte'],
+   ['laschen','Grifflaschen','Hier greift der NH-Aufsteckgriff an.','kontakte'],
+   ['kontakt','Federkontakte des Unterteils','Kupferbacken mit Stahlfedern klemmen die Messer mit hohem Kontaktdruck.','kontakte'],
+   ['unterteil','Sicherungsunterteil','Trägt Federkontakte und Anschlussklemmen. Bleibt beim Wechsel fest verdrahtet.','gesamt'],
+   ['griff','NH-Aufsteckgriff mit Stulpe','Isolierter Griff zum Ziehen und Stecken. Die Stulpe schützt Hand und Unterarm.','gesamt']]);
+  R.fuseG=new THREE.Group();root.add(R.fuseG);buildNHFuse(1);
+  // Unterteil
+  cbox(-52,52,-5,0,-22,22,MAT.base,'unterteil',root);
+  [-1,1].forEach(s=>{const xs=a=>s*a;
+    cbox(Math.min(xs(29),xs(43)),Math.max(xs(29),xs(43)),0,3,-6,6,MAT.copper,'kontakt',root);
+    [[1.3,2.4],[-2.4,-1.3]].forEach(([a,b])=>cbox(Math.min(xs(30.5),xs(40.5)),Math.max(xs(30.5),xs(40.5)),3,32,a,b,MAT.copper,'kontakt',root));
+    [[2.4,3.1],[-3.1,-2.4]].forEach(([a,b])=>cbox(Math.min(xs(31.5),xs(39.5)),Math.max(xs(31.5),xs(39.5)),8,30,a,b,MAT.steel,'kontakt',root));
+    cbox(Math.min(xs(43),xs(50)),Math.max(xs(43),xs(50)),3,4.6,-5,5,MAT.copper,'unterteil',root);
+    const bolt=cylY(xs(46.5),0,0,7.5,2.2,MAT.zinc);reg('unterteil',root.add(bolt)&&bolt);
+    root.add(cylX(5.4,0,Math.min(xs(50),xs(88)),Math.max(xs(50),xs(88)),4.6,MAT.cable));});
+  // Aufsteckgriff
+  R.handleG=new THREE.Group();root.add(R.handleG);
+  [bx(-31.5,-26.5,50.5,57,-6.5,6.5,MAT.handle),bx(26.5,31.5,50.5,57,-6.5,6.5,MAT.handle),bx(-31.5,31.5,57,61,-5,5,MAT.handle),cylY(0,0,61,82,4,MAT.handle)].forEach(m=>reg('griff',R.handleG.add(m)&&m));
+  const st=new THREE.Mesh(new THREE.CylinderGeometry(11,8,16,32,1,true),MAT.stulpe);st.position.set(0,76,0);reg('griff',R.handleG.add(st)&&st);
+  R.handleG.visible=false;
+  // Fluss
+  R.flow=particles(90);
+}
+function buildNHFuse(scale){
+  if(R.nhF){PARTS.forEach(p=>{p.meshes=p.meshes.filter(m=>{let o=m;while(o){if(o===R.nhF)return false;o=o.parent}return true})});R.fuseG.remove(R.nhF);disposeAll(R.nhF)}
+  const F=new THREE.Group();R.nhF=F;R.fuseG.add(F);F.scale.setScalar(scale);
+  // Keramikkörper (Wände)
+  cbox(-24,24,41,44,-15,15,MAT.ceramic,'einsatz',F);cbox(-24,24,10,13,-15,15,MAT.ceramic,'einsatz',F);
+  cbox(-24,24,13,41,-15,-12,MAT.ceramic,'einsatz',F);cbox(-24,24,13,41,12,15,MAT.ceramic,'einsatz',F);
+  cbox(-21,21,13,41,-12,12,MAT.sand,'sand',F,sandTex);
+  [-1,1].forEach(s=>{cbox(Math.min(s*24,s*27),Math.max(s*24,s*27),9,45,-16,16,MAT.zinc,'deckel',F);cbox(Math.min(s*21,s*24),Math.max(s*21,s*24),13,41,-12,12,MAT.zinc,'deckel',F);
+    cbox(Math.min(s*27,s*41),Math.max(s*27,s*41),17,37,-1.25,1.25,MAT.silverCu,'messer',F);cbox(Math.min(s*27,s*30.5),Math.max(s*27,s*30.5),45,51,-5,5,MAT.steel,'laschen',F)});
+  // Schmelzleiter
+  R.strips=[];R.notches=[];R.solders=[];R.arcs=[];R.fulg=[];
+  const zf=[.02,.16],w=3.2,nw=1.4;
+  NHG.stripY.forEach((y,si)=>{const xs=[-21].concat(...NHG.notchX.map(x=>[x-nw/2,x+nw/2]),[21]);
+    for(let i=0;i<xs.length;i+=2){const m=reg('leiter',bx(xs[i],xs[i+1],y-w/2,y+w/2,zf[0],zf[1],MAT.silver));m.userData.cut=true;F.add(m);R.strips.push([si,m])}
+    NHG.notchX.forEach((x,k)=>{const m=reg('leiter',bx(x-nw/2,x+nw/2,y-w*.15,y+w*.15,zf[0],zf[1],MAT.silver));m.userData.cut=true;F.add(m);R.notches.push(m);
+      const a=arcPair(F,false);a.core.position.set(x,y,.35);a.glow.position.set(x,y,.3);R.arcs.push(a);
+      const fg=new THREE.Mesh(new THREE.CircleGeometry(1,24),MAT.fulg.clone());fg.position.set(x,y,.03);fg.userData.cut=true;F.add(fg);R.fulg.push(fg)});
+    const sd=reg('lot',new THREE.Mesh(new THREE.SphereGeometry(1.5,16,12),MAT.tin));sd.scale.set(1,.8,.35);sd.position.set(0,y+w/2-.2,.25);sd.userData.cut=true;F.add(sd);R.solders.push(sd)});
+  // Kennmelder + Draht
+  R.indG=new THREE.Group();F.add(R.indG);
+  [cylY(0,0,42.6,45,2.4,MAT.red),cylY(0,0,41,42.6,.8,MAT.steel)].forEach(m=>reg('melder',R.indG.add(m)&&m));
+  const wm=M(0x8C8F92,{metalness:.5});
+  R.wL=reg('mdraht',tubeOf([V3(-21,39.6,.12),V3(-1.4,39.6,.12)],.22,wm,4));R.wR=reg('mdraht',tubeOf([V3(1.4,39.6,.12),V3(21,39.6,.12)],.22,wm,4));
+  R.wM=reg('mdraht',tubeOf([V3(-1.6,39.6,.12),V3(0,39.8,.12),V3(1.6,39.6,.12)],.22,wm,8));R.wUp=reg('mdraht',tubeOf([V3(0,39.8,.12),V3(0,41,.12)],.22,wm,4));
+  [R.wL,R.wR,R.wM,R.wUp].forEach(m=>{m.userData.cut=true;F.add(m)});
+  R.indSpr=reg('melder',helixY(0,0,1.4,0,1,4,.14,MAT.steel));R.indSpr.position.y=41;R.indSpr.scale.y=1.6;R.indSpr.userData.cut=true;F.add(R.indSpr);
+  S.notch=R.notches.map(()=>1);S.ng=R.notches.map(()=>0);S.arcs=R.notches.map(()=>0);S.fulg=R.notches.map(()=>0);
+  refreshPick();applyCut();
+}
+/* ===== HH ===== */
+const HHG={L:60,turns:15,nn:20,cy:40.5};
+function buildHH(){
+  defParts([['rohr','Isolierrohr (Porzellan)','Druckfestes Rohr, nimmt den Lichtbogendruck auf und isoliert gegen die Umgebung.','gesamt'],
+   ['kappe','Kontaktkappen','Versilberte Kappen an beiden Enden. Sie werden von den Kontaktklemmen gehalten.','kontakte'],
+   ['stern','Sternkörper (Keramik)','Träger für den langen Schmelzleiter. Die Rippen halten die Windungen auf Abstand.','einsatz'],
+   ['leiter','Schmelzleiter, gewendelt','Zwei Silberbänder mit vielen Engstellen, schraubenförmig auf den Sternkörper gewickelt. So passt eine große Länge in das Rohr. Die Wendel ist hier ungeschnitten dargestellt.','einsatz'],
+   ['sand','Quarzsand','Füllt das Rohr. Hier durchsichtig dargestellt, damit die Wendel sichtbar bleibt.','einsatz'],
+   ['hdraht','Haltedraht','Hochohmiger Draht entlang der Achse. Hält den Schlagbolzen gegen die Feder und schmilzt nach dem Schmelzleiter.','melder'],
+   ['thermo','Thermischer Auslöser','Schmilzt bei Übertemperatur und gibt den Schlagbolzen frei, auch wenn der Schmelzleiter noch nicht getrennt hat.','melder'],
+   ['bolzen','Schlagbolzen mit Feder','Schießt nach dem Auslösen aus der Kappe und betätigt die Auslösewelle.','melder'],
+   ['klemme','Kontaktklemmen','Federnde Klemmen auf Stützisolatoren halten die Kontaktkappen.','kontakte'],
+   ['iso','Stützisolatoren','Tragen die Klemmen und isolieren gegen das geerdete Gestell.','gesamt'],
+   ['welle','Auslösewelle des Lasttrennschalters','Verbindet alle drei Pole. Dreht sich, wenn ein Schlagbolzen auftrifft, und lässt den Lasttrennschalter allpolig öffnen.','melder'],
+   ['phasen','Sicherungen L2 und L3','Die beiden anderen Pole. Sie werden bei jeder Auslösung mit abgeschaltet.','gesamt']]);
+  const L=HHG.L;
+  // Pol L1 (geschnitten)
+  R.fuseG=new THREE.Group();R.fuseG.position.set(0,HHG.cy,0);root.add(R.fuseG);
+  R.flipG=new THREE.Group();R.fuseG.add(R.flipG);
+  R.inG=new THREE.Group();R.inG.rotation.z=-Math.PI/2;R.flipG.add(R.inG);
+  buildHHFuse(R.inG,true);
+  // Gestell, Isolatoren, Klemmen für drei Pole
+  const isoProf=[[0,0],[4.6,0],[4.6,3]];for(let k=0;k<5;k++){const y=4+k*4.4;isoProf.push([4.6,y],[8.2,y+1],[8.2,y+1.8],[4.6,y+2.6])}isoProf.push([4.6,25],[3.4,26],[0,26]);
+  cbox(-80,96,-6,0,-112,16,MAT.frame,null,root);
+  [0,-48,-96].forEach((z,pi)=>{
+    [-1,1].forEach(s=>{const x=s*54;const ig=new THREE.Group();ig.position.set(x,0,z);root.add(ig);lathe(isoProf,MAT.iso,'iso',ig,{always:true,fullOnly:true});
+      const cb=(a,b,c,d,e,f,m,id)=>pi===0?cbox(a,b,c,d,e+z,f+z,m,id,root):reg(id,root.add(bx(a,b,c,d,e+z,f+z,m))&&root.children[root.children.length-1]);
+      cb(x-3.5,x+3.5,26,28.6,-9,9,MAT.copper,'klemme');cb(x-3,x+3,28.6,44,11.85,13.2,MAT.copper,'klemme');cb(x-3,x+3,28.6,44,-13.2,-11.85,MAT.copper,'klemme');
+      cb(x-3.6,x+3.6,32,40,13.2,13.8,MAT.steel,'klemme');cb(x-3.6,x+3.6,32,40,-13.8,-13.2,MAT.steel,'klemme')});
+    // Anschlussschienen
+    const sb=(a,b,c,d)=>{const m=pi===0?cbox(a,b,c,d,-4+z,4+z,MAT.copper,null,root):root.add(bx(a,b,c,d,-4+z,4+z,MAT.copper));return m};
+    sb(-100,-50.5,26,28.6);sb(50.5,66,26,28.6);sb(64,66.6,4,28.6);sb(64,100,4,6.6);
+    if(pi>0){const g=new THREE.Group();g.position.set(0,HHG.cy,z);root.add(g);const ig2=new THREE.Group();ig2.rotation.z=-Math.PI/2;g.add(ig2);buildHHFuse(ig2,false)}});
+  // Auslösewelle mit Hebeln
+  R.welleG=new THREE.Group();R.welleG.position.set(84,26,0);root.add(R.welleG);
+  reg('welle',R.welleG.add(cylZ(0,0,-104,8,1.6,MAT.steel))&&R.welleG.children[0]);
+  [0,-48,-96].forEach(z=>{const lv=bx(-1.5,1.5,0,21,z-3,z+3,MAT.zinc);reg('welle',R.welleG.add(lv)&&lv);const pad=bx(-2.4,-1.5,12,17,z-3,z+3,MAT.red);reg('welle',R.welleG.add(pad)&&pad)});
+  R.flow=particles(90);
+}
+function buildHHFuse(G,main){const L=HHG.L,cut=main;const id=k=>main?k:'phasen';const lth=(prof,mat,k,o={})=>lathe(prof,mat,id(k),G,main?o:Object.assign({fullOnly:true,always:true},o));
+  lth(ring(9,11,-54,54),MAT.porcBrown,'rohr');
+  lth([[0,-60],[11.8,-60],[11.8,-47],[11.05,-47],[11.05,-56],[0,-56]],MAT.silver,'kappe');
+  lth([[2.6,56],[11.05,56],[11.05,47],[11.8,47],[11.8,60],[2.6,60]],MAT.silver,'kappe');
+  if(!main)return;
+  lth([[0,-54],[8.6,-54],[8.6,-52.6],[0,-52.6]],MAT.brass,'kappe');lth([[2.6,52.6],[8.6,52.6],[8.6,54],[2.6,54]],MAT.brass,'kappe');
+  // Sand (durchsichtige Schnittfläche)
+  const sm=new THREE.MeshStandardMaterial({map:sandTex,transparent:true,opacity:.16,depthWrite:false,roughness:.9,side:THREE.DoubleSide});
+  const sp=new THREE.Mesh(new THREE.PlaneGeometry(18,105.2),sm);sp.position.set(0,0,-.05);sp.userData.cut=true;reg('sand',G.add(sp)&&sp);
+  // Sternkörper
+  const star=[];const nf=6;for(let i=0;i<nf;i++){const a=i/nf*2*Math.PI,da=.12;[[2.4,a-.55],[2.4,a-da*1.6],[7.3,a-da],[7.3,a+da],[2.4,a+da*1.6]].forEach(([r,b])=>star.push([r*Math.cos(b),r*Math.sin(b)]))}
+  const sg=new THREE.ExtrudeGeometry(shapeOf(star),{depth:105,bevelEnabled:false});sg.translate(0,0,-52.5);sg.rotateX(-Math.PI/2);
+  const sm2=clipOf(M(0xCFC6AE,{roughness:.7}));const stm=new THREE.Mesh(sg,sm2);stm.userData.cut=true;reg('stern',G.add(stm)&&stm);
+  // Schmelzleiter-Wendel
+  R.segs=[];R.notches=[];R.arcs=[];const lm=M(0x9FA8B0,{metalness:.75,roughness:.22});R.notchPos=[];
+  [0,Math.PI].forEach((ph,hi)=>{const pt=t=>{const a=ph+t*HHG.turns*2*Math.PI;return V3(7.6*Math.cos(a),lerp(-52,52,t),7.6*Math.sin(a))};
+    const N=HHG.nn,gap=.006;for(let k=0;k<N;k++){const t0=k/N+gap,t1=(k+1)/N-gap;const pts=[];for(let i=0;i<=24;i++)pts.push(pt(lerp(t0,t1,i/24)));
+      const m=reg('leiter',new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),40,.6,6,false),lm));m.userData.cut=true;G.add(m);R.segs.push(m);
+      if(k<N-1){const tn=(k+1)/N;const np=[pt(tn-gap*1.2),pt(tn),pt(tn+gap*1.2)];const nm=reg('leiter',new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(np),6,.28,6,false),lm));nm.userData.cut=true;G.add(nm);R.notches.push(nm);
+        const a=arcPair(G,false);a.core.position.copy(pt(tn));a.glow.position.copy(pt(tn));R.arcs.push(a);R.notchPos.push(tn)}}});
+  // Haltedraht, Thermo, Schlagbolzen
+  const wm=clipOf(M(0x8C8F92,{metalness:.5}));
+  R.hdA=reg('hdraht',tubeOf([V3(0,-52.6,0),V3(0,40,0)],.28,wm,4));R.hdB=reg('hdraht',tubeOf([V3(0,44.5,0),V3(0,50,0)],.28,wm,4));
+  R.thermo=reg('thermo',cylY(0,0,40,44.5,.9,clipOf(MAT.tin)));
+  [R.hdA,R.hdB,R.thermo].forEach(m=>{m.userData.cut=true;G.add(m)});
+  lth(ring(2.6,3.3,44,56),MAT.brass,'bolzen');
+  R.pinG=new THREE.Group();G.add(R.pinG);
+  const pin=reg('bolzen',cylY(0,0,50,59.6,2.2,clipOf(MAT.steel)));pin.userData.cut=true;R.pinG.add(pin);
+  const pinFull=reg('bolzen',cylY(0,0,55,59.6,2.2,MAT.steel));pinFull.userData.full=true;pinFull.visible=false;R.pinG.add(pinFull);
+  R.spr=reg('bolzen',helixY(0,0,1.7,0,1,6,.2,clipOf(MAT.steel)));R.spr.position.y=45.5;R.spr.scale.y=4.5;R.spr.userData.cut=true;G.add(R.spr);
+  // Pfeil-Aufdruck (Schlagbolzenseite)
+  const arrow=texPlaneHH();arrow.position.set(-11.1,32,0);arrow.rotation.y=-Math.PI/2;G.add(arrow);
+  S.notch=R.notches.map(()=>1);S.arcs=R.notches.map(()=>0);S.fulg=[];S.ng=R.notches.map(()=>0);
+}
+function texPlaneHH(){const c=document.createElement('canvas');c.width=256;c.height=96;const x=c.getContext('2d');x.fillStyle='#30363a';x.font='600 34px IBM Plex Mono, monospace';x.textBaseline='middle';
+  x.fillText('12kV 40A',8,30);x.beginPath();x.moveTo(20,70);x.lineTo(200,70);x.lineTo(200,58);x.lineTo(236,74);x.lineTo(200,90);x.lineTo(200,78);x.lineTo(20,78);x.closePath();x.fill();
+  const t=new THREE.CanvasTexture(c);const m=new THREE.Mesh(new THREE.PlaneGeometry(10,26),new THREE.MeshStandardMaterial({map:t,transparent:true,depthWrite:false}));m.raycast=()=>{};
+  m.geometry.rotateZ(Math.PI/2);m.userData.full=true;m.visible=false;return m}
+function particles(n){const m=new THREE.InstancedMesh(new THREE.SphereGeometry(.8,10,8),new THREE.MeshBasicMaterial({color:0xFFD54A,transparent:true}),n);m.userData.cut=true;m.raycast=()=>{};m.userData.off=0;root.add(m);return m}
+function applyCut(){if(!root)return;const on=$('#cCut').checked;root.traverse(m=>{if(m.userData.cut)m.visible=on;if(m.userData.full)m.visible=!on});if(R.arcs)R.arcs.forEach(a=>{a.core.visible=a.glow.visible=false});if(R.handleG)R.handleG.visible=S.handle>=0}
+
+/* ---------- Kamera ---------- */
+function camDef(n){if(P.key==='NH')return {gesamt:{t:[0,22,0],r:250,th:.42,ph:1.33},einsatz:{t:[0,27,0],r:132,th:.08,ph:1.5},kontakte:{t:[33,18,0],r:92,th:.55,ph:1.32},melder:{t:[0,40,0],r:80,th:.25,ph:1.1},wechsel:{t:[0,50,0],r:270,th:.38,ph:1.3}}[n];
+  return {gesamt:{t:[6,26,-44],r:380,th:.5,ph:1.24},einsatz:{t:[0,HHG.cy,0],r:230,th:.06,ph:1.5},kontakte:{t:[-54,30,0],r:120,th:.35,ph:1.35},melder:{t:[72,36,-10],r:140,th:.62,ph:1.3},wechsel:{t:[0,60,-20],r:360,th:.42,ph:1.28}}[n]}
+const orb={tg:V3(0,25,0),r:200,th:.42,ph:1.36,anim:null};
+function applyCam(){const a=camera.aspect,k=a<1.1?Math.min(2,1.1/a):1,s=Math.sin(orb.ph),r=orb.r*k;
+  camera.position.set(orb.tg.x+r*s*Math.sin(orb.th),orb.tg.y+r*Math.cos(orb.ph),orb.tg.z+r*s*Math.cos(orb.th));camera.lookAt(orb.tg)}
+function markCam(n){document.querySelectorAll('#segCam button').forEach(b=>b.classList.toggle('on',b.dataset.c===n))}
+function fly(name,dur=1.2){const c=camDef(name);if(!c)return;markCam(name);const to={tg:V3(...c.t),r:c.r,th:c.th,ph:c.ph};
+  if(reduced||dur===0){orb.tg.copy(to.tg);orb.r=to.r;orb.th=to.th;orb.ph=to.ph;orb.anim=null;return}
+  let th0=orb.th;while(to.th-th0>Math.PI)th0+=2*Math.PI;while(th0-to.th>Math.PI)th0-=2*Math.PI;orb.anim={t:0,dur,f:{tg:orb.tg.clone(),r:orb.r,th:th0,ph:orb.ph},to}}
+const ptrs=new Map();let drag=null,pinch0=0,moved=0;
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});orb.anim=null;moved=0;
+  drag=(e.button===2||e.shiftKey)?'pan':'rot';if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch0=Math.hypot(a.x-b.x,a.y-b.y);drag='pinch'}});
+canvas.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p){hoverPick(e);return}
+  const dx=e.clientX-p.x,dy=e.clientY-p.y;moved+=Math.abs(dx)+Math.abs(dy);p.x=e.clientX;p.y=e.clientY;
+  if(drag==='pinch'&&ptrs.size===2){const [a,b]=[...ptrs.values()],d=Math.hypot(a.x-b.x,a.y-b.y);if(pinch0)orb.r=clamp(orb.r*pinch0/d,25,700);pinch0=d;return}
+  if(drag==='rot'){orb.th-=dx*.0065;orb.ph=clamp(orb.ph-dy*.0065,.12,Math.PI-.12)}
+  else if(drag==='pan'){const k=orb.r*.0016,right=V3().setFromMatrixColumn(camera.matrix,0),up=V3().setFromMatrixColumn(camera.matrix,1);orb.tg.addScaledVector(right,-dx*k).addScaledVector(up,dy*k)}
+  markCam(null)});
+const endPtr=e=>{ptrs.delete(e.pointerId);if(ptrs.size<2)pinch0=0;if(!ptrs.size){if(moved<4&&hoverId)selectPart(hoverId,false);drag=null}};
+canvas.addEventListener('pointerup',endPtr);canvas.addEventListener('pointercancel',endPtr);
+canvas.addEventListener('pointerleave',()=>{if(!ptrs.size)setHover(null)});
+canvas.addEventListener('wheel',e=>{e.preventDefault();orb.anim=null;orb.r=clamp(orb.r*Math.exp(e.deltaY*.0011),25,700)},{passive:false});
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let hoverId=null,selId=null,lastPick=0;
+const isShown=m=>{let o=m;while(o){if(!o.visible)return false;o=o.parent}return true};
+function hoverPick(e){const now=performance.now();if(now-lastPick<40)return;lastPick=now;const r=canvas.getBoundingClientRect();
+  mouse.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);
+  const hits=ray.intersectObjects(pickables.filter(isShown),false).filter(h=>!(h.object.material&&h.object.material.clippingPlanes&&h.object.material.clippingPlanes.length&&h.point.z>0.01));
+  setHover(hits[0]?hits[0].object.userData.part:null,e.clientX-r.left,e.clientY-r.top)}
+const hov=$('#hover');
+function setHover(id,x,y){hoverId=id;if(!id||!PM[id]){hov.hidden=true;canvas.style.cursor='';return}hov.hidden=false;hov.textContent=PM[id].i+' · '+PM[id].n;hov.style.transform=`translate(${x+14}px,${y+10}px)`;canvas.style.cursor='pointer'}
+
+/* ---------- Beschriftung ---------- */
+const tagsEl=$('#tags'),legEl=$('#leg');
+function anchor(id){
+  if(P.key==='NH'){const f=v=>R.nhF.localToWorld(v);switch(id){
+    case 'einsatz':return f(V3(-12,44,0));case 'leiter':return f(V3(-17.5,NHG.stripY[0],.2));case 'lot':return f(V3(1.6,NHG.stripY[1]+1.6,.3));case 'sand':return f(V3(-17,31,0));
+    case 'melder':return R.indG.localToWorld(V3(2.4,45,0));case 'mdraht':return f(V3(-10,39.6,.2));case 'deckel':return f(V3(-25.5,45,0));case 'messer':return f(V3(-34,37,0));
+    case 'laschen':return f(V3(28.7,51,0));case 'kontakt':return V3(35.5,32,-2);case 'unterteil':return V3(-48,0,10);case 'griff':return R.handleG.localToWorld(V3(0,82,0))}}
+  const g=v=>R.inG.localToWorld(v);switch(id){
+    case 'rohr':return g(V3(-11,-30,0));case 'kappe':return g(V3(-11.8,-54,0));case 'stern':return g(V3(-2.4,-20,0));case 'leiter':return g(V3(-7.6,-36,0));case 'sand':return g(V3(-8.5,-8,0));
+    case 'hdraht':return g(V3(0,20,0));case 'thermo':return g(V3(0,42,0));case 'bolzen':return R.pinG.localToWorld(V3(0,59.6,0));case 'klemme':return V3(-54,44,-12);case 'iso':return V3(-54,14,6);
+    case 'welle':return R.welleG.localToWorld(V3(0,21,0));case 'phasen':return V3(-30,HHG.cy+11,-48)}}
+function buildTags(){tagsEl.innerHTML='';legEl.innerHTML='';
+  PARTS.forEach(p=>{const b=document.createElement('button');b.className='tag';b.type='button';b.innerHTML=`<span class="n">${p.i}</span><span class="nm">${p.n}</span>`;
+    b.addEventListener('click',()=>selectPart(p.id,true));b.addEventListener('mouseenter',()=>{hoverId=p.id});b.addEventListener('mouseleave',()=>{hoverId=null});tagsEl.appendChild(b);p.tag=b;
+    const li=document.createElement('li');li.innerHTML=`<button type="button"><span class="n">${p.i}</span><span><b>${p.n}</b><small>${p.d}</small></span></button>`;
+    const lb=li.firstChild;lb.addEventListener('click',()=>selectPart(p.id,true));lb.addEventListener('mouseenter',()=>{hoverId=p.id});lb.addEventListener('mouseleave',()=>{hoverId=null});legEl.appendChild(li);p.leg=lb})}
+function selectPart(id,move){selId=selId===id&&!move?null:id;PARTS.forEach(p=>{p.tag.classList.toggle('on',p.id===selId);p.leg.classList.toggle('on',p.id===selId)});if(move&&selId)fly(PM[id].cam||'gesamt')}
+const pv=new THREE.Vector3();
+function toScreen(p,w,h){pv.copy(p).project(camera);return {x:(pv.x+1)/2*w,y:(1-pv.y)/2*h,ok:pv.z<1&&pv.z>-1}}
+
+/* ---------- Kennlinien ---------- */
+const BASE16=[[25,3600],[28,900],[32,90],[40,20],[65,5],[90,1],[130,.1],[200,.01],[300,.003]];
+const curveFor=r=>BASE16.map(([i,t])=>[i*r/16,t]);
+const HHC=[[90,3600],[110,600],[140,100],[200,10],[300,1],[500,.1],[800,.01],[1200,.004]],I3=140;
+function tMelt(c,I){if(I<=c[0][0])return Infinity;for(let k=1;k<c.length;k++){if(I<=c[k][0]){const a=Math.log10(c[k-1][0]),b=Math.log10(c[k][0]),u=(Math.log10(I)-a)/(b-a);return Math.pow(10,lerp(Math.log10(c[k-1][1]),Math.log10(c[k][1]),u))}}return .002}
+const KL=(()=>{const svg=$('#kl'),x0=40,x1=282,y0=10,y1=160;let lo=10,hi=10000;
+  const X=i=>x0+(Math.log10(i)-Math.log10(lo))/(Math.log10(hi)-Math.log10(lo))*(x1-x0),Y=t=>y1-((Math.log10(t)+3)/(Math.log10(10000)+3))*(y1-y0);
+  function draw(){let s='';const ticks=P.key==='NH'?(lo=50,hi=20000,[50,100,300,1000,3000,10000]):(lo=10,hi=3000,[10,30,100,300,1000,3000]);
+    ticks.forEach(i=>{s+=`<line x1="${X(i)}" x2="${X(i)}" y1="${y0}" y2="${y1}" stroke="var(--line)" stroke-width=".6"/><text x="${X(i)}" y="${y1+12}" text-anchor="middle">${i>=1000?(i/1000)+'k':i}</text>`});
+    [[.001,'1 ms'],[.01,'10 ms'],[.1,'0,1 s'],[1,'1 s'],[10,'10 s'],[60,'1 min'],[3600,'1 h']].forEach(([t,l])=>{s+=`<line x1="${x0}" x2="${x1}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)" stroke-width=".6"/><text x="${x0-4}" y="${Y(t)+3}" text-anchor="end">${l}</text>`});
+    if(P.key==='NH'){P.ratings.forEach((r,ri)=>{const c=curveFor(r),on=r===S.rating&&S.present;s+=`<polyline points="${c.map(([i,t])=>X(i).toFixed(1)+','+Y(t).toFixed(1)).join(' ')}" fill="none" stroke="${on?'var(--accent)':'var(--muted)'}" stroke-width="${on?2.2:1}" stroke-opacity="${on?1:.55}"/>`;
+      const tl=[300,10,.3][ri],il=c.find(p=>p[1]<=tl)||c[c.length-1];s+=`<text x="${X(il[0])+4}" y="${Y(tl)+3}" style="fill:${on?'var(--accent)':'var(--muted)'}">${r} A</text>`})}
+    else{s+=`<rect x="${X(40)}" y="${y0}" width="${X(I3)-X(40)}" height="${y1-y0}" fill="var(--heat)" fill-opacity=".1"/>`;
+      s+=`<line x1="${X(40)}" x2="${X(40)}" y1="${y0}" y2="${y1}" stroke="var(--muted)" stroke-dasharray="3 3"/><text x="${X(40)+3}" y="${y1-4}">I<tspan dy="2" font-size="7">n</tspan></text>`;
+      s+=`<line x1="${X(I3)}" x2="${X(I3)}" y1="${y0}" y2="${y1}" stroke="var(--heat)" stroke-dasharray="3 3"/><text x="${X(I3)+3}" y="${y1-4}" style="fill:var(--heat)">I<tspan dy="2" font-size="7">3</tspan></text>`;
+      const dash=HHC.filter(p=>p[0]<=I3),sol=HHC.filter(p=>p[0]>=I3);
+      s+=`<polyline points="${dash.map(([i,t])=>X(i)+','+Y(t)).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="4 3"/>`;
+      s+=`<polyline points="${sol.map(([i,t])=>X(i)+','+Y(t)).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2.2"/>`;
+      s+=`<text x="${(X(40)+X(I3))/2}" y="${Y(20)}" text-anchor="middle" style="fill:var(--heat)">Thermo-</text><text x="${(X(40)+X(I3))/2}" y="${Y(20)+10}" text-anchor="middle" style="fill:var(--heat)">striker</text>`}
+    s+=`<rect x="${x0}" y="${y0}" width="${x1-x0}" height="${y1-y0}" fill="none" stroke="var(--line)"/><text x="${(x0+x1)/2}" y="${y1+26}" text-anchor="middle">Strom I in A</text>`;
+    s+=`<circle id="klH" r="9" fill="var(--heat)" fill-opacity=".25" visibility="hidden"/><circle id="klD" r="4" fill="var(--heat)" stroke="var(--raised)" stroke-width="1.5" visibility="hidden"/>`;svg.innerHTML=s}
+  return {draw,set(I,t){const d=svg.querySelector('#klD'),h=svg.querySelector('#klH');if(!d)return;if(I==null){d.setAttribute('visibility','hidden');h.setAttribute('visibility','hidden');return}
+    [d,h].forEach(e=>{e.setAttribute('cx',X(clamp(I,lo,hi)));e.setAttribute('cy',Y(clamp(t,.001,10000)));e.setAttribute('visibility','visible')})}}})();
+const LIM=(()=>{const svg=$('#lim'),x0=40,x1=282,y0=10,y1=160;let L;
+  const ip=t=>L.ipk*Math.sin(2*Math.PI*50*t/1000),il=t=>t<=L.tm?ip(t):t<L.te?ip(L.tm)*Math.pow(1-(t-L.tm)/(L.te-L.tm),1.4):0;
+  function draw(){L=P.lim;const top=L.ipk*1.15,X=t=>x0+t/10*(x1-x0),Y=i=>y1-(i+top*.1)/(top*1.1)*(y1-y0);let s='';
+    const st=L.ipk>20?[0,10,20,30]:[0,5,10,15];st.forEach(i=>{s+=`<line x1="${x0}" x2="${x1}" y1="${Y(i)}" y2="${Y(i)}" stroke="var(--line)" stroke-width=".6"/><text x="${x0-4}" y="${Y(i)+3}" text-anchor="end">${i}</text>`});
+    [0,2,4,6,8,10].forEach(t=>{s+=`<text x="${X(t)}" y="${y1+12}" text-anchor="middle">${t}</text>`});
+    let a='',b='';for(let i=0;i<=200;i++){const t=i/20;a+=(i?'L':'M')+X(t).toFixed(1)+','+Y(Math.max(-top*.08,ip(t))).toFixed(1);b+=(i?'L':'M')+X(t).toFixed(1)+','+Y(il(t)).toFixed(1)}
+    s+=`<path d="${a}" fill="none" stroke="var(--muted)" stroke-width="1.3" stroke-dasharray="4 3"/><path d="${b}" fill="none" stroke="var(--short)" stroke-width="2.2"/>`;
+    s+=`<text x="${X(5)}" y="${Y(L.ipk)-4}" text-anchor="middle">${L.label}</text><text x="${X(L.tm)+6}" y="${Y(ip(L.tm))-6}" style="fill:var(--short)">Durchlassstrom ≈ ${fmt(ip(L.tm),1)} kA</text>`;
+    s+=`<line x1="${X(L.tm)}" x2="${X(L.tm)}" y1="${y0}" y2="${y1}" stroke="var(--heat)" stroke-dasharray="2 2"/><text x="${X(L.tm)+3}" y="${y1-5}" style="fill:var(--heat)">schmilzt</text>`;
+    s+=`<rect x="${x0}" y="${y0}" width="${x1-x0}" height="${y1-y0}" fill="none" stroke="var(--line)"/><text x="${x0}" y="8" style="font-size:8.5px">i in kA</text><text x="${(x0+x1)/2}" y="${y1+26}" text-anchor="middle">t in ms</text>`;
+    s+=`<line id="limC" x1="0" x2="0" y1="${y0}" y2="${y1}" stroke="var(--accent)" stroke-width="1.2" visibility="hidden"/>`;svg.innerHTML=s;LIM.X=X}
+  return {draw,ip:t=>ip(t),il:t=>il(t),cursor(t){const c=svg.querySelector('#limC');if(!c)return;if(t==null){c.setAttribute('visibility','hidden');return}const x=LIM.X(clamp(t,0,10));c.setAttribute('x1',x);c.setAttribute('x2',x);c.setAttribute('visibility','visible')}}})();
+
+/* ---------- Ablaufsteuerung ---------- */
+let seq=null,paused=false,speed=1;
+const narr={ph:$('#nPh'),ti:$('#nTitle'),tx:$('#nText'),cL:$('#cL'),cT:$('#cT'),steps:$('#steps'),act:$('#nAct')};
+function fmtT(s){if(s<0)return '–';if(s===0)return '0 s';if(s<1)return fmt(s*1000,s<.01?1:0)+' ms';if(s<60)return fmt(s,s<10?1:0)+' s';const m=Math.floor(s/60),r=Math.round(s%60);return m+' min '+(r<10?'0':'')+r+' s'}
+function startSeq(name,steps,opts={}){seq={name,steps,i:0,t:0,opts};drawSteps();narr.cT.textContent='–';KL.set(null);LIM.cursor(null);enterStep();refreshButtons()}
+function drawSteps(){narr.steps.innerHTML=seq.steps.map(()=>'<i><b></b></i>').join('')}
+function enterStep(){const st=seq.steps[seq.i];st.done=false;st.enter&&st.enter();narr.ph.textContent=seq.name+' · Schritt '+(seq.i+1)+' von '+seq.steps.length;narr.ti.textContent=st.title;narr.tx.textContent=st.text;
+  narr.act.innerHTML='';if(st.choices)st.choices.forEach(ch=>{const b=document.createElement('button');b.className='b';b.type='button';b.innerHTML=ch.html;b.onclick=()=>{st.pick=ch.v;st.done=true};narr.act.appendChild(b)});
+  if(st.cam&&$('#cFollow').checked)fly(st.cam,1.3);const tag=$('#speedtag');const tg=st.tag!==undefined?st.tag:seq.opts.tag;if(tg){tag.hidden=false;tag.textContent=tg}else tag.hidden=true}
+function endSeq(){const fin=typeof seq.opts.final==='function'?seq.opts.final():seq.opts.final;seq=null;$('#speedtag').hidden=true;narr.act.innerHTML='';if(fin){narr.ph.textContent='Betriebszustand';narr.ti.textContent=fin[0];narr.tx.textContent=fin[1]}refreshButtons();KL.draw()}
+function tickSeq(dt){if(!seq||paused)return;const st=seq.steps[seq.i];let u;
+  if(st.choices){u=st.done?1:0;if(!st.done)return}else{seq.t+=dt*speed;u=clamp(seq.t/st.dur);st.update&&st.update(u)}
+  if(st.real){const r=lerp(st.real[0],st.real[1],u);S.tReal=r;narr.cL.textContent='Echtzeit';narr.cT.textContent=fmtT(r);if(seq.opts.kl&&S.I>0)KL.set(S.I,Math.max(r,.001));if(seq.opts.lim)LIM.cursor(r*1000)}
+  narr.steps.querySelectorAll('i b').forEach((b,j)=>b.style.width=(j<seq.i?100:j===seq.i?u*100:0)+'%');
+  if(u>=1){st.exit&&st.exit();const more=st.next?st.next():null;if(more&&more.length){seq.steps.splice(seq.i+1,0,...more);drawSteps()}seq.i++;seq.t=0;if(seq.i>=seq.steps.length)endSeq();else enterStep()}}
+function clearFault(){S.heat=0;S.notch=S.notch.map(()=>1);S.ng=S.ng.map(()=>0);S.arcs=S.arcs.map(()=>0);S.fulg=S.fulg.map(()=>0);S.solder=1;S.wire=1;S.wireGlow=0;S.ind=0;S.blown=false;S.therm=0}
+
+/* ---- NH-Abläufe ---- */
+const NOTCH_N=()=>S.notch.length;
+function nhIdx(strip,k){return strip*5+k}
+function nhPop(){return {title:'Kennmelder springt heraus',text:'Jetzt fließt der Strom kurz über den Kennmelderdraht. Er schmilzt sofort durch, die Feder drückt den Kennmelder aus dem Deckel. In der Verteilung ist der ausgelöste Einsatz so auf einen Blick zu erkennen.',
+  dur:3,cam:'melder',update(u){S.wireGlow=Math.sin(Math.PI*clamp(u/.5));if(u>.35){S.wire=0;S.I=0;S.flowVis=0}S.ind=eOut(clamp((u-.35)/.4))}}}
+function nhOverload(){const r=S.rating,I=2*r,tm=tMelt(curveFor(r),I);return [
+ {title:'Überlast',text:`Am Abgang hängen zu viele Verbraucher. Dauerhaft fließen ${I} A über den ${r}-A-Einsatz, das Doppelte seines Bemessungsstroms. Das Kabel würde unzulässig warm.`,dur:3,real:[0,0],cam:'gesamt',update(u){S.I=lerp(P.Inorm,I,ease(u))}},
+ {title:'Schmelzleiter erwärmen sich',text:'Der Strom teilt sich auf die drei Bänder auf. An den Engstellen ist der Querschnitt am kleinsten, dort werden sie am heißesten. Der Quarzsand leitet viel Wärme ab, deshalb dauert es bei Überlast Sekunden bis Minuten. Die Animation ist zeitgerafft.',
+  dur:6.5,real:[0,tm*.85],cam:'einsatz',tag:'Zeitraffer',update(u){S.heat=.75*ease(u)}},
+ {title:'Lotdepots schmelzen: M-Effekt',text:'In der Mitte jedes Bandes sitzt ein Lotdepot aus Zinn. Es schmilzt bei rund 230 °C und legiert sich mit dem Silber. Die Legierung hat einen höheren Widerstand und schmilzt leichter. Dort trennt das Band, ohne dass der ganze Einsatz überhitzt.',
+  dur:4.5,real:[tm*.85,tm],cam:'einsatz',tag:'Zeitraffer',update(u){S.heat=lerp(.75,.9,u);S.solder=1-ease(u)}},
+ {title:'Die Bänder trennen nacheinander',text:'Das erste Band trennt am Lotdepot. Sein Strom springt auf die beiden anderen Bänder über, die dadurch noch heißer werden und kurz danach ebenfalls durchschmelzen. Die kleinen Lichtbögen erlöschen im Quarzsand.',
+  dur:4.4,real:[tm,tm+.01],cam:'einsatz',tag:'Zeitlupe',update(u){[0,1,2].forEach(si=>{const st=si*.25,v=clamp((u-st)/.2);const k=nhIdx(si,2);S.notch[k]=1-eOut(v);S.arcs[k]=v>0&&u<st+.55?Math.sin(Math.PI*clamp((u-st)/.55))*.75:0;S.fulg[k]=Math.max(S.fulg[k],.6*clamp((u-st-.15)/.4))});S.heat=lerp(.9,.35,u)}},
+ nhPop()]}
+function nhShort(){return [
+ {title:'Kurzschluss im Abgang',text:'Im Kabel zum Verbraucher entsteht ein Kurzschluss. Der Strom würde auf etwa 20 kA ansteigen (Scheitelwert 28 kA). Die Animation ist stark verlangsamt.',dur:2.6,real:[0,.0006],cam:'einsatz',update(u){S.I=lerp(P.Inorm,20000,eIn(u))}},
+ {title:'Alle Engstellen schmelzen gleichzeitig',text:'Der Strom steigt so schnell, dass keine Wärme an den Sand abgegeben werden kann. In allen drei Bändern schmelzen alle Engstellenreihen gleichzeitig durch, nach etwa 1 ms.',
+  dur:3.6,real:[.0006,.0011],cam:'einsatz',update(u){S.heat=lerp(.2,1,u);S.ng=S.ng.map(()=>ease(u));if(u>.85)S.notch=S.notch.map(()=>1-clamp((u-.85)/.15))}},
+ {title:'15 Teillichtbögen im Quarzsand',text:'In jedem Band brennen fünf Lichtbögen in Reihe. Der Quarzsand schmilzt um sie herum zu Glas (Fulgurit) und entzieht ihnen sehr viel Energie. Die Lichtbogenspannung steigt über die Netzspannung, der Strom wird auf null gedrückt.',
+  dur:4.4,real:[.0011,.003],cam:'einsatz',update(u){S.notch=S.notch.map(()=>0);S.arcs=S.arcs.map((_,k)=>u<.85?Math.sin(Math.PI*Math.min(1,u/.85))*(.8+.2*Math.sin(k*2+u*30)):0);S.fulg=S.fulg.map(f=>Math.max(f,clamp(u*1.2)));S.heat=lerp(1,.4,u);S.I=Math.max(0,LIM.il(lerp(P.lim.tm,P.lim.te,u))*1000)}},
+ {title:'Strombegrenzung',text:`Die Sicherung hat abgeschaltet, bevor der Kurzschlussstrom seinen Scheitelwert erreicht hat. Statt 28 kA flossen höchstens etwa ${fmt(LIM.ip(P.lim.tm),1)} kA. Das schützt Sammelschienen, Kabel und Schaltgeräte vor den großen Kräften und der Wärme.`,
+  dur:4,real:[.003,.01],cam:'gesamt',update(u){S.I=0;S.flowVis=0;S.heat=lerp(.4,.1,u)}},
+ nhPop()]}
+function nhChoose(){return {title:'Neuen Einsatz auswählen',text:'Im Unterteil der Baugröße NH00 steckte ein 160-A-Einsatz. Welchen setzt du ein?',cam:'wechsel',
+  choices:[{v:100,html:'NH00 · 100 A'},{v:160,html:'NH00 · 160 A'},{v:250,html:'NH1 · 250 A'}],next(){return nhInsert(this.pick)}}}
+function nhInsert(r){const big=r===250,sc=big?1.2:1;
+  const show={title:`${big?'NH1':'NH00'}-Einsatz ${r} A in den Griff nehmen`,text:'Der neue Einsatz wird mit dem Aufsteckgriff an den Grifflaschen gefasst und über das Unterteil gehalten.',dur:2.6,cam:'wechsel',
+    enter(){buildNHFuse(sc);S.rating=r;S.present=true;clearFault();S.shiftX=90;S.lift=34;S.handle=0;S.handleOn=true},update(u){S.shiftX=lerp(90,0,ease(u))}};
+  if(big){const stop=31-17*sc+.3;return [show,{title:'Passt nicht: falsche Baugröße',text:'Die Messer des NH1-Einsatzes sind dicker und größer als die Federkontakte des NH00-Unterteils. Er lässt sich nicht stecken. Nur über die Baugröße ist eine Verwechslung ausgeschlossen.',
+    dur:4.4,cam:'kontakte',update(u){S.lift=lerp(34,stop,ease(clamp(u/.55)))+(u>.55&&u<.75?Math.sin((u-.55)*60)*.3:0)}},
+    {title:'Einsatz wieder weglegen',text:'Der zu große Einsatz wird zurückgelegt.',dur:2.4,cam:'wechsel',update(u){S.lift=lerp(stop,34,ease(clamp(u/.5)));if(u>.5)S.shiftX=lerp(0,90,ease((u-.5)/.5))},exit(){S.present=false}},nhChoose()]}
+  return [show,{title:'Einsatz stecken',text:r<160?'Der 100-A-Einsatz passt genauso in das Unterteil. Bei NH gibt es innerhalb einer Baugröße keine Unverwechselbarkeit. Die Fachkraft muss den Bemessungsstrom anhand von Kabelquerschnitt und Verlegeart prüfen.':'Die Messer gleiten in die Federkontakte. Die Stahlfedern sorgen für hohen Kontaktdruck und einen kleinen Übergangswiderstand.',
+    dur:3.4,cam:'kontakte',update(u){S.lift=lerp(34,0,ease(u))}},
+   {title:'Griff abziehen, Last einschalten',text:'Der Aufsteckgriff wird von den Grifflaschen gelöst. Danach wird die Last wieder eingeschaltet.',dur:3,cam:'gesamt',update(u){S.handle=ease(clamp(u/.5));if(u>.5){S.I=P.Inorm*ease((u-.5)/.5);S.flowVis=1}},exit(){S.handle=-1;S.handleOn=false}}]}
+function nhChange(){return [
+ {title:'Last abschalten, Schutzausrüstung anlegen',text:'NH-Einsätze werden nur von Elektrofachkräften oder elektrotechnisch unterwiesenen Personen gewechselt. Vorher wird die Last abgeschaltet: NH-Einsätze nie unter Last ziehen. Persönliche Schutzausrüstung: Gesichtsschutz und NH-Aufsteckgriff mit Stulpe.',
+  dur:3.4,cam:'gesamt',update(u){if(!S.blown)S.I=P.Inorm*(1-u);S.flowVis=1-u}},
+ {title:'Aufsteckgriff ansetzen',text:'Der Griff wird senkrecht auf die Grifflaschen gesteckt, bis er einrastet.',dur:2.8,cam:'wechsel',enter(){S.handle=1},update(u){S.handle=1-ease(u);S.I=0},exit(){S.handleOn=true}},
+ {title:'Einsatz ziehen',text:'Mit einem kräftigen, geraden Zug wird der Einsatz aus den Federkontakten gezogen.',dur:2.8,cam:'wechsel',update(u){S.lift=34*ease(u)}},
+ {title:'Alten Einsatz ablegen',text:S.blown?'Der ausgelöste Einsatz wird entsorgt, nie geflickt.':'Der Einsatz wird abgelegt.',dur:2.4,cam:'wechsel',update(u){S.shiftX=90*ease(u)},exit(){S.present=false;S.handleOn=false;S.handle=-1}},
+ nhChoose()]}
+
+/* ---- HH-Abläufe ---- */
+function hhStrike(text){return {title:'Schlagbolzen schießt heraus',text:text||'Nach dem Schmelzleiter schmilzt auch der Haltedraht. Die gespannte Feder treibt den Schlagbolzen etwa 20 mm aus der Kappe, mit einer Kraft von rund 50 bis 80 N.',
+  dur:2.6,cam:'melder',tag:'Zeitlupe',update(u){S.wireGlow=Math.sin(Math.PI*clamp(u/.4));if(u>.3)S.wire=0;S.ind=eOut(clamp((u-.3)/.4))}}}
+function hhTrip(){return {title:'Lasttrennschalter öffnet alle drei Pole',text:'Der Schlagbolzen stößt gegen den Hebel der Auslösewelle. Die Welle dreht sich und löst den Federspeicher des Lasttrennschalters aus. Er öffnet alle drei Pole gleichzeitig. So läuft der Transformator nicht auf zwei Phasen weiter.',
+  dur:3.6,cam:'gesamt',update(u){S.sw=eOut(clamp(u/.4));if(u>.3){S.I=0;S.flowVis=0}}}}
+function hhShort(){return [
+ {title:'Kurzschluss im Transformator',text:'Im Transformator entsteht ein Wicklungskurzschluss. Der Strom würde auf etwa 10 kA ansteigen (Scheitelwert 14 kA). Die Animation ist stark verlangsamt.',dur:2.6,real:[0,.0002],cam:'einsatz',update(u){S.I=lerp(P.Inorm,10000,eIn(u))}},
+ {title:'Alle Engstellen schmelzen gleichzeitig',text:'Die zwei gewendelten Silberbänder haben einen sehr kleinen Querschnitt. Alle Engstellen erhitzen sich gleichzeitig und schmelzen nach etwa 0,4 ms durch.',
+  dur:3.6,real:[.0002,.0004],cam:'einsatz',update(u){S.heat=lerp(.2,1,u);S.ng=S.ng.map(()=>ease(u));if(u>.85)S.notch=S.notch.map(()=>1-clamp((u-.85)/.15))}},
+ {title:'Lichtbogenspannung baut sich stufenweise auf',text:'Entlang der Wendel zünden viele Teillichtbögen in Reihe. Sie entstehen nicht alle im selben Augenblick. So steigt die Lichtbogenspannung stufenweise und die Schaltüberspannung bleibt begrenzt. Der Quarzsand kühlt und löscht die Bögen.',
+  dur:5,real:[.0004,.0024],cam:'einsatz',update(u){const n=S.arcs.length;S.notch=S.notch.map(()=>0);S.arcs=S.arcs.map((_,k)=>{const st=(k%20)/20*.45;const v=clamp((u-st)/.12);return u<.9?v*(.75+.25*Math.sin(k*1.7+u*40)):Math.max(0,1-(u-.9)/.1)*.6});S.heat=lerp(1,.4,u);S.I=Math.max(0,LIM.il(lerp(P.lim.tm,P.lim.te,u))*1000)}},
+ {title:'Strombegrenzung',text:`Die Sicherung hat abgeschaltet, lange bevor der Strom seinen Scheitelwert erreicht hat. Statt 14 kA flossen höchstens etwa ${fmt(LIM.ip(P.lim.tm),1)} kA. Transformator und Schaltanlage bleiben vor großen Kräften geschützt.`,
+  dur:3.6,real:[.0024,.01],cam:'einsatz',update(u){S.I=0;S.flowVis=0;S.arcs=S.arcs.map(()=>0);S.heat=lerp(.4,.1,u)}},
+ hhStrike(),hhTrip()]}
+function hhSmall(){return [
+ {title:'Kleiner Überstrom',text:'Der Transformator ist dauerhaft überlastet. Es fließen 60 A, das 1,5-fache des Bemessungsstroms. Dieser Strom liegt unter dem Mindestausschaltstrom I₃ ≈ 140 A der Teilbereichssicherung.',dur:3.4,real:[0,0],cam:'gesamt',update(u){S.I=lerp(P.Inorm,60,ease(u))}},
+ {title:'Die Sicherung erwärmt sich',text:'Eine Teilbereichssicherung kann so kleine Ströme nicht sicher abschalten. Würde der Schmelzleiter jetzt an einer Stelle durchschmelzen, könnte der Lichtbogen stehen bleiben und die Sicherung zerstören. Die Animation ist zeitgerafft.',
+  dur:6,real:[0,900],cam:'einsatz',tag:'Zeitraffer',update(u){S.heat=.55*ease(u)}},
+ {title:'Thermischer Auslöser spricht an',text:'Der thermische Auslöser am Haltedraht wird so heiß, dass sein Lot schmilzt. Er gibt den Schlagbolzen frei, bevor die Sicherung gefährlich überhitzt. Der Schmelzleiter ist dabei noch nicht getrennt.',
+  dur:3.6,real:[900,960],cam:'melder',tag:'Zeitraffer',update(u){S.heat=lerp(.55,.6,u);S.therm=ease(u)}},
+ hhStrike('Die Feder treibt den Schlagbolzen aus der Kappe.'),
+ Object.assign(hhTrip(),{text:'Der Schlagbolzen dreht die Auslösewelle. Der Lasttrennschalter öffnet alle drei Pole und schaltet den Überstrom selbst ab. Bei diesem kleinen Strom ist das kein Problem für ihn. Danach werden alle drei Einsätze getauscht.'})]}
+function hhChoose(){return {title:'Wie herum einsetzen?',text:'Der Pfeil auf dem Einsatz zeigt zur Schlagbolzenseite. Die Auslösewelle sitzt rechts. Wie setzt du den neuen Einsatz ein?',cam:'wechsel',
+  choices:[{v:'ok',html:'Schlagbolzen nach rechts'},{v:'flip',html:'Schlagbolzen nach links'}],next(){return hhInsert(this.pick==='flip')}}}
+function hhInsert(flip){const take={title:'Neuen Einsatz mit der Zange fassen',text:'Der neue Einsatz wird mit der HH-Sicherungszange gefasst und über die Kontaktklemmen gehalten.',dur:2.4,cam:'wechsel',
+    enter(){clearFault();S.present=true;S.flip=flip;S.shiftX=-140;S.lift=40},update(u){S.shiftX=lerp(-140,0,ease(u))}};
+  const push={title:'In die Kontaktklemmen drücken',text:'Der Einsatz wird von oben in die federnden Kontaktklemmen gedrückt, bis die Kappen sicher sitzen.',dur:2.8,cam:'kontakte',update(u){S.lift=lerp(40,0,ease(u))}};
+  if(flip)return [take,push,{title:'Falsch eingesetzt',text:'Der Schlagbolzen zeigt von der Auslösewelle weg. Bei einer Auslösung würde er ins Leere schießen, der Lasttrennschalter bliebe eingeschaltet. Der Transformator liefe dann auf zwei Phasen weiter. Der Einsatz muss umgedreht werden.',
+    dur:5,cam:'melder',enter(){}},{title:'Einsatz wieder herausnehmen',text:'Der Einsatz wird mit der Zange wieder aus den Klemmen gezogen.',dur:2.6,cam:'wechsel',update(u){S.lift=lerp(0,40,ease(u));if(u>.5)S.shiftX=lerp(0,-140,ease((u-.5)/.5))},exit(){S.present=false}},hhChoose()];
+  return [take,push,{title:'Schutzmaßnahmen aufheben, einschalten',text:'Erdung und Kurzschließung werden entfernt, die Abdeckungen abgenommen. Dann wird der Lasttrennschalter wieder eingeschaltet. Der Schlagbolzen zeigt zur Auslösewelle, die allpolige Abschaltung funktioniert wieder.',
+    dur:3.6,cam:'gesamt',update(u){S.sw=1-ease(clamp(u/.5));if(u>.5){S.I=P.Inorm*ease((u-.5)/.5);S.flowVis=1}}}]}
+function hhChange(){return [
+ {title:'Die fünf Sicherheitsregeln',text:'Freischalten (Lasttrennschalter ist bereits offen), gegen Wiedereinschalten sichern, Spannungsfreiheit feststellen, erden und kurzschließen, benachbarte unter Spannung stehende Teile abdecken. Erst dann darf eine Elektrofachkraft den Einsatz berühren.',
+  dur:5,cam:'gesamt',update(u){if(S.sw<.5)S.sw=ease(u);S.I=0;S.flowVis=0}},
+ {title:'Einsatz mit der Zange herausziehen',text:'Die HH-Sicherungszange fasst das Isolierrohr. Der Einsatz wird nach oben aus den Kontaktklemmen gezogen. Nach einer Auslösung werden alle drei Einsätze getauscht, auch die beiden, die nicht ausgelöst haben. Sie könnten vorgeschädigt sein.',
+  dur:3.4,cam:'wechsel',update(u){S.lift=40*ease(u)}},
+ {title:'Alten Einsatz ablegen',text:'Der Einsatz wird abgelegt.',dur:2.2,cam:'wechsel',update(u){S.shiftX=-140*ease(u)},exit(){S.present=false}},
+ hhChoose()]}
+
+/* ---------- Szene aktualisieren ---------- */
+let T0=0;const dummy=new THREE.Object3D();
+function updateScene(){const cut=$('#cCut').checked;
+  if(P.key==='NH'){
+    R.fuseG.position.set(S.shiftX,S.lift,0);R.fuseG.visible=S.present||S.shiftX<89;
+    R.handleG.visible=S.handle>=0;if(S.handle>=0)R.handleG.position.set(S.handleOn?S.shiftX:0,(S.handleOn?S.lift:0)+S.handle*40,0);
+    R.notches.forEach((m,k)=>{m.scale.y=Math.max(.001,S.notch[k]);m.visible=cut&&S.notch[k]>.02});
+    R.solders.forEach(m=>m.scale.set(1+.8*(1-S.solder),.8*(S.solder*.7+.3),.35*(S.solder*.6+.4)));
+    R.wM.visible=cut&&S.wire>.5;R.indG.position.y=S.ind*3.2;R.indSpr.scale.y=1.6+S.ind*3.2;
+    R.fulg.forEach((m,k)=>{m.material.opacity=.85*S.fulg[k];m.scale.set(2+1.6*S.fulg[k],1.4+1*S.fulg[k],1);m.visible=cut&&S.fulg[k]>.02});
+  }else{
+    R.fuseG.position.set(S.shiftX,HHG.cy+S.lift,0);R.flipG.rotation.z=S.flip?Math.PI:0;R.fuseG.visible=S.present||Math.abs(S.shiftX)<139;
+    R.notches.forEach((m,k)=>{m.visible=cut&&S.notch[k]>.5});
+    R.hdB.visible=R.hdA.visible=cut;if(S.wire<.5&&S.therm<.5){R.hdA.visible=false}
+    R.thermo.scale.set(1+.6*S.therm,1-.7*S.therm,1+.6*S.therm);R.thermo.visible=cut&&S.therm<.98;
+    R.pinG.position.y=S.ind*22;R.spr.scale.y=4.5+S.ind*22;
+    R.welleG.rotation.z=-S.sw*28*D;
+  }
+  // Lichtbögen
+  let ai=0,ap=null;R.arcs.forEach((a,k)=>{const v=S.arcs[k]||0;a.core.visible=a.glow.visible=cut&&v>.02;if(v>.02){const fl=.7+.3*Math.sin(T0*80+k*3);a.core.scale.setScalar(P.key==='NH'?.7+.5*v:.45+.35*v);a.core.material.opacity=v*fl;a.glow.scale.setScalar((P.key==='NH'?2.2:1.4)+2*v);a.glow.material.opacity=.5*v*fl;if(v>ai){ai=v;ap=a.glow}}});
+  if(ap){arcLight.position.copy(ap.getWorldPosition(V3()));arcLight.position.z+=15;arcLight.intensity=3*ai}else arcLight.intensity=0}
+const accentHL=new THREE.Color(0x1b7fb8);
+function setDyn(m,r,g,b){const ms=Array.isArray(m.material)?m.material:[m.material];ms.forEach(x=>x.userData.dyn&&x.userData.dyn.setRGB(r,g,b))}
+function updateMats(){const h=S.heat;
+  if(P.key==='NH'){R.strips.forEach(([si,m])=>setDyn(m,1.1*h*h,.3*h*h,0));R.notches.forEach((m,k)=>{const v=Math.max(h*1.25,S.ng[k]);setDyn(m,1.4*v*v,.55*v*v,.1*v*v)});
+    R.solders.forEach(m=>setDyn(m,.9*(1-S.solder),.4*(1-S.solder),0));[R.wL,R.wR,R.wM,R.wUp].forEach(m=>setDyn(m,1.4*S.wireGlow,.5*S.wireGlow,.1*S.wireGlow))}
+  else{R.segs.forEach(m=>setDyn(m,1.1*h*h,.3*h*h,0));R.notches.forEach((m,k)=>{const v=Math.max(h*1.2,S.ng[k]);setDyn(m,1.4*v*v,.55*v*v,.1*v*v)});
+    [R.hdA,R.hdB].forEach(m=>setDyn(m,1.4*S.wireGlow,.5*S.wireGlow,.1*S.wireGlow));setDyn(R.thermo,.9*S.therm+.6*h,.35*S.therm+.2*h,0)}
+  const hl=hoverId||selId;PARTS.forEach(p=>{const on=p.id===hl;p.meshes.forEach(m=>{(Array.isArray(m.material)?m.material:[m.material]).forEach(x=>{if(!x.emissive)return;x.emissive.copy(x.userData.dyn||new THREE.Color());if(on)x.emissive.add(accentHL)})})})}
+function flowPath(){if(P.key==='NH'){const z=.9,x=S.shiftX,y=S.lift;return [V3(-88,5.4,5),V3(-46.5,5.4,5),V3(-36,3,z),V3(-35.5,24,z+1.4),V3(-34+x,27+y,z+1.4),V3(-25.5+x,27+y,z+1.4),V3(-21+x,27+y,z),V3(21+x,27+y,z),V3(25.5+x,27+y,z+1.4),V3(34+x,27+y,z+1.4),V3(35.5,24,z+1.4),V3(36,3,z),V3(46.5,5.4,5),V3(88,5.4,5)]}
+  const z=.9,c=HHG.cy,y=S.lift;return [V3(-100,29.4,4.6),V3(-54,29.4,4.6),V3(-54,34,z+13.5),V3(-57,c+y,z+12),V3(-50,c+7.8+y,z),V3(50,c+7.8+y,z),V3(57,c+y,z+12),V3(54,34,z+13.5),V3(54,29.4,4.6),V3(65.3,29.4,4.6),V3(65.3,7.4,4.6),V3(100,7.4,4.6)]}
+function updateFlow(dt){const m=R.flow,vis=$('#cFlow').checked&&$('#cCut').checked&&S.I>.05&&S.lift<.5&&S.present?S.flowVis:0;m.visible=vis>.02;if(!m.visible)return;
+  const pts=flowPath(),cum=[0];for(let i=1;i<pts.length;i++)cum.push(cum[i-1]+pts[i].distanceTo(pts[i-1]));const tot=cum[cum.length-1];
+  m.userData.off=(m.userData.off+dt*(14+16*Math.min(3,Math.pow(S.I/P.Inorm,.4))))%tot;const n=m.count,sp=tot/n,arr=[];for(let i=0;i<n;i++)arr.push((m.userData.off+i*sp)%tot);arr.sort((a,b)=>a-b);
+  let j=1;for(let i=0;i<n;i++){const d=arr[i];while(j<pts.length-1&&cum[j]<d)j++;const t=(d-cum[j-1])/((cum[j]-cum[j-1])||1);dummy.position.lerpVectors(pts[j-1],pts[j],t);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix)}
+  m.instanceMatrix.needsUpdate=true;m.material.opacity=vis;m.material.color.set(S.I>500?0xEAF6FF:S.I>1.3*S.rating?0xFF8C33:0xFFD54A)}
+
+/* Overlays */
+const callout=$('#callout');
+function place(el,p,dx,dy,w,h){const s=toScreen(p,w,h);el.style.display=s.ok?'':'none';el.style.transform=`translate(${s.x+dx}px,${s.y+dy}px)`}
+const INNER={NH:['leiter','lot','sand','mdraht'],HH:['stern','leiter','sand','hdraht','thermo']};
+function updateTags(){const w=stageEl.clientWidth,h=stageEl.clientHeight,cut=$('#cCut').checked;
+  PARTS.forEach(p=>{let vis=!(INNER[P.key].includes(p.id)&&!cut);if(p.id==='griff')vis=S.handle>=0;if(['einsatz','leiter','lot','sand','melder','mdraht','deckel','messer','laschen','rohr','kappe','stern','hdraht','thermo','bolzen'].includes(p.id)&&!R.fuseG.visible)vis=false;
+    const s=toScreen(anchor(p.id),w,h);p.tag.style.display=s.ok&&vis?'':'none';p.tag.style.transform=`translate(${s.x-11}px,${s.y-11}px)`});
+  if(P.key==='NH'){place($('#wl1'),V3(-86,9,5),-40,-24,w,h);place($('#wl2'),V3(86,9,5),-110,-24,w,h)}else{place($('#wl1'),V3(-98,30,0),-10,-26,w,h);place($('#wl2'),V3(98,8,0),-150,-26,w,h)}
+  let txt=null,cls='callout',pos=null;
+  if(P.key==='NH'&&S.ind>.5&&S.lift<1){txt='Kennmelder herausgesprungen: Einsatz ausgelöst';cls='callout bad';pos=R.indG.localToWorld(V3(0,45,0))}
+  if(P.key==='HH'&&S.sw>.5&&!seq){txt='Lasttrennschalter AUS, alle drei Pole offen';cls='callout bad';pos=V3(86,48,0)}
+  if(P.key==='HH'&&S.flip&&S.present&&S.lift<1){txt='Schlagbolzen zeigt von der Auslösewelle weg';cls='callout bad';pos=V3(-62,HHG.cy+14,0)}
+  if(txt){callout.hidden=false;callout.className=cls;callout.textContent=txt;place(callout,pos,12,-34,w,h)}else callout.hidden=true;
+  $('#stage').classList.toggle('names',$('#cNames').checked)}
+
+/* Status */
+function chip(el,html){if(el._k===html)return;el._k=html;el.innerHTML=html}
+const dot=c=>`<i class="dot ${c}"></i>`;
+function updateStatus(){const I=S.I;
+  const blownNow=S.notch.some(n=>n<.5)||S.blown;
+  chip($('#c1'),!S.present?dot('off')+'entnommen':blownNow?dot('bad')+`${S.rating} A · ausgelöst`:S.therm>.5?dot('bad')+'thermisch ausgelöst':dot('ok')+`${S.rating} A · intakt`);
+  if(P.key==='NH'){chip($('#c2'),!S.present?dot('off')+'–':S.ind>.5?dot('bad')+'herausgesprungen':dot('ok')+'sitzt');chip($('#c3'),dot('ok')+(S.present&&S.rating===250?'NH1 (Unterteil NH00)':'NH00'))}
+  else{chip($('#c2'),!S.present?dot('off')+'–':S.ind>.5?dot('bad')+'ausgefahren':dot('ok')+'eingezogen');chip($('#c3'),S.sw>.5?dot('off')+'AUS (3-polig)':dot('ok')+'EIN')}
+  chip($('#c4'),I<.05?dot('off')+'0 A':(I>500?dot('bad'):I>1.3*S.rating?dot('off'):dot('ok'))+(I>=1000?fmt(I/1000,1)+' kA':Math.round(I)+' A'))}
+function refreshButtons(){const busy=!!seq,ok=S.present&&!S.blown&&S.lift<.5&&S.sw<.5&&S.therm<.5&&!S.flip;
+  $('#bOL').disabled=busy||!ok;$('#bSC').disabled=busy||!ok;$('#bChange').disabled=busy;document.querySelectorAll('#segSys button').forEach(b=>b.disabled=busy);
+  $('#bPause').disabled=!busy;$('#bPause').textContent=paused?'Weiter':'Pause'}
+function setSystemTexts(){$('#eyebrow').textContent=P.eyebrow;$('#sub').textContent=P.sub;$('#marking').innerHTML='Modell: '+P.marking.map(m=>`<b>${m}</b>`).join('');
+  $('#l1').textContent=P.chips[0];$('#l2').textContent=P.chips[1];$('#l3').textContent=P.chips[2];$('#bOL').innerHTML=P.ol.lbl;$('#bSC').innerHTML=P.sc.lbl;$('#camMelder').textContent=P.camMelder;$('#chHint').textContent=P.chHint;
+  $('#wl1').textContent=P.wl[0];$('#wl2').textContent=P.wl[1];$('#klTitle').textContent=P.klTitle;$('#klCap').textContent=P.klCap;
+  $('#tabTitle').textContent=P.tabTitle;$('#ctab').innerHTML=P.tab.map(([a,b])=>`<div><b style="font-weight:500">${a}</b>&nbsp;${b}</div>`).join('');
+  $('#notes').innerHTML=P.notes.map(([h,p])=>`<div class="note"><h4>${h}</h4><p>${p}</p></div>`).join('')}
+function idleText(){narr.ph.textContent='Betriebszustand';narr.ti.textContent='Eingeschaltet – Normalbetrieb';narr.steps.innerHTML='';narr.cT.textContent='–';
+  narr.tx.textContent=P.key==='NH'?`Ein Strom von ${P.Inorm} A fließt über Kabel, Federkontakt und Messer in den Einsatz, durch die drei parallelen Schmelzleiter und auf der anderen Seite wieder hinaus.`
+    :`Ein Strom von ${P.Inorm} A versorgt den Transformator. Er fließt über Kontaktklemme und Kappe durch die gewendelten Schmelzleiter. Der Schlagbolzen ist eingezogen, der Lasttrennschalter eingeschaltet.`}
+
+/* ---------- Bedienung ---------- */
+const FIN={NH:{ol:()=>{S.blown=true;return ['Ausgelöst – Überlast','Der Kennmelder ist herausgesprungen. Ursache der Überlast beseitigen, dann den Einsatz mit dem Aufsteckgriff wechseln.']},
+  sc:()=>{S.blown=true;return ['Ausgelöst – Kurzschluss','Der Kennmelder ist herausgesprungen. Kurzschluss beseitigen, dann den Einsatz wechseln.']},
+  ch:()=>['Eingeschaltet – neuer Einsatz',`Ein NH00-Einsatz ${S.rating} A steckt im Unterteil.`]},
+ HH:{ol:()=>{S.blown=true;return ['Lasttrennschalter AUS – thermisch ausgelöst','Der Thermostriker hat den Schlagbolzen ausgelöst, der Lasttrennschalter hat abgeschaltet. Überlastursache am Transformator klären, dann alle drei Einsätze tauschen.']},
+  sc:()=>{S.blown=true;return ['Lasttrennschalter AUS – Kurzschluss','Die Sicherung hat den Kurzschluss strombegrenzend abgeschaltet, der Lasttrennschalter hat alle drei Pole geöffnet. Fehler am Transformator suchen, alle drei Einsätze tauschen.']},
+  ch:()=>['Eingeschaltet – neuer Einsatz','Der neue Einsatz sitzt richtig herum. Der Lasttrennschalter ist eingeschaltet, der Transformator wird wieder versorgt.']}};
+$('#bOL').onclick=()=>startSeq(P.key==='NH'?'Überlast':'Kleiner Überstrom',P.key==='NH'?nhOverload():hhSmall(),{kl:true,final:FIN[P.key].ol});
+$('#bSC').onclick=()=>startSeq('Kurzschluss',P.key==='NH'?nhShort():hhShort(),{kl:true,lim:true,tag:'Zeitlupe',final:FIN[P.key].sc});
+$('#bChange').onclick=()=>startSeq(P.key==='NH'?'NH-Einsatz wechseln':'HH-Einsatz wechseln',P.key==='NH'?nhChange():hhChange(),{final:FIN[P.key].ch});
+$('#bPause').onclick=()=>{paused=!paused;refreshButtons()};
+document.querySelectorAll('#segSpeed button').forEach(b=>b.onclick=()=>{speed=+b.dataset.v;document.querySelectorAll('#segSpeed button').forEach(x=>x.classList.toggle('on',x===b))});
+document.querySelectorAll('#segCam button').forEach(b=>b.onclick=()=>fly(b.dataset.c));
+function switchSys(k){P=SYS[k];document.querySelectorAll('#segSys button').forEach(x=>x.classList.toggle('on',x.dataset.s===k));resetState();selId=null;buildModel();setSystemTexts();KL.draw();LIM.draw();KL.set(null);LIM.cursor(null);idleText();fly('gesamt',0);refreshButtons()}
+document.querySelectorAll('#segSys button').forEach(b=>b.onclick=()=>{if(!seq)switchSys(b.dataset.s)});
+$('#cCut').onchange=()=>applyCut();
+
+/* ---------- Render-Schleife ---------- */
+function resize(){const w=stageEl.clientWidth,h=stageEl.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(stageEl);resize();
+switchSys('NH');
+let last=performance.now();
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;T0+=dt;
+  if(orb.anim){const a=orb.anim;a.t+=dt;const u=ease(clamp(a.t/a.dur));orb.tg.lerpVectors(a.f.tg,a.to.tg,u);orb.r=lerp(a.f.r,a.to.r,u);orb.th=lerp(a.f.th,a.to.th,u);orb.ph=lerp(a.f.ph,a.to.ph,u);if(u>=1)orb.anim=null}
+  applyCam();tickSeq(dt);updateScene();scene.updateMatrixWorld();updateFlow(paused?0:dt*Math.min(speed,1.5));updateMats();updateTags();updateStatus();
+  renderer.render(scene,camera);requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script>
+
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span></footer>
+<script src="hfs-app.js"></script>
+</body></html>

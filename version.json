@@ -1,0 +1,29 @@
+{
+ "stand": "21.11.2026",
+ "apps": {
+  "lf1-werkbank": "73853a4ca7b0",
+  "wechselstromgenerator-3d": "a7b841d840cd",
+  "effektivwert": "b587b46496e0",
+  "rlc-labor": "d6a7d8e5bd40",
+  "leistung-wechselstrom": "2125f91bcf89",
+  "kompensationsrechner": "2bab6eee1f41",
+  "drehstromgenerator-3d": "0152ad47b882",
+  "drehstrom-zeigerlabor": "ca5c844560c6",
+  "drehfeld-motor-3d": "f1e2d8ec462d",
+  "stern-dreieck": "b566dc16e8fe",
+  "oberschwingungen": "4ffd483cc7a5",
+  "zeiger-auf-zeiger": "979505201682",
+  "diazed-neozed": "0fac66396b0b",
+  "nh-hh-sicherung": "73edfce6b384",
+  "ls-schalter": "2046e18c3a85",
+  "fi-schutzschalter": "ac76a072f594",
+  "ueberspannungsschutz": "529565a8647a",
+  "leitungsdimensionierung": "ea32c7c31d41",
+  "lichtlabor": "26e3fc344487",
+  "relais-stromstossschalter": "b774f94ab58f",
+  "schuetz": "1644cde0947b",
+  "kleinsteuerung-3d": "d9dfb0c825e4",
+  "sensor-labor": "9b73c2d1afeb",
+  "fehlersuche-steuerstromkreis": "304921d83717"
+ }
+}

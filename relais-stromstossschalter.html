@@ -1,0 +1,755 @@
+<!doctype html><html><head><meta charset=utf8>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="relais-stromstossschalter|sim|b774f94ab58f">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Relais und Stromstoßscha">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="hfs-app.css">
+</head><body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Relais und Stromstoßschalter im Schnitt</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<title>Relais und Stromstoßschalter im Schnitt</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* Layout: Werkbank – 3D-Halbschnitt links mit Ablauf und Kennlinien darunter; Bedienpult rechts; unten Bauteile, Farbcode und Merksätze */
+:root{
+  --bg:#E8EBE6; --surface:#F6F7F4; --raised:#FFFFFF; --ink:#1B211F; --muted:#56615C; --line:#C8CFC9;
+  --accent:#0F5F8A; --accent-ink:#FFFFFF; --accent-soft:#D6E7F1;
+  --heat:#BF3F0B; --heat-soft:#F6E1D6; --short:#3644A8; --short-soft:#DFE2F6; --ok:#26734A; --off:#8A5A00; --bad:#C42B22;
+  --stage-a:#F3F4F0; --stage-b:#CDD4CC; --tag-bg:rgba(255,255,255,.9); --tag-ink:#1B211F; --shadow:0 1px 2px rgba(20,30,25,.08),0 6px 18px rgba(20,30,25,.06);
+  --f-display:'Barlow Semi Condensed','Arial Narrow',system-ui,sans-serif;
+  --f-body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1311; --surface:#161B19; --raised:#1D2320; --ink:#E3E8E4; --muted:#9AA59F; --line:#2D3632;
+  --accent:#62B4E0; --accent-ink:#04202F; --accent-soft:#16303F;
+  --heat:#FF8B52; --heat-soft:#3A2218; --short:#98A6FF; --short-soft:#1F2442; --ok:#6FCB95; --off:#E2B24A; --bad:#FF6B62;
+  --stage-a:#252C29; --stage-b:#0B0E0D; --tag-bg:rgba(22,27,25,.88); --tag-ink:#E3E8E4; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.3);
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0F1311; --surface:#161B19; --raised:#1D2320; --ink:#E3E8E4; --muted:#9AA59F; --line:#2D3632;
+  --accent:#62B4E0; --accent-ink:#04202F; --accent-soft:#16303F;
+  --heat:#FF8B52; --heat-soft:#3A2218; --short:#98A6FF; --short-soft:#1F2442; --ok:#6FCB95; --off:#E2B24A; --bad:#FF6B62;
+  --stage-a:#252C29; --stage-b:#0B0E0D; --tag-bg:rgba(22,27,25,.88); --tag-ink:#E3E8E4; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.3);
+  color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1360px;margin:0 auto;padding-inline:20px;padding-block:22px 40px;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(1.7rem,3vw,2.4rem);line-height:1.05;margin:4px 0 0;text-wrap:balance}
+.sub{color:var(--muted);max-width:66ch;margin:6px 0 0}
+.marking{font-family:var(--f-mono);font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;color:var(--muted)}
+.marking b{font-weight:500;color:var(--ink);border:1px solid var(--line);padding:2px 6px;border-radius:3px;background:var(--surface)}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;align-items:start}
+.stagecol{display:flex;flex-direction:column;gap:12px;min-width:0}
+.stage{position:relative;height:min(70vh,660px);min-height:440px;border-radius:10px;overflow:hidden;
+  background:radial-gradient(120% 90% at 45% 35%,var(--stage-a),var(--stage-b));border:1px solid var(--line)}
+.stage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.tags{position:absolute;inset:0;pointer-events:none}
+.tag{position:absolute;left:0;top:0;pointer-events:auto;display:flex;align-items:center;gap:6px;border:0;padding:0;background:none;cursor:pointer;font:inherit;color:var(--tag-ink)}
+.tag .n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:11.5px;font-weight:500;
+  background:var(--tag-bg);border:1.5px solid var(--accent);color:var(--tag-ink);box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.tag .nm{font-family:var(--f-display);font-weight:600;font-size:13px;background:var(--tag-bg);padding:2px 7px;border-radius:4px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.14);display:none}
+.stage.names .tag .nm,.tag:hover .nm,.tag.on .nm{display:block}
+.tag.on .n{background:var(--accent);color:var(--accent-ink)}
+.tag:focus-visible .n{outline:2px solid var(--accent);outline-offset:2px}
+.wl{position:absolute;left:0;top:0;pointer-events:none;font-family:var(--f-mono);font-size:11px;color:var(--muted);background:var(--tag-bg);padding:1px 6px;border-radius:3px;white-space:nowrap}
+.callout{position:absolute;left:0;top:0;pointer-events:none;font-family:var(--f-display);font-weight:600;font-size:13px;line-height:1.25;
+  background:var(--raised);color:var(--ink);border:1px solid var(--line);border-left:3px solid var(--off);padding:5px 9px;border-radius:4px;max-width:240px;box-shadow:var(--shadow)}
+.callout.bad{border-left-color:var(--bad)}
+.hover{position:absolute;pointer-events:none;font-family:var(--f-display);font-weight:600;font-size:13px;background:var(--tag-bg);padding:3px 8px;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--muted);background:var(--tag-bg);padding:3px 8px;border-radius:4px;pointer-events:none}
+.speedtag{position:absolute;right:12px;top:12px;font-family:var(--f-mono);font-size:12px;padding:4px 9px;border-radius:4px;background:var(--tag-bg);border:1px solid var(--line)}
+.narr{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px}
+.narr .ph{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.narr h2{font-family:var(--f-display);font-size:1.3rem;font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+.narr p{margin:4px 0 0;max-width:74ch;min-width:0}
+.clock{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.clock .t{font-size:1.35rem;font-weight:500}
+.clock .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.steps{grid-column:1/-1;display:flex;gap:4px;margin-top:8px}
+.steps i{flex:1;height:5px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.steps i b{position:absolute;inset:0;width:0;background:var(--accent)}
+.narr .act{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.narr .act button.b{flex:0 0 auto}
+.diag{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.card svg{width:100%;height:auto;display:block}
+.card .cap{font-size:12px;color:var(--muted)}
+.ch text{font-family:var(--f-mono);font-size:9px;fill:var(--muted)}
+.panel{display:flex;flex-direction:column;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.grp{display:flex;flex-direction:column;gap:8px}
+.grp + .grp{border-top:1px solid var(--line);padding-top:14px}
+.lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.chip{background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:6px 9px;display:flex;flex-direction:column;min-width:0}
+.chip span{font-size:11.5px;color:var(--muted)}
+.chip strong{font-family:var(--f-display);font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.dot.ok{background:var(--ok)} .dot.off{background:var(--off)} .dot.bad{background:var(--bad)}
+.sw{width:12px;height:12px;border-radius:3px;border:1px solid rgba(0,0,0,.25);flex:none;display:inline-block}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button.b{font:inherit;font-family:var(--f-display);font-weight:600;font-size:15px;border-radius:7px;border:1px solid var(--line);background:var(--raised);color:var(--ink);
+  padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:9px;flex:1;min-width:0;justify-content:center;transition:background .15s,border-color .15s,transform .05s}
+button.b:hover:not(:disabled){border-color:var(--accent)}
+button.b:active:not(:disabled){transform:translateY(1px)}
+button.b:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.b:disabled{opacity:.45;cursor:not-allowed}
+button.b.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.b.th{background:var(--heat-soft);border-color:color-mix(in srgb,var(--heat) 40%,var(--line))}
+button.b.mg{background:var(--short-soft);border-color:color-mix(in srgb,var(--short) 40%,var(--line))}
+.sym{font-family:var(--f-mono);font-size:12px;font-weight:500;padding:1px 5px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.th .sym{color:var(--heat)} .mg .sym{color:var(--short)}
+.seg{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{flex:1;font:inherit;font-family:var(--f-mono);font-size:12.5px;border:0;background:var(--raised);color:var(--ink);padding:7px 4px;cursor:pointer;border-right:1px solid var(--line);line-height:1.25}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.seg button:disabled{opacity:.5;cursor:not-allowed}
+.seg.big button{font-family:var(--f-display);font-size:15px;font-weight:600;padding:9px 4px}
+.seg.big small{display:block;font-family:var(--f-mono);font-size:11px;font-weight:400;opacity:.8}
+.small{font-size:12.5px;color:var(--muted);margin:0}
+label.tg{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+label.tg input{accent-color:var(--accent);width:16px;height:16px}
+.lower{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+.legend{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.legend h3,.colors h3{font-family:var(--f-display);font-size:1.15rem;margin:0 0 10px;font-weight:700}
+.leg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px;list-style:none;margin:0;padding:0}
+.leg li button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;padding:7px 6px;border-radius:6px;cursor:pointer}
+.leg li button:hover,.leg li button.on{background:var(--accent-soft)}
+.leg li button:focus-visible{outline:2px solid var(--accent)}
+.leg .n{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--accent);display:grid;place-items:center;font-family:var(--f-mono);font-size:11px}
+.leg b{font-family:var(--f-display);font-weight:600;font-size:15px;display:block;line-height:1.2}
+.leg small{color:var(--muted);font-size:13px;line-height:1.35;display:block;margin-top:2px}
+.notes{display:flex;flex-direction:column;gap:10px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.note h4{margin:0 0 4px;font-family:var(--f-display);font-size:1.05rem;font-weight:700}
+.note p{margin:0;font-size:14px}
+.colors{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.ctab{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.ctab div{display:flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:12.5px;background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:5px 7px;min-width:0}
+.ctab .sw{width:14px;height:14px}
+.err{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted)}
+@media (max-width:980px){.bench{grid-template-columns:minmax(0,1fr)}.lower{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.diag{grid-template-columns:minmax(0,1fr)}.ctab{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.wrap{padding-inline:16px}.stage{height:60vh;min-height:380px}.leg{grid-template-columns:minmax(0,1fr)}.narr{grid-template-columns:minmax(0,1fr)}.clock{text-align:left}.hint{display:none}}
+@media (prefers-reduced-motion:reduce){button.b{transition:none}}
+</style>
+<style>
+.sim{display:flex;flex-direction:column;gap:6px}
+.press{touch-action:none;user-select:none;-webkit-user-select:none}
+.press.down{transform:translateY(1px);border-color:var(--accent)!important;box-shadow:inset 0 2px 6px rgba(0,0,0,.18)}
+.btnS2{background:#2E7D4F!important;color:#fff!important;border-color:#2E7D4F!important}
+.btnS1{background:#C42B22!important;color:#fff!important;border-color:#C42B22!important}
+.urow{display:flex;align-items:center;gap:10px}
+.urow output{font-family:var(--f-mono);font-size:13px;min-width:54px;text-align:right;font-variant-numeric:tabular-nums}
+.uscale{position:relative;height:14px;font-family:var(--f-mono);font-size:10px;color:var(--muted)}
+.uscale span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;font-family:var(--f-mono);font-size:12.5px;max-height:132px;overflow:auto}
+.log li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;padding:3px 6px;border-radius:4px;background:var(--raised);border:1px solid var(--line)}
+.log li b{font-weight:500;color:var(--accent);text-align:right;font-variant-numeric:tabular-nums}
+.log li.warn b{color:var(--bad)}
+.cir text{font-family:var(--f-mono);font-size:9px;fill:var(--muted)}
+.cir .t{font-family:var(--f-display);font-weight:600;font-size:10.5px;fill:var(--ink)}
+.cir .w{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.cir .live{stroke:var(--bad);stroke-width:2.2}
+.cir .comp{fill:var(--surface);stroke:var(--ink);stroke-width:1.5}
+.cir .on{fill:color-mix(in srgb,var(--bad) 22%,var(--surface));stroke:var(--bad)}
+.cir .lamp{fill:var(--surface);stroke:var(--ink);stroke-width:1.5}
+.cir .lit{fill:#F2CC2E;stroke:#B8901A}
+.cir .btn{cursor:pointer}
+.cir .btn:hover .comp{stroke:var(--accent)}
+.cir .hot{fill:var(--bad)}
+.legrow{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legrow i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+</style>
+<style>
+:where([hidden]){display:none!important}
+.grp[hidden]{display:none!important}
+.btnS{background:#2E7D4F!important;color:#fff!important;border-color:#2E7D4F!important}
+.btnS.off{background:var(--raised)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.strip text{font-family:var(--f-mono);font-size:9px;fill:var(--muted)}
+</style>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Lernsimulation · Relais und Stromstoßschalter</div>
+      <h1>Relais und Stromstoßschalter im Schnitt</h1>
+      <p class="sub" id="sub"></p>
+    </div>
+    <div class="marking" id="marking" aria-label="Gerätedaten"></div>
+  </header>
+
+  <div class="bench">
+    <div class="stagecol">
+      <div class="stage" id="stage">
+        <canvas id="cv" aria-label="3D-Schnittmodell. Mit der Maus drehen, mit dem Mausrad zoomen."></canvas>
+        <div class="tags" id="tags"></div>
+        <div id="tlabels" class="tags"></div>
+        <div class="hover" id="hover" hidden></div>
+        <div class="callout" id="callout" hidden></div>
+        <div class="speedtag" id="speedtag"></div>
+        <div class="hint">Ziehen: drehen · Mausrad: zoomen · Rechte Maustaste oder Umschalt: verschieben</div>
+      </div>
+      <section class="narr" aria-live="polite">
+        <div style="min-width:0">
+          <div class="ph">Zustand</div>
+          <h2 id="nTitle"></h2>
+          <p id="nText"></p>
+        </div>
+        <div class="clock"><div class="l" id="cL"></div><div class="t" id="cT"></div></div>
+        <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:6px;margin-top:6px">
+          <div class="lbl">Ablauf (Echtzeit ab letzter Betätigung)</div>
+          <ul class="log" id="log"></ul>
+        </div>
+      </section>
+      <div class="diag">
+        <div class="card cir">
+          <div class="lbl" id="cirTitle">Stromlaufplan</div>
+          <svg id="cir" viewBox="0 0 340 236" role="img" aria-label="Stromlaufplan"></svg>
+          <div class="legrow"><span><i style="background:var(--bad)"></i>unter Spannung</span><span><i style="background:var(--muted)"></i>spannungsfrei</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+          <div class="card ch strip">
+            <div class="lbl" id="dTitle">Schaltzustände</div>
+            <svg id="dig" viewBox="0 0 290 120" role="img" aria-label="Zeitverlauf der Schaltzustände"></svg>
+          </div>
+          <div class="card ch strip">
+            <div class="lbl" id="aTitle"></div>
+            <svg id="ana" viewBox="0 0 290 120" role="img" aria-label="Zeitverlauf an der Spule"></svg>
+            <div class="cap" id="aCap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel" aria-label="Bedienung">
+      <div class="grp">
+        <div class="lbl">Gerät</div>
+        <div class="seg big" id="segSys" role="group" aria-label="Gerät">
+          <button type="button" data-s="REL" class="on">Relais<small>24 V DC · 1 Wechsler</small></button><button type="button" data-s="SS">Stromstoßschalter<small>230 V AC · 1 S</small></button>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Zustand</div>
+        <div class="chips">
+          <div class="chip"><span>Spule A1-A2</span><strong id="c1"></strong></div>
+          <div class="chip"><span id="l2"></span><strong id="c2"></strong></div>
+          <div class="chip"><span id="l3"></span><strong id="c3"></strong></div>
+          <div class="chip"><span id="l4"></span><strong id="c4"></strong></div>
+        </div>
+      </div>
+      <div class="grp" id="ctlRel">
+        <div class="lbl">Bedienen</div>
+        <button class="b btnS off" id="bS1" type="button">S1 einschalten</button>
+        <div class="lbl" style="margin-top:4px">Spulenspannung (24 V DC = 100 %)</div>
+        <div class="urow"><input type="range" id="rU" min="0" max="120" value="100" aria-label="Spulenspannung in Prozent"><output id="oU">100 %</output></div>
+        <div class="uscale"><span style="left:12.5%">15 % Abfall</span><span style="left:58.3%">70 % Anzug</span></div>
+      </div>
+      <div class="grp" id="ctlRel2">
+        <div class="lbl">Besonderheiten</div>
+        <label class="tg"><input type="checkbox" id="cDiode" checked> Freilaufdiode an der Spule</label>
+        <label class="tg"><input type="checkbox" id="cShim"> Trennblech entfernen</label>
+        <button class="b" id="bTap" type="button">Relais antippen</button>
+      </div>
+      <div class="grp" id="ctlSS" hidden>
+        <div class="lbl">Taster (Klick = kurzer Druck, halten = Dauerbetätigung)</div>
+        <div class="row">
+          <button class="b press btnS2" id="bT1" type="button">S1 Flur</button>
+          <button class="b press btnS2" id="bT2" type="button">S2 Treppe</button>
+          <button class="b press btnS2" id="bT3" type="button">S3 Keller</button>
+        </div>
+        <button class="b" id="bHand" type="button">Handhebel betätigen</button>
+      </div>
+      <div class="grp" id="ctlSS2" hidden>
+        <div class="lbl">Beleuchtete Taster (Glimmlampen parallel zum Kontakt)</div>
+        <div class="urow"><input type="range" id="rG" min="0" max="10" value="0" aria-label="Anzahl beleuchteter Taster"><output id="oG">0</output></div>
+        <p class="small">Jede Glimmlampe lässt etwa 0,8 mA durch die Spule fließen. Zulässig sind hier höchstens 5 mA.</p>
+      </div>
+      <div class="grp">
+        <div class="lbl">Zeitlupe</div>
+        <div class="seg" id="segSlow" role="group" aria-label="Zeitlupenfaktor">
+          <button type="button" data-f="20">1 : 20</button><button type="button" data-f="100">1 : 100</button><button type="button" data-f="400">1 : 400</button>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Ansicht</div>
+        <div class="seg" id="segCam" role="group" aria-label="Kameraposition">
+          <button type="button" data-c="gesamt" class="on">Gesamt</button><button type="button" data-c="magnet">Magnet</button><button type="button" data-c="kontakte" id="camK">Kontakte</button><button type="button" data-c="seite">Seite</button>
+        </div>
+        <label for="rCover" style="font-size:13.5px;color:var(--muted)">Gehäuse: <span id="covV">transparent</span></label>
+        <input type="range" id="rCover" min="0" max="100" value="10">
+        <label class="tg"><input type="checkbox" id="cCut" checked> Spule aufgeschnitten</label>
+        <label class="tg"><input type="checkbox" id="cNames"> Bauteilnamen anzeigen</label>
+        <label class="tg"><input type="checkbox" id="cTerm" checked> Klemmenbezeichnungen</label>
+        <label class="tg"><input type="checkbox" id="cFlux" checked> Magnetfluss anzeigen</label>
+      </div>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="legend">
+      <h3>Bauteile</h3>
+      <ul class="leg" id="leg"></ul>
+    </section>
+    <section class="notes" id="notes"></section>
+  </div>
+</div>
+
+<script src="three-r128.min.js"></script>
+<script>
+(function(){
+'use strict';
+const stageEl=document.getElementById('stage');
+if(!window.THREE){stageEl.insertAdjacentHTML('beforeend','<div class="err">Das 3D-Modell konnte nicht geladen werden. Bitte die Seite neu laden.</div>');return;}
+const $=s=>document.querySelector(s);
+const D=Math.PI/180;
+const lerp=(a,b,t)=>a+(b-a)*t, clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=(n,d=1)=>n.toFixed(d).replace('.',',');
+
+/* ---------- Three.js Grundlage ---------- */
+const canvas=$('#cv');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));renderer.setClearColor(0x000000,0);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(30,1,1,3000);
+scene.add(new THREE.HemisphereLight(0xffffff,0x7d837c,0.8));
+const dl=new THREE.DirectionalLight(0xffffff,0.72);dl.position.set(70,110,160);scene.add(dl);
+const dl2=new THREE.DirectionalLight(0xdfe8ff,0.32);dl2.position.set(-90,20,-70);scene.add(dl2);
+scene.add(new THREE.AmbientLight(0xffffff,0.12));
+const sparkLight=new THREE.PointLight(0x9fd6ff,0,40,2);scene.add(sparkLight);
+const mkTex=(draw,rx,ry)=>{const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');draw(x);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);return t};
+const hatchTex=mkTex(x=>{x.fillStyle='#fff';x.fillRect(0,0,64,64);x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=3;for(let i=-64;i<128;i+=16){x.beginPath();x.moveTo(i,64);x.lineTo(i+64,0);x.stroke()}},.35,.35);
+const windTex=mkTex(x=>{x.fillStyle='#B5562E';x.fillRect(0,0,64,64);x.fillStyle='#E39A63';for(let i=0;i<4;i++)for(let j=0;j<4;j++){x.beginPath();x.arc(8+i*16,8+j*16,6.4,0,7);x.fill()}},.9,.9);
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.5,metalness:0,side:THREE.DoubleSide},o));
+const MAT={housing:M(0xD5D9DC,{transparent:true,opacity:.1,depthWrite:false,roughness:.35}),base:M(0x3B4248,{roughness:.6}),
+  steel:M(0x8E979D,{metalness:.55,roughness:.4}),copper:M(0xC97D4C,{metalness:.45,roughness:.38}),wind:M(0xB5562E,{metalness:.3,roughness:.45}),silver:M(0xE3E6E8,{metalness:.65,roughness:.2}),
+  bronze:M(0xC2A25A,{metalness:.55,roughness:.3}),plastic:M(0xE0B33A,{roughness:.5}),bobbin:M(0x30363B,{roughness:.6}),spring:M(0xA7B0B6,{metalness:.6,roughness:.3}),
+  zinc:M(0xBCC3B6,{metalness:.5,roughness:.35}),white:M(0xEDEDE8,{roughness:.5}),red:M(0xD9342B,{roughness:.45}),green:M(0x2E9E52,{roughness:.45}),rail:M(0xAFB6BC,{metalness:.55,roughness:.35})};
+const V3=(x,y,z=0)=>new THREE.Vector3(x,y,z);
+let PARTS=[],PM={},pickables=[];
+function reg(id,mesh){const ms=Array.isArray(mesh.material)?mesh.material:[mesh.material];const cl=ms.map(m=>{const c=m.clone();c.userData.dyn=new THREE.Color(0,0,0);return c});mesh.material=Array.isArray(mesh.material)?cl:cl[0];mesh.userData.part=id;PM[id].meshes.push(mesh);return mesh}
+function add(parent,id,m){parent.add(m);if(id)reg(id,m);return m}
+function bx(x0,x1,y0,y1,z0,z1,mat){const m=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),mat);m.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2);return m}
+function cyl(axis,a0,a1,r,mat,c1=0,c2=0,seg=24){const g=new THREE.CylinderGeometry(r,r,a1-a0,seg);if(axis==='x')g.rotateZ(Math.PI/2);if(axis==='z')g.rotateX(Math.PI/2);const m=new THREE.Mesh(g,mat);const mid=(a0+a1)/2;
+  if(axis==='x')m.position.set(mid,c1,c2);else if(axis==='y')m.position.set(c1,mid,c2);else m.position.set(c1,c2,mid);return m}
+function shapeOf(pts){const s=new THREE.Shape();pts.forEach((p,i)=>i?s.lineTo(p[0],p[1]):s.moveTo(p[0],p[1]));s.closePath();return s}
+function ext(pts,z0,z1,mat){const g=new THREE.ExtrudeGeometry(shapeOf(pts),{depth:z1-z0,bevelEnabled:false,curveSegments:24});g.translate(0,0,z0);return new THREE.Mesh(g,mat)}
+function tubeOf(pts,r,mat,seg){return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),seg||pts.length*8,r,8,false),mat)}
+function helix(axis,r,turns,tr,mat,L){const pts=[];const N=Math.round(turns*28);for(let i=0;i<=N;i++){const t=i/N,a=t*turns*2*Math.PI;const u=r*Math.cos(a),v=r*Math.sin(a);pts.push(axis==='x'?V3(t*L,u,v):V3(u,t*L,v))}const m=tubeOf(pts,tr,mat,N*2);m.userData.L=L;return m}
+function cutMat(m,tex){const c=m.clone();c.map=tex||hatchTex;c.side=THREE.FrontSide;c.polygonOffset=true;c.polygonOffsetFactor=1;c.polygonOffsetUnits=1;return c}
+/* Rotationskörper (Achse lokal y), Halbschnitt z≤0 */
+function lathe(prof,mat,id,parent,capTex){const pts=prof.map(p=>new THREE.Vector2(Math.max(0,p[0]),p[1]));pts.push(pts[0].clone());const g=new THREE.Group();parent.add(g);
+  const half=new THREE.Mesh(new THREE.LatheGeometry(pts,40,0,Math.PI),mat);half.rotation.y=Math.PI/2;half.userData.cut=true;
+  const cm=cutMat(mat,capTex);const c1=new THREE.Mesh(new THREE.ShapeGeometry(shapeOf(prof)),cm),c2=new THREE.Mesh(new THREE.ShapeGeometry(shapeOf(prof.map(p=>[-p[0],p[1]]))),cm);c1.userData.cut=c2.userData.cut=true;
+  const full=new THREE.Mesh(new THREE.LatheGeometry(pts,48),mat);full.userData.full=true;full.visible=false;[half,c1,c2,full].forEach(m=>add(g,id,m));return g}
+const ring=(ri,ro,y0,y1)=>[[ri,y0],[ro,y0],[ro,y1],[ri,y1]];
+function disposeAll(o){o.traverse(m=>{if(m.geometry)m.geometry.dispose();if(m.material){(Array.isArray(m.material)?m.material:[m.material]).forEach(x=>x.dispose())}})}
+function particles(n,r,color){const m=new THREE.InstancedMesh(new THREE.SphereGeometry(r,10,8),new THREE.MeshBasicMaterial({color,transparent:true,depthWrite:false}),n);m.raycast=()=>{};m.userData.off=0;m.visible=false;root.add(m);return m}
+const dummy=new THREE.Object3D();
+function runAlong(m,pts,dist,vis){m.visible=vis>.02;if(!m.visible)return;const cum=[0];for(let i=1;i<pts.length;i++)cum.push(cum[i-1]+pts[i].distanceTo(pts[i-1]));const tot=cum[cum.length-1];
+  m.userData.off=((m.userData.off+dist)%tot+tot)%tot;const n=m.count,sp=tot/n,arr=[];for(let i=0;i<n;i++)arr.push((m.userData.off+i*sp)%tot);arr.sort((a,b)=>a-b);
+  let j=1;for(let i=0;i<n;i++){const d=arr[i];while(j<pts.length-1&&cum[j]<d)j++;const t=(d-cum[j-1])/((cum[j]-cum[j-1])||1);dummy.position.lerpVectors(pts[j-1],pts[j],t);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix)}
+  m.instanceMatrix.needsUpdate=true;m.material.opacity=vis}
+function textPlane(w,h,draw){const c=document.createElement('canvas');c.width=512;c.height=Math.round(512*h/w);const x=c.getContext('2d');draw(x,c.width,c.height);const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));m.raycast=()=>{};return m}
+
+/* ---------- gemeinsamer Zustand ---------- */
+let root=null,R={},DEVK='REL';
+const G={F:100,tReal:0,tEvent:0,hist:[],ahist:[]};
+let logItems=[];
+function log(txt,warn,reset){if(reset){G.tEvent=G.tReal;logItems=[]}const t=G.tReal-G.tEvent;logItems.unshift({t,txt,warn});logItems=logItems.slice(0,9);
+  $('#log').innerHTML=logItems.map(l=>`<li class="${l.warn?'warn':''}"><b>${l.t<0.005?'0':fmt(l.t,l.t<10?2:0)} ms</b><span>${l.txt}</span></li>`).join('')}
+
+/* ======================= RELAIS ======================= */
+const RL={H:[5.2,7.5],AL:9,LEV:14,AG:.25,NOG:1.4,INOM:41.7,TAU:6,PULL:.7,DROP:.15};
+RL.tailY=phi=>RL.LEV*Math.sin(phi)+1.6*Math.cos(phi);RL.restPhi=-RL.AL*D;RL.y0=RL.tailY(RL.restPhi);
+RL.rodTop0=RL.H[1]+RL.y0+5.2;RL.yC0=RL.rodTop0+RL.AG;
+const RS={};
+function relReset(){Object.assign(RS,{S1:false,U:1,diode:true,shim:true,i:0,u:0,ang:0,stuck:false,i0:0,tOff:-1e9,bounce:null,prevNO:false,prevNC:true,spark:0,low:false})}
+function relParts(){return [
+ ['kappe','Schutzkappe','Durchsichtige Kappe, schützt gegen Staub und Berührung.','gesamt'],
+ ['spule','Spule A1-A2','Kupferwicklung auf Spulenkörper, 24 V DC, Widerstand etwa 580 Ω.','magnet'],
+ ['kern','Eisenkern mit Polschuh','Bündelt das Magnetfeld der Spule auf die Polfläche unter dem Anker.','magnet'],
+ ['joch','Joch','Winkelförmiges Eisenteil. Schließt den Magnetkreis vom Kern zum Ankerlager.','magnet'],
+ ['anker','Klappanker','Drehbar an der Jochkante gelagert. Kippt beim Anziehen auf den Polschuh, sein hinteres Ende hebt den Betätigungsschieber.','magnet'],
+ ['trenn','Trennblech','Dünnes, nicht magnetisches Blech zwischen Anker und Polschuh. Hält einen kleinen Luftspalt, damit der Anker nicht durch Restmagnetismus kleben bleibt.','magnet'],
+ ['rfeder','Rückstellfeder','Zieht den Anker in die Ruhelage zurück, sobald die Spule stromlos ist.','kontakte'],
+ ['schieber','Betätigungsschieber','Isolierstoffstift. Überträgt die Ankerbewegung auf die mittlere Kontaktfeder und trennt Steuer- und Laststromkreis galvanisch.','kontakte'],
+ ['wechsler','Wechsler 11-12-14','Mittlere Feder 11 (Wurzel) mit Öffner 12 und Schließer 14. Silberkontaktniete, Einfachunterbrechung.','kontakte'],
+ ['sockel','Sockel mit Steckstiften','Trägt alle Teile. Die Stifte passen in einen Relaissockel.','gesamt']]}
+function buildRel(){
+  // Sockel + Kappe
+  add(root,'sockel',bx(-28,50,-32,-28,-10,10,MAT.base));
+  [['A1',-18],['A2',-2],['11',30],['12',38],['14',46]].forEach(([n,x])=>{add(root,'sockel',bx(x-.6,x+.6,-40,-32,-.4,.4,MAT.zinc));R.term.push({t:n,pos:V3(x,-41,0)})});
+  const cap=new THREE.Mesh(new THREE.BoxGeometry(78,52,20),MAT.housing);cap.position.set(11,-2,0);cap.renderOrder=5;add(root,'kappe',cap);R.housing=cap;
+  root.add(new THREE.LineSegments(new THREE.EdgesGeometry(cap.geometry),new THREE.LineBasicMaterial({color:0x6E777C,transparent:true,opacity:.45})).translateX(11).translateY(-2));
+  // Joch
+  add(root,'joch',bx(-16,6,-26,-23,-6,6,MAT.steel));add(root,'joch',bx(3,6,-26,RL.H[1],-6,6,MAT.steel));
+  // Spule + Kern (aufgeschnitten)
+  const cg=new THREE.Group();cg.position.set(-10,0,0);root.add(cg);
+  lathe(ring(0,3.2,-23,6),MAT.steel,'kern',cg);lathe(ring(0,4.6,6,7.2),MAT.steel,'kern',cg);
+  lathe(ring(3.6,8.5,-21.8,4.8),MAT.wind,'spule',cg,windTex);lathe(ring(3.3,9.2,-22.6,-21.8),MAT.bobbin,'spule',cg);lathe(ring(3.3,9.2,4.8,5.6),MAT.bobbin,'spule',cg);
+  // Spulenanschlüsse
+  add(root,'spule',tubeOf([V3(-18.5,-20,-3),V3(-18,-26,-4),V3(-18,-32,0)],.3,MAT.copper,16));add(root,'spule',tubeOf([V3(-1.5,-18,-3),V3(-2,-26,-4),V3(-2,-32,0)],.3,MAT.copper,16));
+  // Klappanker
+  R.arm=new THREE.Group();R.arm.position.set(RL.H[0],RL.H[1],0);root.add(R.arm);
+  add(R.arm,'anker',bx(-21.2,RL.LEV+1.2,0,1.6,-6,6,MAT.steel));
+  R.shim=add(R.arm,'trenn',bx(-19.5,-10.5,-.3,0,-4.6,4.6,MAT.bronze));
+  // Rückstellfeder: Halter am Joch, Feder zum Ankerende
+  add(root,'joch',bx(6,RL.H[0]+RL.LEV+2.5,-6,-5,-2,2,MAT.steel));
+  R.rspr=helix('y',1.1,8,.16,MAT.spring,10);R.rspr.position.set(RL.H[0]+RL.LEV+.6,-5,3.4);add(root,'rfeder',R.rspr);
+  // Betätigungsschieber
+  R.rod=add(root,'schieber',bx(RL.H[0]+RL.LEV-.6,RL.H[0]+RL.LEV+.6,0,5.2,-1.5,1.5,MAT.plastic));
+  // Kontaktfedern (Drehpunkt an Klemmblock x=48)
+  const xc=48,yC=RL.yC0;R.yC=yC;
+  add(root,'sockel',bx(46,50,yC-4,yC+5,-4,4,M(0x2B2F33)));
+  const spring=(y,len)=>{const g=new THREE.Group();g.position.set(xc,y,0);root.add(g);add(g,'wechsler',bx(-len,0,-.25,.25,-2.6,2.6,MAT.bronze));return g};
+  R.ncS=spring(yC-.25,27);R.coS=spring(yC+.25,30);R.noS=spring(yC+.25+RL.NOG+.5,27);
+  // Kontaktniete
+  const riv=(g,x,yo)=>add(g,'wechsler',cyl('y',yo-.35,yo+.35,1.1,MAT.silver,x,0));
+  riv(R.ncS,-24.5,.4);riv(R.coS,-24.5,-.4);riv(R.coS,-24.5,.4);riv(R.noS,-24.5,-.4);
+  // Verbindungen zu den Stiften
+  [[yC-.25,38,-2.2],[yC+.25,30,0],[yC+2.15,46,2.2]].forEach(([y,x,z])=>add(root,'wechsler',tubeOf([V3(49,y,z),V3(49,-20,z),V3(x,-30,z),V3(x,-32,z)],.28,MAT.copper,20)));
+  // Magnetfluss + Funke
+  R.flux=particles(40,.5,0x6FA8FF);R.flux.userData.cut=true;
+  R.sparkC=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),new THREE.MeshBasicMaterial({color:0x7AB8FF,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));R.sparkC.visible=false;root.add(R.sparkC);
+  R.cams={gesamt:{t:[10,-4,0],r:200,th:.45,ph:1.3},magnet:{t:[-6,-6,0],r:95,th:.15,ph:1.42},kontakte:{t:[32,12,0],r:62,th:.3,ph:1.38},seite:{t:[10,-4,0],r:200,th:1.45,ph:1.25}};
+}
+function relSim(dt){const U=RS.U,on=RS.S1&&U>0.001;
+  const inom=RL.INOM;
+  if(on){if(RS.i<0.01*inom&&!RS.wasOn){log('S1 geschlossen: Spannung an A1-A2',false,true)}RS.wasOn=true;RS.i+=(inom*U-RS.i)*(1-Math.exp(-dt/RL.TAU));RS.u=24*U;RS.spark=0}
+  else{if(RS.wasOn){RS.wasOn=false;RS.i0=RS.i;RS.tOff=G.tReal;log(RS.diode?'S1 offen: Strom fließt über die Freilaufdiode weiter':'S1 offen: Strom wird schlagartig unterbrochen',!RS.diode,true);if(!RS.diode&&RS.i0>2){RS.spark=1;log(`Induktionsspitze etwa ${Math.round(-12*RS.i0)} V an der Spule`,true)}}
+    if(RS.diode){RS.i*=Math.exp(-dt/RL.TAU);RS.u=RS.i>.3?-.7:0}else{const t=G.tReal-RS.tOff;RS.i=RS.i0*Math.exp(-t/.05);RS.u=RS.i>.2?-12*RS.i0*Math.exp(-t/.05):0;RS.spark=Math.max(0,1-t/.4)}}
+  // Magnet
+  const seated=RS.ang>=.999;
+  let attract=seated?RS.i>=RL.DROP*inom:RS.i>=RL.PULL*inom;
+  if(seated&&!attract&&!RS.shim){RS.stuck=true}
+  if(RS.stuck)attract=true;
+  RS.low=on&&!seated&&RS.ang<.01&&U>0&&U<RL.PULL;
+  const tgt=attract?1:0,v=attract?1/2.2:1/2.6;RS.ang=clamp(RS.ang+Math.sign(tgt-RS.ang)*Math.min(Math.abs(tgt-RS.ang),v*dt));
+  if(RS.ang>=.999&&!seated)log('Anker liegt am Polschuh an');
+  // Kontakte
+  const k=relKin();const noB=k.c>=RL.NOG,ncB=k.c<=0;
+  if(noB&&!RS.prevNO){RS.bounce={t:G.tReal,which:'NO'};log('Schließer 11-14 schließt und prellt etwa 1 ms')}
+  if(!noB&&RS.prevNO)log('Schließer 11-14 öffnet');
+  if(!ncB&&RS.prevNC)log('Öffner 11-12 öffnet');
+  if(ncB&&!RS.prevNC){RS.bounce={t:G.tReal,which:'NC'};log('Öffner 11-12 schließt und prellt')}
+  RS.prevNO=noB;RS.prevNC=ncB;
+  const bo=bounceOpen();RS.NO=noB&&!(bo&&RS.bounce.which==='NO');RS.NC=ncB&&!(bo&&RS.bounce.which==='NC');RS.k=k;
+  G.hist.push([G.tReal,[RS.S1?1:0,RS.i>.5?1:0,RS.NC?1:0,RS.NO?1:0]]);G.ahist.push([G.tReal,RS.u]);}
+const BOUNCE=[.15,.08,.22,.07,.3,.05];
+function bounceOpen(){if(!RS.bounce)return false;const t=G.tReal-RS.bounce.t;let acc=0;for(let i=0;i<BOUNCE.length;i++){acc+=BOUNCE[i];if(t<acc)return i%2===1}return false}
+function relKin(){const phi=RL.restPhi*(1-RS.ang);const rise=RL.tailY(phi)-RL.y0;const c=Math.max(0,rise-RL.AG);return {phi,rise,c,o:Math.max(0,c-RL.NOG)}}
+function relScene(dt){const k=RS.k||relKin();R.arm.rotation.z=k.phi;
+  R.rod.position.y=RL.H[1]+RL.y0+2.6+k.rise;
+  let c=k.c;if(RS.bounce){const t=G.tReal-RS.bounce.t;if(t<.9)c+=(RS.bounce.which==='NO'?-1:1)*.25*Math.abs(Math.sin(t*40))*(1-t/.9)}
+  R.coS.rotation.z=-Math.atan2(c,30);R.noS.rotation.z=-Math.atan2(k.o,27);
+  // Rückstellfeder: vom Halter bis Ankerende
+  const tail=R.arm.localToWorld(V3(RL.LEV+.6,0,0));const L=tail.y-(-5);R.rspr.scale.y=Math.max(.2,L/10);
+  R.shim.visible=RS.shim;
+  // Fluss
+  const flux=$('#cFlux').checked&&$('#cCut').checked&&RS.i>.5;if(flux){const a=R.arm.localToWorld(V3(-15.2,.8,0)),h=R.arm.localToWorld(V3(-1,.8,0)),z=.6;
+    const pts=[V3(-10,-24.5,z),V3(-10,6.6,z),V3(a.x,a.y,z),V3(h.x,h.y,z),V3(4.5,RL.H[1]-.5,z),V3(4.5,-24.5,z),V3(-10,-24.5,z)];runAlong(R.flux,pts,dt*10*(RS.i/RL.INOM),clamp(RS.i/RL.INOM))}else R.flux.visible=false;
+  R.sparkC.visible=RS.spark>.02;if(R.sparkC.visible){R.sparkC.position.set(-30,-24,0);R.sparkC.scale.setScalar(1+3*RS.spark);R.sparkC.material.opacity=RS.spark}}
+function relSituation(){const U=RS.U,inom=RL.INOM;
+  if(RS.stuck&&!RS.S1)return ['Anker klebt: Restmagnetismus','Ohne Trennblech liegt der Anker direkt auf dem Polschuh. Nach dem Abschalten bleibt im Eisen ein Restmagnetismus (Remanenz). Er reicht, um den Anker ohne Luftspalt festzuhalten. Das Relais schaltet nicht mehr zurück. Tippe das Relais an oder setze das Trennblech wieder ein.'];
+  if(RS.low)return ['Spannung zu niedrig: zieht nicht an',`Bei ${Math.round(U*100)} % fließen nur ${fmt(RS.i,1)} mA. Zum Anziehen über den offenen Luftspalt sind etwa 70 % des Nennstroms nötig.`];
+  if(!RS.S1&&RS.i>.5&&RS.diode)return ['Abschalten mit Freilaufdiode','Die Spule will den Strom aufrechterhalten. Er fließt über die Freilaufdiode weiter und klingt langsam ab. Die Spannung an der Spule bleibt bei −0,7 V, Schalter und Transistor sind geschützt. Nachteil: Der Anker fällt später ab.'];
+  if(!RS.S1&&RS.spark>.05&&!RS.diode)return ['Abschalten ohne Freilaufdiode',`Der Strom wird schlagartig unterbrochen. Nach dem Induktionsgesetz entsteht an der Spule eine Spannungsspitze von mehreren hundert Volt (hier etwa ${Math.round(12*RS.i0)} V). Sie erzeugt am Schalter einen Funken und kann Transistoren oder SPS-Ausgänge zerstören. Dafür fällt der Anker sehr schnell ab.`];
+  if(RS.S1&&RS.ang<.999&&RS.i>.5)return ['Spulenstrom steigt, Anker zieht an',`Der Strom steigt mit der Zeitkonstante τ = L/R ≈ ${RL.TAU} ms. Ab etwa 70 % des Nennstroms ist die Kraft groß genug: Der Anker kippt, zuerst öffnet der Öffner 11-12, dann schließt der Schließer 11-14.`];
+  if(RS.S1&&RS.ang>=.999)return ['Angezogen',`Die mittlere Feder 11 liegt am Schließer 14, Lampe H1 leuchtet. Steuerkreis (24 V DC) und Laststromkreis (230 V AC) sind galvanisch getrennt.${U<RL.PULL?` Auch bei ${Math.round(U*100)} % hält der Anker, weil kein Luftspalt mehr da ist. Er fällt erst unter etwa 15 % ab.`:''}`];
+  if(!RS.S1&&RS.ang>0)return ['Anker fällt ab','Die Rückstellfeder zieht den Anker zurück. Die mittlere Feder verlässt den Schließer 14 und legt sich wieder auf den Öffner 12. Beim Aufsetzen prellt sie kurz.'];
+  return ['Ruhestellung','Die Spule ist stromlos. Die Rückstellfeder hält den Anker angehoben. Die mittlere Feder 11 liegt auf dem Öffner 12, Lampe H2 leuchtet. Schalte S1 ein.']}
+function relCircuit(){const on=RS.S1,U=on&&RS.U>0;const k=[on,RS.NO,RS.NC,RS.diode,RS.i>.5,RS.spark>.1].join();if(k===G.lastCir)return;G.lastCir=k;
+  const L=(x1,y1,x2,y2,live)=>`<path class="w ${live?'live':''}" d="M${x1},${y1} L${x2},${y2}"/>`;
+  let s=`<text class="t" x="8" y="17">Steuerkreis 24 V DC</text><text class="t" x="8" y="30">+</text><text class="t" x="8" y="224">−</text>`;
+  s+=L(18,26,120,26,true)+L(18,220,120,220,false);
+  const xa=50;s+=L(xa,26,xa,52,true);
+  s+=`<g><path class="w ${on?'live':''}" d="M${xa},52 V58 ${on?`L${xa},76`:`L${xa-9},72`} M${xa},76 V84"/><text x="${xa+6}" y="58">1</text><text x="${xa+6}" y="82">2</text><text class="t" x="${xa+6}" y="70">S1</text></g>`;
+  if(RS.spark>.1&&!RS.diode)s+=`<path d="M${xa-12},60 l6,6 -4,1 7,7" fill="none" stroke="#3D7DFF" stroke-width="2"/><text x="${xa-46}" y="90" style="fill:var(--bad)">Funke</text>`;
+  s+=L(xa,84,xa,120,on)+`<rect class="comp ${RS.i>.5?'on':''}" x="${xa-10}" y="120" width="20" height="24"/><text x="${xa-14}" y="118" text-anchor="end">A1</text><text x="${xa-14}" y="156" text-anchor="end">A2</text><text class="t" x="${xa+14}" y="134">K1</text>`+L(xa,144,xa,220,false);
+  if(RS.diode)s+=`${L(xa,102,90,102,on)}${L(90,102,90,120,on)}<path class="w" d="M84,132 H96 M84,132 L90,122 L96,132"/><path class="w" d="M84,122 H96"/>${L(90,132,90,162,false)}${L(90,162,xa,162,false)}<text class="t" x="98" y="130">V1</text><text x="98" y="140">Freilauf</text>`;
+  s+=`<text class="t" x="168" y="17">Laststromkreis 230 V AC</text><text class="t" x="166" y="30">L</text><text class="t" x="166" y="224">N</text>`+L(176,26,332,26,true)+L(176,220,332,220,false);
+  const xw=230;s+=L(xw,26,xw,60,true)+`<text x="${xw+5}" y="64">11</text>`;
+  const toNO=RS.NO,toNC=RS.NC;s+=`<path class="w live" d="M${xw},60 ${toNO?`L${xw+30},86`:toNC?`L${xw-30},86`:`L${xw},88`}"/>`;
+  s+=`<circle cx="${xw-30}" cy="90" r="2" fill="var(--muted)"/><circle cx="${xw+30}" cy="90" r="2" fill="var(--muted)"/><text x="${xw-44}" y="100">12</text><text x="${xw+34}" y="100">14</text><text class="t" x="${xw+8}" y="52">K1</text>`;
+  s+=L(xw-30,90,xw-30,160,toNC)+L(xw+30,90,xw+30,160,toNO);
+  const lamp=(x,y,lit,n,t)=>`<circle class="lamp ${lit?'lit':''}" cx="${x}" cy="${y}" r="9"/><path class="w" d="M${x-6.3},${y-6.3} L${x+6.3},${y+6.3} M${x+6.3},${y-6.3} L${x-6.3},${y+6.3}"/><text class="t" x="${x+12}" y="${y+3}">${n}</text><text x="${x+12}" y="${y+13}">${t}</text>`;
+  s+=lamp(xw-30,170,toNC,'H2','Ruhe')+lamp(xw+30,170,toNO,'H1','Betrieb')+L(xw-30,179,xw-30,220,false)+L(xw+30,179,xw+30,220,false);
+  s+=`<path class="w" d="M${xa+10},132 H150" stroke-dasharray="3 3"/><path class="w" d="M150,132 V74 H${xw-2}" stroke-dasharray="3 3"/>`;
+  $('#cir').innerHTML=s}
+function relChips(){chip('#c1',RS.i>.5?dot('bad')+`${fmt(RS.i,1)} mA`:dot('off')+'stromlos');chip('#c2',RS.stuck?dot('bad')+'klebt':RS.ang>=.999?dot('ok')+'angezogen':RS.ang<=.001?dot('off')+'abgefallen':dot('off')+'kippt');
+  chip('#c3',RS.NC?dot('ok')+'geschlossen':dot('off')+'offen');chip('#c4',RS.NO?dot('ok')+'geschlossen':dot('off')+'offen');$('#cT').textContent=fmt(RS.u,RS.u<-10?0:1)+' V'}
+function relTags(id){const a=R.arm;switch(id){case 'kappe':return V3(48,24,10);case 'spule':return V3(-18.5,-6,0);case 'kern':return V3(-10,7.2,0);case 'joch':return V3(4.5,-14,6);
+  case 'anker':return a.localToWorld(V3(-17,1.6,6));case 'trenn':return a.localToWorld(V3(-12,-.3,4.6));case 'rfeder':return V3(RL.H[0]+RL.LEV+.6,-1,4.5);case 'schieber':return R.rod.localToWorld(V3(0,2.6,1.5));
+  case 'wechsler':return V3(36,R.yC+1,2.6);case 'sockel':return V3(-26,-28,10)}}
+
+/* ======================= STROMSTOSSSCHALTER ======================= */
+const SL={W:[14,4],R0:6,RA:1.5,STROKE:9*Math.PI/6,PC:[4,18],CY:18,IPULL:45,IHOLD:22};
+const SS={};
+function ssReset(){Object.assign(SS,{t:[false,false,false],tt:[0,0,0],trel:[false,false,false],hand:0,p:0,base:0,ang:0,reset:true,engaged:false,i:0,glow:0,coil:false,prevC:false,steps:0,heat:0,hum:false,blocked:false,tPress:-1e9})}
+function ssParts(){return [
+ ['gehaeuse','Gehäuse','Reiheneinbaugehäuse für die Hutschiene.','gesamt'],
+ ['spule','Spule A1-A2','230 V AC. Bekommt nur Strom, solange ein Taster gedrückt ist.','magnet'],
+ ['anker','Tauchanker','Eisenstift, der in die Spule gezogen wird. Er trägt vorne die Schaltklinke.','magnet'],
+ ['joch','Magnetbügel','Eisenrahmen um die Spule. Führt den Magnetfluss zum Tauchanker.','magnet'],
+ ['rfeder','Rückstellfeder','Schiebt den Tauchanker zurück, sobald der Taster losgelassen wird.','magnet'],
+ ['klinke','Schaltklinke','Hakt in einen Zahn des Schaltrads und dreht es bei jedem Hub um genau einen Zahn weiter. Beim Rückweg gleitet sie über den nächsten Zahn.','kontakte'],
+ ['rad','Schaltrad (12 Zähne)','Sägezahnrad. Ein Hub dreht es um 30°.','kontakte'],
+ ['nocken','Nockenscheibe','Sitzt auf derselben Achse. Ihre 6 Nocken wechseln alle 30° zwischen hoch und tief, also bei jedem Impuls.','kontakte'],
+ ['rast','Rastfeder','Hält das Schaltrad in jeder Stellung fest. So bleibt der Schaltzustand ohne Strom erhalten.','kontakte'],
+ ['kontakt','Kontaktfeder 1-2','Wird vom Nocken auf den Festkontakt gedrückt (Ein) oder federt hoch (Aus).','kontakte'],
+ ['anzeige','Schaltstellungsanzeige','Zeiger auf der Achse. Zeigt von vorn, ob der Kontakt geschlossen ist.','gesamt']]}
+function camR(psi){return SL.R0+SL.RA*clamp(3*Math.cos(6*psi),-1,1)}
+function buildSS(){
+  const Wz=9;
+  const hb=new THREE.Mesh(new THREE.BoxGeometry(90,80,2*Wz),MAT.housing);hb.position.set(5,6,0);hb.renderOrder=5;add(root,'gehaeuse',hb);R.housing=hb;
+  root.add(new THREE.LineSegments(new THREE.EdgesGeometry(hb.geometry),new THREE.LineBasicMaterial({color:0x6E777C,transparent:true,opacity:.45})).translateX(5).translateY(6));
+  add(root,'gehaeuse',bx(-40,50,-34,46,-Wz,-Wz+1.2,M(0x5D666C)));
+  // Spule (Achse x) + Magnetbügel
+  const cg=new THREE.Group();cg.position.set(-23,SL.CY,0);cg.rotation.z=-Math.PI/2;root.add(cg);
+  lathe(ring(3.7,8.4,-10.5,10.5),MAT.wind,'spule',cg,windTex);lathe(ring(3.5,9,-11.3,-10.5),MAT.bobbin,'spule',cg);lathe(ring(3.5,9,10.5,11.3),MAT.bobbin,'spule',cg);
+  add(root,'joch',bx(-36.5,-34.5,8,28,-6,6,MAT.steel));add(root,'joch',bx(-36.5,-10,27,28.6,-6,6,MAT.steel));add(root,'joch',bx(-36.5,-10,7.4,9,-6,6,MAT.steel));
+  add(root,'joch',bx(-12,-10,9,14.6,-6,6,MAT.steel));add(root,'joch',bx(-12,-10,21.4,27,-6,6,MAT.steel));add(root,'joch',cyl('x',-34.5,-31.2,3.2,MAT.steel,SL.CY,0));
+  // Tauchanker
+  R.plG=new THREE.Group();root.add(R.plG);
+  add(R.plG,'anker',cyl('x',-26,4,3.1,MAT.steel,SL.CY,0));add(R.plG,'anker',cyl('x',-1.4,-.4,4.6,MAT.zinc,SL.CY,0));
+  R.rspr=helix('x',4,6,.22,MAT.spring,10);R.rspr.position.set(-10,SL.CY,0);add(root,'rfeder',R.rspr);
+  // Schaltklinke
+  R.pawl=add(root,'klinke',bx(0,1,-.7,.7,-1.4,1.4,MAT.zinc));
+  // Schaltrad + Nockenscheibe + Achse
+  R.wheel=new THREE.Group();R.wheel.position.set(SL.W[0],SL.W[1],0);root.add(R.wheel);
+  const teeth=[];for(let i=0;i<12;i++){const a0=i*30*D,a1=(i+1)*30*D;teeth.push([8.2*Math.cos(a0),8.2*Math.sin(a0)]);teeth.push([9.7*Math.cos(a1-.02),9.7*Math.sin(a1-.02)])}
+  add(R.wheel,'rad',ext(teeth,-1,1,MAT.white));
+  const cam=[];for(let i=0;i<180;i++){const a=i/180*2*Math.PI;const r=camR(a);cam.push([r*Math.cos(a),r*Math.sin(a)])}
+  add(R.wheel,'nocken',ext(cam,1.2,3.6,M(0x3E6FB0,{roughness:.45})));
+  add(R.wheel,'anzeige',cyl('z',1,6.5,1.1,MAT.steel));
+  const ptr=bx(-1.2,1.2,0,6,6.5,7.2,MAT.red);add(R.wheel,'anzeige',ptr);
+  add(root,'anzeige',cyl('z',-8,-1,1.1,MAT.steel,SL.W[0],SL.W[1]));
+  const dial=textPlane(18,18,(x,w,h)=>{x.strokeStyle='#30363a';x.lineWidth=6;x.beginPath();x.arc(w/2,h/2,w*.42,0,7);x.stroke();x.fillStyle='#30363a';x.font='700 70px Barlow, Arial';x.textAlign='center';x.textBaseline='middle';x.fillText('I',w/2,h*.16);x.fillText('0',w*.84,h/2)});
+  dial.position.set(SL.W[0],SL.W[1],7.25);root.add(dial);
+  // Rastfeder
+  R.rast=add(root,'rast',bx(23.4,24,-2,14,-1.2,1.2,MAT.spring));add(root,'rast',bx(23.3,25.5,12,16,-2,2,M(0x2B2F33)));
+  // Kontaktfeder + Festkontakt
+  R.csp=new THREE.Group();R.csp.position.set(44,-6,0);root.add(R.csp);add(R.csp,'kontakt',bx(-30.5,0,-.3,.3,-2.6,2.6,MAT.bronze));
+  add(R.csp,'kontakt',cyl('y',-.9,-.3,1.3,MAT.silver,-14,0));add(R.csp,'kontakt',cyl('y',.3,1.1,1.2,MAT.white,-30,2.4));
+  add(root,'gehaeuse',bx(42,48,-10,-2,-4,4,M(0x2B2F33)));
+  R.fixY=-6+(30-14)/30*0;// wird unten gesetzt
+  R.fix=add(root,'kontakt',bx(27,33,0,1,-2.6,2.6,MAT.copper));R.fixR=add(root,'kontakt',cyl('y',0,.6,1.3,MAT.silver,30,0));
+  // Klemmen
+  [['A1',-30,40],['A2',-30,-28],['1',40,40],['2',40,-28]].forEach(([n,x,y])=>{add(root,'gehaeuse',bx(x-5,x+5,y-3,y+3,-5,5,MAT.zinc));R.term.push({t:n,pos:V3(x,y+(y>0?4:-4),5)})});
+  add(root,'kontakt',tubeOf([V3(46,-2,2),V3(46,20,3),V3(40,37,0)],.35,MAT.copper,20));
+  R.fixLead=add(root,'kontakt',tubeOf([V3(33,-6.8,0),V3(38,-14,1),V3(40,-25,0)],.35,MAT.copper,20));
+  add(root,'spule',tubeOf([V3(-33,24,-4),V3(-32,34,-2),V3(-30,37,0)],.3,MAT.copper,16));add(root,'spule',tubeOf([V3(-14,12,-4),V3(-20,-10,-2),V3(-30,-25,0)],.3,MAT.copper,16));
+  R.flux=particles(40,.5,0x6FA8FF);R.flux.userData.cut=true;
+  R.cams={gesamt:{t:[4,6,0],r:220,th:.35,ph:1.32},magnet:{t:[-18,18,0],r:95,th:.12,ph:1.42},kontakte:{t:[16,4,0],r:95,th:.15,ph:1.45},seite:{t:[4,6,0],r:220,th:1.3,ph:1.28}};
+  // Festkontakt-Höhe aus Geometrie: Feder zu, wenn Nocken hoch
+  const tipHigh=SL.W[1]-(SL.R0+SL.RA);const yAt=x=>-6+((44-x)/30)*(tipHigh-(-6));R.fixTop=yAt(30)-.3-.6;R.fix.position.y=R.fixTop-.5-.6;R.fixR.position.y=R.fixTop-.3;
+}
+function ssPressed(){return SS.t.some(x=>x)||SS.hand>0}
+function ssSim(dt){const pressed=ssPressed();const glow=SS.glowN*.8;SS.glow=glow;
+  if(pressed&&!SS.coil){SS.coil=true;SS.tPress=G.tReal;log(SS.hand>0?'Handhebel betätigt':'Taster gedrückt: Spule A1-A2 bekommt Spannung',false,true)}
+  if(!pressed&&SS.coil){SS.coil=false;log('Taster losgelassen: Spule stromlos')}
+  // Strom
+  const pf=SS.p/SL.STROKE;SS.i=pressed&&SS.hand===0?SL.IHOLD+(SL.IPULL-SL.IHOLD)*(1-pf):(SS.hand>0?0:glow);
+  if(SS.coil&&SS.hand===0)SS.heat=Math.min(1,SS.heat+dt/4000);else SS.heat=Math.max(0,SS.heat-dt/8000);
+  // Ankerziel
+  let tgt=0;if(pressed&&G.tReal-SS.tPress>3)tgt=SL.STROKE;else if(!pressed){if(glow>6)tgt=2.6;else tgt=0}
+  SS.hum=!pressed&&glow>4;
+  const v=tgt>SS.p?SL.STROKE/8:SL.STROKE/10;SS.p+=Math.sign(tgt-SS.p)*Math.min(Math.abs(tgt-SS.p),v*dt);
+  // Klinke / Schaltrad
+  if(SS.p<.6&&!SS.reset){SS.reset=true;log('Klinke ist über den nächsten Zahn geglitten, bereit')}
+  if(!pressed&&SS.p>.6&&SS.reset&&!SS.engaged){SS.reset=false}
+  if(pressed&&SS.reset&&SS.p>.05&&!SS.engaged&&tgt>SS.p){SS.engaged=true;SS.reset=false}
+  if(pressed&&!SS.engaged&&SS.p>.05&&!SS.reset&&tgt>SS.p&&!SS.blocked){SS.blocked=true;log('Klinke nicht zurückgestellt: Schaltrad dreht nicht weiter',true)}
+  if(SS.engaged){SS.ang=SS.base+(SS.p/SL.STROKE)*30;if(SS.p>=SL.STROKE-1e-3){SS.base+=30;SS.ang=SS.base;SS.engaged=false;SS.steps++;log('Schaltrad um einen Zahn (30°) weitergedreht')}
+    else if(tgt<SS.p){SS.ang=SS.base;SS.engaged=false}}
+  if(!pressed)SS.blocked=false;
+  const closed=camR((-90-SS.ang)*D)>SL.R0;
+  if(closed!==SS.prevC){log(closed?'Nocken drückt die Kontaktfeder: 1-2 geschlossen, Lampe an':'Nocken gibt die Feder frei: 1-2 offen, Lampe aus');SS.prevC=closed}
+  SS.closed=closed;
+  G.hist.push([G.tReal,[pressed?1:0,SS.i>3?1:0,closed?1:0]]);G.ahist.push([G.tReal,SS.i]);}
+function ssScene(dt){let p=SS.p;if(SS.hum)p+=.25*Math.abs(Math.sin(2*Math.PI*100*G.tReal/1000));
+  R.plG.position.x=-p;R.rspr.position.x=-10;R.rspr.scale.x=Math.max(.2,(9-p)/10);
+  R.wheel.rotation.z=SS.ang*D;
+  // Klinke: Gelenk am Ankerende, Spitze am Zahn oder gleitend
+  const hx=SL.PC[0]-p,hy=SL.PC[1];let tx,ty;
+  if(SS.engaged){const a=(90+(SS.ang-SS.base))*D;tx=SL.W[0]+9.4*Math.cos(a);ty=SL.W[1]+9.4*Math.sin(a)}else{tx=hx+9.6;ty=SL.W[1]+9.6+1.2*Math.abs(Math.sin(Math.PI*p/SL.STROKE))}
+  const dx=tx-hx,dy=ty-hy,len=Math.hypot(dx,dy);R.pawl.scale.set(len,1,1);R.pawl.position.set(hx+dx/2,hy+dy/2,0);R.pawl.rotation.z=Math.atan2(dy,dx);
+  // Rastfeder federt beim Drehen
+  const frac=((SS.ang%30)+30)%30;R.rast.position.x=23.7+.6*Math.sin(Math.PI*frac/30);
+  // Kontaktfeder folgt dem Nocken (unten)
+  const fy=SL.W[1]-camR((-90-SS.ang)*D);R.csp.rotation.z=Math.atan2(-(fy+6),30);
+  // Fluss
+  const flux=$('#cFlux').checked&&$('#cCut').checked&&SS.i>3&&SS.hand===0;if(flux){const z=.6;const pts=[V3(-30,SL.CY,z),V3(-26-p+4,SL.CY,z),V3(-11,SL.CY,z),V3(-11,24,z),V3(-11,27.8,z),V3(-35.5,27.8,z),V3(-35.5,SL.CY,z),V3(-30,SL.CY,z)];
+    runAlong(R.flux,pts,dt*10*clamp(SS.i/30),clamp(SS.i/30)*(SS.hum?Math.abs(Math.sin(2*Math.PI*50*G.tReal/1000)):1))}else R.flux.visible=false}
+function ssSituation(){const g=SS.glow;
+  if(SS.glowN>0&&g>6&&!ssPressed())return ['Zu viele beleuchtete Taster',`Die ${SS.glowN} Glimmlampen lassen zusammen etwa ${fmt(g,1)} mA durch die Spule fließen. Das hält den Tauchanker halb angezogen. Die Klinke kommt nicht mehr über den nächsten Zahn, der Stromstoßschalter reagiert nicht mehr. Abhilfe: weniger beleuchtete Taster, Taster mit N-Anschluss oder ein Kompensationsmodul.`];
+  if(SS.glowN>0&&g>4&&!ssPressed())return ['Spule brummt',`${fmt(g,1)} mA Glimmlampenstrom fließen dauernd durch die Spule. Der Anker brummt leise. Der Hersteller begrenzt deshalb den zulässigen Glimmlampenstrom.`];
+  if(ssPressed()&&SS.p>=SL.STROKE-1e-3&&G.tReal-SS.tPress>60)return ['Dauerbetätigung: kein weiterer Schaltvorgang','Der Taster wird festgehalten. Der Anker bleibt angezogen, die Klinke steht still. Erst nach dem Loslassen kann der nächste Impuls schalten. Die Spule ist dabei dauernd bestromt und erwärmt sich.'];
+  if(ssPressed()&&SS.p<SL.STROKE)return ['Impuls: Anker zieht an','Die Spule zieht den Tauchanker hinein. Die Schaltklinke nimmt einen Zahn mit und dreht das Schaltrad um 30°. Mit dem Rad dreht sich die Nockenscheibe, nach der Hälfte des Wegs wechselt der Kontakt.'];
+  if(!ssPressed()&&SS.p>.05)return ['Rückstellung','Die Rückstellfeder schiebt den Anker zurück. Die Klinke gleitet über den nächsten Zahn, die Rastfeder hält das Schaltrad fest. Der Kontakt bleibt in seiner neuen Stellung, auch ganz ohne Strom.'];
+  return SS.closed?['Eingeschaltet, Spule stromlos','Der Nocken drückt die Kontaktfeder auf den Festkontakt, die Lampe E1 leuchtet. Die Spule ist stromlos, der Zustand wird mechanisch gehalten (bistabil). Der nächste Tastendruck an einer beliebigen Stelle schaltet aus.']
+    :['Ausgeschaltet, Spule stromlos','Die Kontaktfeder liegt auf einem tiefen Nocken und ist geöffnet. Drücke einen der drei Taster. Jeder Impuls schaltet abwechselnd ein und aus.']}
+function ssCircuit(){const P=SS.t.map(x=>x);const coil=SS.i>3&&SS.hand===0,cl=SS.closed;const k=[P.join(),coil,cl,SS.glowN>0].join();if(k===G.lastCir)return;G.lastCir=k;
+  const L=(x1,y1,x2,y2,live)=>`<path class="w ${live?'live':''}" d="M${x1},${y1} L${x2},${y2}"/>`;
+  let s=`<text class="t" x="6" y="17">L</text><text class="t" x="6" y="227">N</text>`+L(16,20,330,20,true)+L(16,224,330,224,false);
+  const xs=[40,90,140],any=P.some(x=>x);
+  xs.forEach((x,i)=>{s+=L(x,20,x,48,true);s+=`<g class="btn" data-btn="T${i+1}"><rect x="${x-16}" y="44" width="32" height="40" fill="transparent"/><path class="w ${P[i]?'live':''}" d="M${x},48 V54 ${P[i]?`L${x},72`:`L${x-8},70`} M${x},72 V80"/><path class="w" d="M${x-12},62 H${x-4}" stroke-dasharray="2 2"/><path class="w" d="M${x-16},58 V66 M${x-16},62 H${x-12}"/><text class="t" x="${x+5}" y="64">S${i+1}</text></g>`;
+    if(SS.glowN>0)s+=`<circle class="lamp" cx="${x+14}" cy="64" r="4"/>${L(x,52,x+14,52,true)}${L(x+14,52,x+14,60,true)}${L(x+14,68,x+14,76,coil||SS.glowN>0)}${L(x+14,76,x,76,any||SS.glowN>0)}`;
+    s+=L(x,80,x,100,P[i]||SS.glowN>0)});
+  s+=L(40,100,140,100,any||SS.glowN>0)+L(90,100,90,130,any||SS.glowN>0)+`<rect class="comp ${coil?'on':''}" x="80" y="130" width="20" height="24"/><text x="76" y="128" text-anchor="end">A1</text><text x="76" y="166" text-anchor="end">A2</text>`;
+  s+=`<path class="w" d="M84,138 L96,146 M96,138 L84,146"/><text class="t" x="104" y="142">K1</text><text x="104" y="152">Stromstoß-</text><text x="104" y="161">schalter</text>`+L(90,154,90,224,false);
+  const xc=260;s+=L(xc,20,xc,70,true)+`<path class="w ${cl?'live':''}" d="M${xc},70 V76 ${cl?`L${xc},94`:`L${xc-9},92`} M${xc},94 V100"/><text x="${xc+6}" y="76">1</text><text x="${xc+6}" y="98">2</text><text class="t" x="${xc+6}" y="87">K1</text>`;
+  s+=`<path class="w" d="M100,142 H180 V85 H${xc-4}" stroke-dasharray="3 3"/>`;
+  s+=L(xc,100,xc,160,cl)+`<circle class="lamp ${cl?'lit':''}" cx="${xc}" cy="170" r="10"/><path class="w" d="M${xc-7},163 L${xc+7},177 M${xc+7},163 L${xc-7},177"/><text class="t" x="${xc+14}" y="173">E1</text><text x="${xc+14}" y="184">Flurlicht</text>`+L(xc,180,xc,224,false);
+  $('#cir').innerHTML=s}
+function ssChips(){chip('#c1',SS.i>3&&SS.hand===0?dot('bad')+`${fmt(SS.i,0)} mA`:SS.glow>0?dot('off')+`${fmt(SS.glow,1)} mA (Glimm)`:dot('off')+'stromlos');
+  chip('#c2',SS.p>=SL.STROKE-1e-3?dot('ok')+'angezogen':SS.p<=.05?dot('off')+'Ruhe':dot('off')+`${fmt(SS.p,1)} mm`);
+  chip('#c3',SS.closed?dot('ok')+'geschlossen':dot('off')+'offen');chip('#c4',`${dot(SS.heat>.5?'bad':'ok')}${Math.round(SS.steps)} Impulse`);
+  $('#cT').textContent=fmt(((SS.ang%360)+360)%360,0)+'°'}
+function ssTags(id){switch(id){case 'gehaeuse':return V3(48,44,9);case 'spule':return V3(-23,26.4,0);case 'anker':return R.plG.localToWorld(V3(2,SL.CY+3,0));case 'joch':return V3(-36.5,10,6);
+  case 'rfeder':return V3(-6,SL.CY+4,3);case 'klinke':return R.pawl.position.clone().add(V3(0,1,1.4));case 'rad':return V3(SL.W[0]-8,SL.W[1]+4,1);case 'nocken':return R.wheel.localToWorld(V3(-5,-3,3.6));
+  case 'rast':return V3(23.7,13,1.2);case 'kontakt':return V3(30,-3.5,2.6);case 'anzeige':return V3(SL.W[0]+6,SL.W[1]+6,7.2)}}
+
+/* ======================= Rahmen ======================= */
+function defParts(list){PARTS=list.map(([id,n,d,cam],i)=>({id,n,d,cam,i:i+1,meshes:[]}));PM={};PARTS.forEach(p=>PM[p.id]=p)}
+function build(){if(root){scene.remove(root);disposeAll(root)}root=new THREE.Group();scene.add(root);R={term:[]};
+  if(DEVK==='REL'){defParts(relParts());buildRel()}else{defParts(ssParts());buildSS()}
+  pickables=[];PARTS.forEach(p=>p.meshes.forEach(m=>{if(m!==R.housing||true)pickables.push(m)}));buildTags();buildTermLabels();applyCut();applyCover()}
+function applyCut(){const on=$('#cCut').checked;root.traverse(m=>{if(m.userData.cut&&!m.isInstancedMesh)m.visible=on;if(m.userData.full)m.visible=!on})}
+function applyCover(){const o=$('#rCover').value/100;R.housing.material.opacity=o;R.housing.visible=o>.005;R.housing.material.depthWrite=o>.7;$('#covV').textContent=o<.02?'ausgeblendet':o<.4?'transparent':o<.85?'halbtransparent':'geschlossen'}
+const orb={tg:V3(0,0,0),r:200,th:.4,ph:1.3,anim:null};
+function applyCam(){const a=camera.aspect,k=a<1.1?Math.min(2,1.1/a):1,s=Math.sin(orb.ph),r=orb.r*k;camera.position.set(orb.tg.x+r*s*Math.sin(orb.th),orb.tg.y+r*Math.cos(orb.ph),orb.tg.z+r*s*Math.cos(orb.th));camera.lookAt(orb.tg)}
+function markCam(n){document.querySelectorAll('#segCam button').forEach(b=>b.classList.toggle('on',b.dataset.c===n))}
+function fly(name,dur=1.2){const c=R.cams[name];if(!c)return;markCam(name);const to={tg:V3(...c.t),r:c.r,th:c.th,ph:c.ph};
+  if(reduced||dur===0){orb.tg.copy(to.tg);orb.r=to.r;orb.th=to.th;orb.ph=to.ph;orb.anim=null;return}
+  let th0=orb.th;while(to.th-th0>Math.PI)th0+=2*Math.PI;while(th0-to.th>Math.PI)th0-=2*Math.PI;orb.anim={t:0,dur,f:{tg:orb.tg.clone(),r:orb.r,th:th0,ph:orb.ph},to}}
+const ptrs=new Map();let drag=null,pinch0=0,moved=0;
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+canvas.addEventListener('pointerdown',e=>{try{canvas.setPointerCapture(e.pointerId)}catch(_){}ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});orb.anim=null;moved=0;drag=(e.button===2||e.shiftKey)?'pan':'rot';if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch0=Math.hypot(a.x-b.x,a.y-b.y);drag='pinch'}});
+canvas.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p){hoverPick(e);return}const dx=e.clientX-p.x,dy=e.clientY-p.y;moved+=Math.abs(dx)+Math.abs(dy);p.x=e.clientX;p.y=e.clientY;
+  if(drag==='pinch'&&ptrs.size===2){const [a,b]=[...ptrs.values()],d=Math.hypot(a.x-b.x,a.y-b.y);if(pinch0)orb.r=clamp(orb.r*pinch0/d,25,600);pinch0=d;return}
+  if(drag==='rot'){orb.th-=dx*.0065;orb.ph=clamp(orb.ph-dy*.0065,.12,Math.PI-.12)}else if(drag==='pan'){const k=orb.r*.0016,right=V3().setFromMatrixColumn(camera.matrix,0),up=V3().setFromMatrixColumn(camera.matrix,1);orb.tg.addScaledVector(right,-dx*k).addScaledVector(up,dy*k)}markCam(null)});
+const endPtr=e=>{ptrs.delete(e.pointerId);if(ptrs.size<2)pinch0=0;if(!ptrs.size){if(moved<4&&hoverId)selectPart(hoverId,false);drag=null}};
+canvas.addEventListener('pointerup',endPtr);canvas.addEventListener('pointercancel',endPtr);canvas.addEventListener('pointerleave',()=>{if(!ptrs.size)setHover(null)});
+canvas.addEventListener('wheel',e=>{e.preventDefault();orb.anim=null;orb.r=clamp(orb.r*Math.exp(e.deltaY*.0011),25,600)},{passive:false});
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let hoverId=null,selId=null,lastPick=0;
+const isShown=m=>{let o=m;while(o){if(!o.visible)return false;o=o.parent}return true};
+function hoverPick(e){const now=performance.now();if(now-lastPick<40)return;lastPick=now;const r=canvas.getBoundingClientRect();mouse.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);
+  const hits=ray.intersectObjects(pickables.filter(isShown),false).filter(h=>!(h.object===R.housing&&R.housing.material.opacity<.4));setHover(hits[0]?hits[0].object.userData.part:null,e.clientX-r.left,e.clientY-r.top)}
+const hov=$('#hover');function setHover(id,x,y){hoverId=id;if(!id||!PM[id]){hov.hidden=true;canvas.style.cursor='';return}hov.hidden=false;hov.textContent=PM[id].i+' · '+PM[id].n;hov.style.transform=`translate(${x+14}px,${y+10}px)`;canvas.style.cursor='pointer'}
+const tagsEl=$('#tags'),legEl=$('#leg'),tlEl=$('#tlabels');
+function buildTags(){tagsEl.innerHTML='';legEl.innerHTML='';PARTS.forEach(p=>{const b=document.createElement('button');b.className='tag';b.type='button';b.innerHTML=`<span class="n">${p.i}</span><span class="nm">${p.n}</span>`;
+  b.addEventListener('click',()=>selectPart(p.id,true));b.addEventListener('mouseenter',()=>{hoverId=p.id});b.addEventListener('mouseleave',()=>{hoverId=null});tagsEl.appendChild(b);p.tag=b;
+  const li=document.createElement('li');li.innerHTML=`<button type="button"><span class="n">${p.i}</span><span><b>${p.n}</b><small>${p.d}</small></span></button>`;const lb=li.firstChild;lb.addEventListener('click',()=>selectPart(p.id,true));lb.addEventListener('mouseenter',()=>{hoverId=p.id});lb.addEventListener('mouseleave',()=>{hoverId=null});legEl.appendChild(li);p.leg=lb})}
+function buildTermLabels(){tlEl.innerHTML='';R.term.forEach(o=>{const d=document.createElement('div');d.className='wl';d.textContent=o.t;tlEl.appendChild(d);o.d=d})}
+function selectPart(id,move){selId=selId===id&&!move?null:id;PARTS.forEach(p=>{p.tag.classList.toggle('on',p.id===selId);p.leg.classList.toggle('on',p.id===selId)});if(move&&selId)fly(PM[id].cam||'gesamt')}
+const pv=new THREE.Vector3();function toScreen(p,w,h){pv.copy(p).project(camera);return {x:(pv.x+1)/2*w,y:(1-pv.y)/2*h,ok:pv.z<1&&pv.z>-1}}
+function place(el,p,dx,dy,w,h){const s=toScreen(p,w,h);el.style.display=s.ok?'':'none';el.style.transform=`translate(${s.x+dx}px,${s.y+dy}px)`}
+function updateTags(){const w=stageEl.clientWidth,h=stageEl.clientHeight;const fn=DEVK==='REL'?relTags:ssTags;
+  PARTS.forEach(p=>{const a=fn(p.id);if(!a){p.tag.style.display='none';return}const s=toScreen(a,w,h);p.tag.style.display=s.ok?'':'none';p.tag.style.transform=`translate(${s.x-11}px,${s.y-11}px)`});
+  const tl=$('#cTerm').checked;R.term.forEach(o=>{if(!tl){o.d.style.display='none';return}place(o.d,o.pos,-8,-6,w,h)});
+  const co=$('#callout');let txt=null,pos=null;
+  if(DEVK==='REL'){if(RS.stuck&&!RS.S1){txt='Anker klebt am Polschuh';pos=R.arm.localToWorld(V3(-17,1.6,0))}else if(RS.spark>.1&&!RS.diode){txt=`Induktionsspitze ≈ ${Math.round(12*RS.i0)} V`;pos=V3(-18,-28,0)}}
+  else{if(SS.glow>6&&!ssPressed()){txt='Anker bleibt halb angezogen';pos=V3(-4,SL.CY+4,0)}}
+  if(txt){co.hidden=false;co.className='callout bad';co.textContent=txt;place(co,pos,12,-34,w,h)}else co.hidden=true;
+  $('#stage').classList.toggle('names',$('#cNames').checked)}
+const accentHL=new THREE.Color(0x1b7fb8);
+function updateMats(){const cg=DEVK==='REL'?clamp(RS.i/RL.INOM)*.3:(SS.hand===0?clamp(SS.i/45)*.3:0)+(DEVK==='SS'?SS.heat*.4:0);
+  PM.spule.meshes.forEach(m=>(Array.isArray(m.material)?m.material:[m.material]).forEach(x=>x.userData.dyn&&x.userData.dyn.setRGB(cg,cg*.25,0)));
+  const hl=hoverId||selId;PARTS.forEach(p=>{const on=p.id===hl;p.meshes.forEach(m=>(Array.isArray(m.material)?m.material:[m.material]).forEach(x=>{if(!x.emissive)return;x.emissive.copy(x.userData.dyn||new THREE.Color());if(on)x.emissive.add(accentHL)}))})}
+function chip(sel,html){const el=$(sel);if(el._k===html)return;el._k=html;el.innerHTML=html}
+const dot=c=>`<i class="dot ${c}"></i>`;
+
+/* ---------- Zeitdiagramme ---------- */
+const DIG=(()=>{const svg=$('#dig'),x0=78,x1=282;let rows=[];
+  function draw(r){rows=r;let s='';rows.forEach((n,i)=>{const y=10+i*24;s+=`<text x="${x0-6}" y="${y+12}" text-anchor="end">${n}</text><line x1="${x0}" x2="${x1}" y1="${y+16}" y2="${y+16}" stroke="var(--line)" stroke-width=".6"/><path id="dg${i}" fill="none" stroke="var(--accent)" stroke-width="1.6"/>`});
+    const yb=10+rows.length*24;s+=`<text id="dgT" x="${x1}" y="${yb+10}" text-anchor="end"></text>`;svg.setAttribute('viewBox',`0 0 290 ${yb+14}`);svg.innerHTML=s}
+  function update(){const win=6000/G.F,X=t=>x1-(G.tReal-t)/win*(x1-x0);rows.forEach((n,i)=>{const y=10+i*24;let d='',prev=null;G.hist.forEach(([t,v],k)=>{const x=X(t),yy=v[i]?y+3:y+16;if(k===0)d+=`M${x.toFixed(1)},${yy}`;else{if(prev!==v[i])d+=`L${x.toFixed(1)},${prev?y+3:y+16}`;d+=`L${x.toFixed(1)},${yy}`}prev=v[i]});const el=svg.querySelector('#dg'+i);if(el)el.setAttribute('d',d)});
+    const t=svg.querySelector('#dgT');if(t)t.textContent=`letzte ${fmt(win,win<20?1:0)} ms Echtzeit`}
+  return {draw,update}})();
+const ANA=(()=>{const svg=$('#ana'),x0=40,x1=282,y0=8,y1=100;let cfg;
+  function draw(c){cfg=c;const Y=v=>y1-(v-c.min)/(c.max-c.min)*(y1-y0);let s='';c.ticks.forEach(v=>{s+=`<line x1="${x0}" x2="${x1}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="${v===0?1:.6}"/><text x="${x0-4}" y="${Y(v)+3}" text-anchor="end">${v}</text>`});
+    s+=`<text x="${x0}" y="6" style="font-size:8.5px">${c.unit}</text><path id="anP" fill="none" stroke="var(--bad)" stroke-width="1.5"/><text id="anT" x="${x1}" y="${y1+14}" text-anchor="end"></text>`;svg.innerHTML=s}
+  function update(){const win=6000/G.F,X=t=>x1-(G.tReal-t)/win*(x1-x0),Y=v=>y1-(clamp(v,cfg.min,cfg.max)-cfg.min)/(cfg.max-cfg.min)*(y1-y0);let d='';G.ahist.forEach(([t,v],k)=>{d+=(k?'L':'M')+X(t).toFixed(1)+','+Y(v).toFixed(1)});
+    const p=svg.querySelector('#anP');if(p)p.setAttribute('d',d);const t=svg.querySelector('#anT');if(t)t.textContent=cfg.label()}
+  return {draw,update}})();
+
+/* ---------- Gerätewechsel und Bedienung ---------- */
+const NOTES={REL:[['Aufbau Klappankerrelais','Spule, Eisenkern, Joch und Klappanker bilden den Magnetkreis. Der Anker kippt um die Jochkante und bewegt über einen Isolierstoffschieber die Kontaktfedern. Typisch ist ein Wechsler mit den Klemmen 11 (Wurzel), 12 (Öffner) und 14 (Schließer).'],
+   ['Galvanische Trennung','Steuerkreis und Laststromkreis haben keine leitende Verbindung. Ein kleiner Steuerstrom (hier 42 mA bei 24 V) schaltet einen Laststromkreis mit 230 V.'],
+   ['Freilaufdiode','Beim Abschalten einer Gleichstromspule entsteht eine hohe Induktionsspannung. Die Diode antiparallel zur Spule lässt den Strom weiterfließen und begrenzt die Spannung auf etwa 0,7 V. Der Anker fällt dadurch etwas später ab. Bei AC-Spulen nimmt man RC-Glieder oder Varistoren.'],
+   ['Prellen','Metallkontakte federn beim Schließen einige Male zurück, bevor sie fest aufliegen. Für Lampen ist das egal, für digitale Eingänge (Zähler, SPS) muss man entprellen.'],
+   ['Relais oder Schütz','Relais schalten kleine Ströme mit Einfachunterbrechung und haben oft Wechsler. Schütze schalten große Lasten (Motoren) mit Doppelunterbrechung und Lichtbogenlöschung.']],
+ SS:[['Bistabiles Schalten','Jeder Stromimpuls dreht das Schaltrad um einen Zahn weiter. Die Nocken wechseln dabei zwischen Ein und Aus. Ohne Strom hält die Rastfeder den Zustand fest. Der Stromstoßschalter braucht deshalb keinen Haltestrom.'],
+   ['Von vielen Stellen schalten','Beliebig viele Taster werden einfach parallel angeschlossen. Das ist bei mehr als zwei Schaltstellen einfacher als eine Kreuzschaltung und braucht nur eine dünne Steuerleitung.'],
+   ['Glimmlampen-Taster','Die Glimmlampe liegt parallel zum Tasterkontakt. Ihr kleiner Strom fließt dauernd durch die Spule. Zu viele beleuchtete Taster lassen die Spule brummen oder halten den Anker fest. Herstellerangabe zum maximalen Glimmlampenstrom beachten.'],
+   ['Dauerbetätigung','Ein festgehaltener Taster schaltet nur einmal um. Die Spule ist dann aber dauernd bestromt. Ältere Geräte sind dafür nicht ausgelegt, moderne Spulen oft für 100 % Einschaltdauer.'],
+   ['Kennzeichnung','Spule A1-A2, Kontakt 1-2. Elektronische Stromstoßschalter (ESR) arbeiten mit Elektronik und bistabilem Relais. Sie sind leise und oft unempfindlich gegen Glimmlampenströme.']]};
+function switchDev(k){DEVK=k;document.querySelectorAll('#segSys button').forEach(x=>x.classList.toggle('on',x.dataset.s===k));
+  relReset();ssReset();SS.glowN=+$('#rG').value;G.hist=[];G.ahist=[];G.lastCir='';G.lastSit='';logItems=[];$('#log').innerHTML='';
+  const rel=k==='REL';['#ctlRel','#ctlRel2'].forEach(s=>$(s).hidden=!rel);['#ctlSS','#ctlSS2'].forEach(s=>$(s).hidden=rel);
+  $('#sub').textContent=rel?'Klappankerrelais mit Wechsler, Spule aufgeschnitten. Schalte den Steuerkreis mit S1 und beobachte Anzug, Prellen und Abfall. Probiere das Abschalten mit und ohne Freilaufdiode und ohne Trennblech.':'Elektromechanischer Stromstoßschalter für die Hutschiene. Jeder Tastendruck schaltet um. Schalte von drei Stellen, halte einen Taster fest oder schließe zu viele beleuchtete Taster an.';
+  $('#marking').innerHTML='Modell: '+(rel?['K1','Relais','U<sub>s</sub> 24 V DC','1 Wechsler 11-12-14','8 A / 250 V AC']:['K1','Stromstoßschalter','U<sub>s</sub> 230 V AC','1 Schließer 1-2','16 A / 250 V AC']).map(m=>`<b>${m}</b>`).join('');
+  $('#l2').textContent='Anker';$('#l3').textContent=rel?'Öffner 11-12':'Kontakt 1-2';$('#l4').textContent=rel?'Schließer 11-14':'Zähler';$('#cL').textContent=rel?'Spulenspannung':'Schaltrad';
+  $('#cirTitle').textContent=rel?'Stromlaufplan · S1 ist klickbar':'Stromlaufplan · Taster sind klickbar';$('#camK').textContent='Kontakte';
+  $('#notes').innerHTML=NOTES[k].map(([h,p])=>`<div class="note"><h4>${h}</h4><p>${p}</p></div>`).join('');
+  setSlow(rel?100:20);
+  DIG.draw(rel?['S1','Spulenstrom','Öffner 11-12','Schließer 11-14']:['Taster','Spule','Kontakt 1-2']);
+  $('#dTitle').textContent='Schaltzustände';
+  if(rel){$('#aTitle').textContent='Spannung an der Spule';ANA.draw({min:-420,max:60,ticks:[-400,-200,0,24],unit:'u in V',label:()=>`aktuell ${fmt(RS.u,Math.abs(RS.u)>10?0:1)} V`});$('#aCap').textContent='Ohne Freilaufdiode entsteht beim Abschalten eine Spannungsspitze von mehreren hundert Volt. Mit Diode bleibt sie bei −0,7 V.'}
+  else{$('#aTitle').textContent='Spulenstrom';ANA.draw({min:0,max:50,ticks:[0,10,20,30,40,50],unit:'i in mA',label:()=>`aktuell ${fmt(SS.i,1)} mA`});$('#aCap').textContent='Anzugsstrom etwa 45 mA, Haltestrom etwa 22 mA. Strom fließt nur während des Impulses, außer bei Glimmlampen.'}
+  build();fly('gesamt',0)}
+function setSlow(f){G.F=f;G.hist=[];G.ahist=[];document.querySelectorAll('#segSlow button').forEach(x=>x.classList.toggle('on',+x.dataset.f===f));$('#speedtag').textContent='Zeitlupe 1 : '+f}
+document.querySelectorAll('#segSys button').forEach(b=>b.onclick=()=>switchDev(b.dataset.s));
+document.querySelectorAll('#segSlow button').forEach(b=>b.onclick=()=>setSlow(+b.dataset.f));
+document.querySelectorAll('#segCam button').forEach(b=>b.onclick=()=>fly(b.dataset.c));
+$('#rCover').oninput=applyCover;$('#cCut').onchange=applyCut;
+// Relais
+function toggleS1(){RS.S1=!RS.S1;const b=$('#bS1');b.classList.toggle('off',!RS.S1);b.textContent=RS.S1?'S1 ausschalten':'S1 einschalten'}
+$('#bS1').onclick=toggleS1;
+$('#rU').oninput=e=>{RS.U=e.target.value/100;$('#oU').textContent=e.target.value+' %'};
+$('#cDiode').onchange=e=>{RS.diode=e.target.checked};$('#cShim').onchange=e=>{RS.shim=!e.target.checked;if(RS.shim&&RS.stuck){RS.stuck=false;RS.ang=.97;log('Trennblech eingesetzt: Luftspalt wieder da, Anker fällt ab',false,true)}};
+$('#bTap').onclick=()=>{if(RS.stuck){RS.stuck=false;RS.ang=.97;log('Relais angetippt: Anker löst sich',false,true)}};
+// Stromstoßschalter
+function pressT(i,down){if(down){SS.t[i]=true;SS.tt[i]=G.tReal;SS.trel[i]=false;$('#bT'+(i+1)).classList.add('down')}else SS.trel[i]=true}
+function releaseCheck(){for(let i=0;i<3;i++)if(SS.t[i]&&SS.trel[i]&&G.tReal-SS.tt[i]>40){SS.t[i]=false;SS.trel[i]=false;$('#bT'+(i+1)).classList.remove('down')}
+  if(SS.hand>0&&G.tReal-SS.handT>40)SS.hand=0}
+[0,1,2].forEach(i=>{const b=$('#bT'+(i+1));b.addEventListener('pointerdown',e=>{e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(_){}pressT(i,true)});const up=()=>pressT(i,false);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);
+  b.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();pressT(i,true)}});b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')pressT(i,false)})});
+$('#bHand').onclick=()=>{if(ssPressed())return;SS.hand=1;SS.handT=G.tReal};
+$('#rG').oninput=e=>{SS.glowN=+e.target.value;$('#oG').textContent=e.target.value+(SS.glowN?` · ${fmt(SS.glowN*.8,1)} mA`:'');G.lastCir=''};
+$('#cir').addEventListener('pointerdown',e=>{const g=e.target.closest('[data-btn]');if(!g)return;e.preventDefault();const n=g.dataset.btn;
+  if(n==='S1'){toggleS1();return}const i=+n.slice(1)-1;pressT(i,true);const up=()=>{pressT(i,false);window.removeEventListener('pointerup',up)};window.addEventListener('pointerup',up)});
+
+/* ---------- Schleife ---------- */
+function resize(){const w=stageEl.clientWidth,h=stageEl.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(stageEl);resize();
+switchDev('REL');
+let last=performance.now();
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+  if(orb.anim){const a=orb.anim;a.t+=dt;const u=ease(clamp(a.t/a.dur));orb.tg.lerpVectors(a.f.tg,a.to.tg,u);orb.r=lerp(a.f.r,a.to.r,u);orb.th=lerp(a.f.th,a.to.th,u);orb.ph=lerp(a.f.ph,a.to.ph,u);if(u>=1)orb.anim=null}
+  const dtr=dt*1000/G.F;G.tReal+=dtr;const win=6000/G.F;
+  if(DEVK==='REL'){relSim(dtr)}else{ssSim(dtr);releaseCheck()}
+  while(G.hist.length&&G.hist[0][0]<G.tReal-win)G.hist.shift();while(G.ahist.length&&G.ahist[0][0]<G.tReal-win)G.ahist.shift();
+  applyCam();if(DEVK==='REL')relScene(dt);else ssScene(dt);scene.updateMatrixWorld();updateMats();updateTags();
+  const sit=DEVK==='REL'?relSituation():ssSituation();if(sit[0]!==G.lastSit){G.lastSit=sit[0];$('#nTitle').textContent=sit[0];$('#nText').textContent=sit[1]}
+  if(DEVK==='REL'){relChips();relCircuit()}else{ssChips();ssCircuit()}
+  DIG.update();ANA.update();
+  renderer.render(scene,camera);requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script>
+
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span></footer>
+<script src="hfs-app.js"></script>
+</body></html>

@@ -1,0 +1,657 @@
+<!doctype html><html><head><meta charset=utf8>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="stern-dreieck|sim|b566dc16e8fe">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Stern, Dreieck und N-Lei">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="hfs-app.css">
+</head><body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Stern, Dreieck und N-Leiter</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<title>Stern, Dreieck und N-Leiter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>/* Layout: Laborgerät – Kopfleiste wie ein Typenschild, Bühne (3D/Diagramm) + Messpanel, darunter Arbeitsaufträge */
+:root {
+  --bg: #EDF2F5; --surface: #FFFFFF; --surface2: #F5F8FA; --ink: #13202A; --muted: #586B78;
+  --line: #D2DDE4; --grid: #E3EAEF; --accent: #0089C4; --accent-ink: #FFFFFF;
+  --u: #1B63A8; --i: #C8372D; --p: #2E8B4A; --q: #D9822B; --s: #7A4DB0;
+  --l1: #8B5A2B; --l2: #1E1E1E; --l3: #8C969E; --n: #1E88E5; --warn: #C8372D; --ok: #2E8B4A;
+  --copper: #C77D3A; --steel: #9AA6AE; --magN: #D23B30; --magS: #2E8B4A;
+  --f-head: "Barlow Semi Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+  --f-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3;
+  --line: #2A3B47; --grid: #1F2E38; --accent: #29B6F0; --accent-ink: #062030;
+  --u: #5CB4FF; --i: #FF6F62; --p: #5BD488; --q: #F2A659; --s: #B78CF0;
+  --l1: #C98E55; --l2: #E4E4E4; --l3: #8F9AA3; --n: #4FA3FF; --warn: #FF6F62; --ok: #5BD488;
+  --copper: #D98C46; --steel: #7D8A93; --magN: #E2554A; --magS: #45A866; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3;
+  --line: #2A3B47; --grid: #1F2E38; --accent: #29B6F0; --accent-ink: #062030;
+  --u: #5CB4FF; --i: #FF6F62; --p: #5BD488; --q: #F2A659; --s: #B78CF0;
+  --l1: #C98E55; --l2: #E4E4E4; --l3: #8F9AA3; --n: #4FA3FF; --warn: #FF6F62; --ok: #5BD488;
+  --copper: #D98C46; --steel: #7D8A93; --magN: #E2554A; --magS: #45A866; color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px 32px; }
+.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px }
+h1, h2, h3 { font-family: var(--f-head); text-wrap: balance; margin: 0; line-height: 1.15 }
+h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 700; letter-spacing: .005em }
+h2 { font-size: 1.15rem; font-weight: 600 }
+p { margin: 0 }
+.top { display: flex; flex-direction: column; gap: 6px; border-bottom: 2px solid var(--accent); padding-bottom: 12px }
+.tags { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 600 .74rem/1 var(--f-head); text-transform: uppercase; letter-spacing: .09em; color: var(--muted) }
+.tags b { color: var(--accent); font-weight: 700 }
+.lead { color: var(--muted); max-width: 68ch }
+.lab { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; align-items: start }
+@media (max-width: 880px) { .lab { grid-template-columns: minmax(0, 1fr) } }
+.col { display: flex; flex-direction: column; gap: 16px; min-width: 0 }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.panel > header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+.panel > header small { color: var(--muted); font-size: .8rem }
+.stage { position: relative; width: 100%; height: clamp(300px, 52vh, 480px); border-radius: 8px; overflow: hidden; background: var(--surface2); touch-action: none }
+.stage canvas { display: block; width: 100%; height: 100% }
+.stage .hint { position: absolute; left: 10px; bottom: 8px; font-size: .75rem; color: var(--muted); pointer-events: none }
+.stage .views { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px }
+canvas.plot { display: block; width: 100%; height: 220px }
+canvas.plot.tall { height: 260px }
+canvas.plot.short { height: 170px }
+canvas.plot.pl { height: auto; aspect-ratio: 5 / 2; min-height: 150px }
+.ctls { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px 18px }
+.ctl { display: flex; flex-direction: column; gap: 4px; min-width: 0 }
+.ctl label { display: flex; justify-content: space-between; gap: 8px; font-size: .88rem; color: var(--muted) }
+.ctl output { font: 500 .88rem var(--f-mono); color: var(--ink); font-variant-numeric: tabular-nums }
+input[type=range] { width: 100%; accent-color: var(--accent); height: 28px }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+button { font: 600 .9rem var(--f-head); letter-spacing: .02em; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface2); color: var(--ink); padding: 8px 12px; cursor: pointer; min-height: 38px }
+button:hover { border-color: var(--accent) }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+.seg { display: flex; flex-wrap: wrap; gap: 6px }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+.vals { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; margin: 0 }
+.vals div { background: var(--surface2); border-radius: 8px; padding: 8px 10px; min-width: 0 }
+.vals dt { font-size: .76rem; color: var(--muted) }
+.vals dd { margin: 0; font: 500 1.02rem var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap }
+.c-u { color: var(--u) } .c-i { color: var(--i) } .c-p { color: var(--p) } .c-q { color: var(--q) } .c-s { color: var(--s) }
+.c-l1 { color: var(--l1) } .c-l2 { color: var(--l2) } .c-l3 { color: var(--l3) } .c-n { color: var(--n) }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .82rem; color: var(--muted) }
+.legend span::before { content: ""; display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: currentColor; margin-right: 6px; vertical-align: middle }
+.formula { font: 500 .92rem var(--f-mono); background: var(--surface2); border-radius: 8px; padding: 8px 10px; overflow-wrap: anywhere }
+.note { font-size: .88rem; color: var(--muted) }
+.badge { display: inline-flex; align-items: center; gap: 6px; font: 600 .78rem var(--f-head); letter-spacing: .04em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; border: 1px solid currentColor }
+.badge.ok { color: var(--ok) } .badge.warn { color: var(--warn) }
+.tasks ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; max-width: 80ch }
+.tasks details { border-top: 1px solid var(--line); padding-top: 8px }
+.tasks summary { cursor: pointer; color: var(--accent); font-weight: 600 }
+.tasks details p { margin-top: 6px; color: var(--muted) }
+footer.foot { font-size: .8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 16px; border-top: 1px solid var(--line); padding-top: 10px }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0) }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto } }
+
+canvas.sch { display: block; width: 100%; height: 270px }
+.lamps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px }
+.lamp { background: var(--surface2); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-width: 0 }
+.bulb { width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--line); background: radial-gradient(circle at 50% 45%, #fff6c8 0, #ffd34d 45%, #ffb300 70%); opacity: .15; transition: opacity .2s, box-shadow .2s }
+.lamp b { font-family: var(--f-head) }
+.lamp .m { font: 500 .85rem var(--f-mono) }
+.lamp .w { font-size: .76rem; min-height: 1.2em }
+.tab[hidden] { display: none !important }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="tags"><span><b>Simulation 6</b> · Skript Kapitel B7, B8 und B9</span><span>Skript BFK</span></div>
+    <h1>Stern, Dreieck und Neutralleiter</h1>
+    <p class="lead">Teil A vergleicht drei gleiche Heizwiderstände in Stern- und Dreieckschaltung. Teil B belastet die drei Außenleiter unterschiedlich – und zeigt, was passiert, wenn der Neutralleiter unterbrochen ist.</p>
+  </header>
+
+  <section class="panel">
+    <div class="seg" id="tabs" role="group" aria-label="Teil wählen">
+      <button type="button" data-v="a" aria-pressed="true">A · Stern ↔ Dreieck</button>
+      <button type="button" data-v="b">B · Unsymmetrie und N-Leiter</button>
+    </div>
+  </section>
+
+  <!-- Teil A -->
+  <div class="lab tab" id="tabA">
+    <div class="col">
+      <section class="panel">
+        <header><h2 id="aTitle">Sternschaltung</h2><small>3/N/PE AC 400/230 V</small></header>
+        <canvas class="sch" id="schA" aria-label="Schaltplan Stern oder Dreieck"></canvas>
+      </section>
+    </div>
+    <div class="col">
+      <section class="panel">
+        <header><h2>Einstellungen</h2></header>
+        <div class="seg" id="yd" role="group" aria-label="Schaltung">
+          <button type="button" data-v="Y" aria-pressed="true">Stern (Y)</button>
+          <button type="button" data-v="D">Dreieck (Δ)</button>
+        </div>
+        <div class="ctls"><div class="ctl"><label for="rA">Widerstand je Strang R <output for="rA"></output></label><input type="range" id="rA" min="10" max="200" step="1" value="46"></div></div>
+      </section>
+      <section class="panel">
+        <header><h2>Vergleich</h2><small>gleiche Widerstände</small></header>
+        <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.9rem" id="cmp">
+          <thead><tr style="text-align:left;color:var(--muted)"><th style="padding:6px 4px"></th><th style="padding:6px 4px">Stern</th><th style="padding:6px 4px">Dreieck</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+        <p class="formula">P = √3 · U · I · cos φ (für beide Schaltungen) · P<sub>Δ</sub> = 3 · P<sub>Y</sub></p>
+      </section>
+    </div>
+  </div>
+
+  <!-- Teil B -->
+  <div class="lab tab" id="tabB" hidden>
+    <div class="col">
+      <section class="panel">
+        <header><h2>Zeigerbild</h2><small id="bState">N-Leiter angeschlossen</small></header>
+        <canvas class="plot" style="height:320px" id="phB" aria-label="Zeigerbild der Strangspannungen und Ströme"></canvas>
+        <div class="legend"><span class="c-l1">L1</span><span class="c-l2">L2</span><span class="c-l3">L3</span><span class="c-n">I<sub>N</sub></span><span>Pfeile vom Sternpunkt: Strangspannungen · dünne Pfeile: Ströme</span></div>
+      </section>
+      <section class="panel">
+        <header><h2>Verbraucher (230-V-Geräte, ohmsch)</h2></header>
+        <div class="lamps" id="lamps"></div>
+      </section>
+    </div>
+    <div class="col">
+      <section class="panel">
+        <header><h2>Belastung je Außenleiter</h2><small>Nennleistung bei 230 V</small></header>
+        <div class="ctls">
+          <div class="ctl"><label for="p1">L1 <output for="p1"></output></label><input type="range" id="p1" min="0" max="3000" step="10" value="2300"></div>
+          <div class="ctl"><label for="p2">L2 <output for="p2"></output></label><input type="range" id="p2" min="0" max="3000" step="10" value="1150"></div>
+          <div class="ctl"><label for="p3">L3 <output for="p3"></output></label><input type="range" id="p3" min="0" max="3000" step="10" value="230"></div>
+        </div>
+        <div class="seg" id="pre" role="group" aria-label="Beispiele">
+          <button type="button" data-v="sym">Symmetrisch</button>
+          <button type="button" data-v="ex" aria-pressed="true">Skript 9.2</button>
+          <button type="button" data-v="two">Nur L1 und L2</button>
+        </div>
+      </section>
+      <section class="panel">
+        <header><h2>Störung</h2></header>
+        <div class="seg" id="nfault" role="group" aria-label="Neutralleiter">
+          <button type="button" data-v="0" aria-pressed="true">N angeschlossen</button>
+          <button type="button" data-v="1">N unterbrochen</button>
+        </div>
+        <div class="seg" id="lfault" role="group" aria-label="Außenleiterausfall">
+          <button type="button" data-v="-1" aria-pressed="true">Alle Außenleiter da</button>
+          <button type="button" data-v="0">L1 fällt aus</button>
+          <button type="button" data-v="1">L2 fällt aus</button>
+          <button type="button" data-v="2">L3 fällt aus</button>
+        </div>
+        <dl class="vals">
+          <div><dt>Neutralleiterstrom I<sub>N</sub></dt><dd class="c-n" id="vIN"></dd></div>
+          <div><dt>Verschiebung des Sternpunkts</dt><dd id="vVN"></dd></div>
+        </dl>
+        <p class="note" id="bMsg" aria-live="polite"></p>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel tasks">
+    <h2>Arbeitsaufträge</h2>
+    <ol>
+      <li>Teil A: Schalte von Stern auf Dreieck. Um welchen Faktor ändern sich Strangspannung, Außenleiterstrom und Leistung?</li>
+      <li>Teil B: Stelle alle drei Lasten gleich ein. Wie groß ist I<sub>N</sub>? Unterbrich dann den N-Leiter – ändert sich etwas?</li>
+      <li>Lade „Skript 9.2“ und unterbrich den N-Leiter. Welcher Verbraucher bekommt die höchste Spannung? Warum ist das gefährlich?</li>
+      <li>Lass den N-Leiter angeschlossen und lass L2 ausfallen. Was passiert mit den Verbrauchern an L1 und L3?</li>
+    </ol>
+    <details><summary>Lösungen anzeigen</summary>
+      <p>1. Die Strangspannung steigt um √3 (230 V → 400 V), der Strangstrom ebenfalls um √3, der Außenleiterstrom um 3, die Leistung um 3.
+      2. I<sub>N</sub> = 0 A. Bei symmetrischer Last fließt kein Ausgleichsstrom – eine N-Unterbrechung bleibt folgenlos.
+      3. Der kleinste Verbraucher an L3 (größter Widerstand) bekommt rund 329 V. Geräte werden durch Überspannung zerstört; Brandgefahr.
+      4. Mit N bleiben L1 und L3 bei 230 V und arbeiten normal; nur der Verbraucher an L2 ist ohne Spannung.</p>
+    </details>
+  </section>
+
+  <footer class="foot"><span>Skript BFK · Hans-Freudenberg-Schule Weinheim</span><span>Pablo Disson (Dn)</span><span>Modell: ideales Netz 400/230 V, temperaturunabhängige Widerstände</span></footer>
+</div>
+
+<script>/* ---------- gemeinsame Hilfen für alle Simulationen ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const TAU = Math.PI * 2, DEG = Math.PI / 180;
+const COL = {};
+const themeHooks = [];
+function readColors() {
+  const cs = getComputedStyle(document.documentElement);
+  ["bg", "surface", "surface2", "ink", "muted", "line", "grid", "accent", "u", "i", "p", "q", "s", "l1", "l2", "l3", "n", "warn", "ok", "copper", "steel", "magN", "magS"]
+    .forEach((k) => (COL[k] = cs.getPropertyValue("--" + k).trim()));
+}
+readColors();
+function onTheme(fn) { themeHooks.push(fn); }
+function themeChanged() { readColors(); themeHooks.forEach((f) => f()); }
+try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", themeChanged); } catch (e) {}
+new MutationObserver(themeChanged).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+const REDUCED = (() => { try { return matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } })();
+
+/* Zahlformat deutsch */
+function nf(v, d = 1) {
+  if (!isFinite(v)) return "–";
+  return v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false });
+}
+function setText(id, t) { const e = document.getElementById(id); if (e) e.textContent = t; }
+
+/* Schieberegler binden: Ausgabe formatieren, Callback */
+function bindRange(id, fmt, cb) {
+  const el = document.getElementById(id); const out = document.querySelector(`output[for="${id}"]`);
+  const upd = () => { if (out) out.textContent = fmt(+el.value); cb && cb(+el.value); };
+  el.addEventListener("input", upd); upd();
+  return { el, get v() { return +el.value; }, set(v) { el.value = v; upd(); } };
+}
+/* Segment-Schalter (aria-pressed) */
+function bindSeg(id, cb) {
+  const box = document.getElementById(id);
+  const btns = $$("button", box);
+  const pick = (b) => { btns.forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false")); cb(b.dataset.v); };
+  btns.forEach((b) => b.addEventListener("click", () => pick(b)));
+  const cur = btns.find((b) => b.getAttribute("aria-pressed") === "true") || btns[0];
+  pick(cur);
+  return { pick: (v) => pick(btns.find((b) => b.dataset.v === v)) };
+}
+
+/* Canvas mit hoher Auflösung, passt sich der Größe an */
+function hiCanvas(canvas, onResize) {
+  const ctx = canvas.getContext("2d");
+  const fit = (quiet) => {
+    const r = canvas.getBoundingClientRect(); const d = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.max(1, Math.round(r.width * d)); canvas.height = Math.max(1, Math.round(r.height * d));
+    ctx.setTransform(d, 0, 0, d, 0, 0); ctx.W = r.width; ctx.H = r.height; if (!quiet && onResize) onResize();
+  };
+  try { new ResizeObserver(() => fit()).observe(canvas); } catch (e) { window.addEventListener("resize", () => fit()); }
+  fit(true);
+  return ctx;
+}
+
+/* Zeichenhilfen */
+function arrow(ctx, x0, y0, x1, y1, color, w = 2.4, head = 9, dash = null) {
+  const a = Math.atan2(y1 - y0, x1 - x0), L = Math.hypot(x1 - x0, y1 - y0);
+  if (L < 1) return;
+  const h = Math.min(head, L * 0.45);
+  ctx.save(); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w; ctx.lineCap = "round";
+  if (dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 - Math.cos(a) * h * 0.8, y1 - Math.sin(a) * h * 0.8); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1, y1);
+  ctx.lineTo(x1 - h * Math.cos(a - 0.38), y1 - h * Math.sin(a - 0.38));
+  ctx.lineTo(x1 - h * Math.cos(a + 0.38), y1 - h * Math.sin(a + 0.38)); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function label(ctx, t, x, y, color, opt = {}) {
+  const size = opt.size || 12, fam = opt.mono ? "IBM Plex Mono, monospace" : "Barlow, Segoe UI, sans-serif";
+  ctx.save(); ctx.fillStyle = color; ctx.textBaseline = opt.base || "middle";
+  const parts = String(t).match(/^([^_]*)_(\S+)$/);   // "U_R" → U mit tiefgestelltem R
+  if (parts) {
+    ctx.font = `${opt.weight || 600} ${size}px ${fam}`; const w1 = ctx.measureText(parts[1]).width;
+    ctx.font = `${opt.weight || 600} ${size * 0.72}px ${fam}`; const w2 = ctx.measureText(parts[2]).width;
+    const al = opt.align || "center"; let x0 = al === "center" ? x - (w1 + w2) / 2 : al === "right" ? x - w1 - w2 : x;
+    ctx.textAlign = "left";
+    const draw = (txt, xx, yy, sz) => { ctx.font = `${opt.weight || 600} ${sz}px ${fam}`; if (opt.halo) { ctx.lineWidth = 4; ctx.strokeStyle = opt.halo; ctx.lineJoin = "round"; ctx.strokeText(txt, xx, yy); } ctx.fillText(txt, xx, yy); };
+    draw(parts[1], x0, y, size); draw(parts[2], x0 + w1, y + size * 0.3, size * 0.72);
+    ctx.restore(); return;
+  }
+  ctx.font = `${opt.weight || 600} ${size}px ${fam}`;
+  ctx.textAlign = opt.align || "center";
+  if (opt.halo) { ctx.lineWidth = 4; ctx.strokeStyle = opt.halo; ctx.lineJoin = "round"; ctx.strokeText(t, x, y); }
+  ctx.fillText(t, x, y); ctx.restore();
+}
+
+/*
+  Zeiger + Liniendiagramm.
+  series: [{label, amp (0..1), phase (rad), k (Frequenzfaktor), color, base (Index, Zeiger beginnt an Spitze), plot (bool), width, dash}]
+  alpha: aktueller Winkel ω·t (rad). cycles: Perioden im Liniendiagramm.
+*/
+function drawPhasorLine(ctx, series, alpha, opt = {}) {
+  const W = ctx.W, H = ctx.H, cycles = opt.cycles || 1;
+  if (!(W > 60 && H > 60)) return null;
+  ctx.clearRect(0, 0, W, H);
+  const s = Math.min(H, W * (opt.split || 0.4));
+  const cx = s / 2, cy = H / 2, R = s / 2 - 18;
+  const x0 = s + 16, x1 = W - 16, span = TAU * cycles;
+  const X = (ph) => x0 + (ph / span) * (x1 - x0);
+  // Kreis + Achsen
+  ctx.strokeStyle = COL.grid; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - R - 6, cy); ctx.lineTo(cx + R + 6, cy); ctx.moveTo(cx, cy - R - 6); ctx.lineTo(cx, cy + R + 6); ctx.stroke();
+  // Diagrammachsen
+  ctx.beginPath(); ctx.moveTo(x0, cy); ctx.lineTo(x1, cy); ctx.stroke();
+  for (let k = 0; k <= 4 * cycles; k++) {
+    const x = X(k * Math.PI / 2);
+    ctx.strokeStyle = COL.grid; ctx.beginPath(); ctx.moveTo(x, cy - R); ctx.lineTo(x, cy + R); ctx.stroke();
+    label(ctx, (k * 90) + "°", x, cy + R + 10, COL.muted, { size: 10, weight: 500 });
+  }
+  if (opt.xlabel) label(ctx, opt.xlabel, x1, cy - R - 8, COL.muted, { size: 10, weight: 500, align: "right" });
+  // Zeigerspitzen berechnen
+  const tips = [];
+  series.forEach((sr, n) => {
+    const k = sr.k || 1, a = k * alpha + (sr.phase || 0);
+    const bx = sr.base != null ? tips[sr.base].x : cx, by = sr.base != null ? tips[sr.base].y : cy;
+    tips[n] = { x: bx + R * sr.amp * Math.cos(a), y: by - R * sr.amp * Math.sin(a), bx, by };
+  });
+  const cur = ((alpha % span) + span) % span;
+  // Kurven
+  series.forEach((sr) => {
+    if (sr.plot === false) return;
+    const k = sr.k || 1, f = (ph) => cy - R * sr.amp * Math.sin(k * ph + (sr.phase || 0));
+    ctx.save(); ctx.strokeStyle = sr.color; ctx.lineWidth = sr.width || 2.2; ctx.lineJoin = "round";
+    ctx.globalAlpha = 0.22; ctx.beginPath();
+    for (let x = x0; x <= x1; x += 1.5) { const ph = (x - x0) / (x1 - x0) * span; x === x0 ? ctx.moveTo(x, f(ph)) : ctx.lineTo(x, f(ph)); }
+    ctx.stroke(); ctx.globalAlpha = 1; ctx.beginPath();
+    const xc = X(cur);
+    for (let x = x0; x <= xc; x += 1.5) { const ph = (x - x0) / (x1 - x0) * span; x === x0 ? ctx.moveTo(x, f(ph)) : ctx.lineTo(x, f(ph)); }
+    ctx.lineTo(xc, f(cur)); ctx.stroke(); ctx.restore();
+  });
+  // Projektionslinien + Zeiger
+  const xc = X(cur);
+  series.forEach((sr, n) => {
+    if (sr.plot === false) return;
+    const k = sr.k || 1, yv = cy - R * sr.amp * Math.sin(k * cur + (sr.phase || 0));
+    const t = tips[n]; const ty = sr.base != null ? cy - R * sr.amp * Math.sin(k * alpha + (sr.phase || 0)) : t.y;
+    ctx.save(); ctx.strokeStyle = sr.color; ctx.globalAlpha = 0.5; ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(sr.base != null ? cx : t.x, ty); ctx.lineTo(xc, yv); ctx.stroke(); ctx.restore();
+    ctx.fillStyle = sr.color; ctx.beginPath(); ctx.arc(xc, yv, 3.5, 0, TAU); ctx.fill();
+  });
+  ctx.strokeStyle = COL.muted; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.moveTo(xc, cy - R); ctx.lineTo(xc, cy + R); ctx.stroke(); ctx.globalAlpha = 1;
+  series.forEach((sr, n) => {
+    const t = tips[n];
+    arrow(ctx, t.bx, t.by, t.x, t.y, sr.color, sr.width || 2.6, 9, sr.dash || null);
+    if (sr.label) {
+      const dx = t.x - t.bx, dy = t.y - t.by, L = Math.hypot(dx, dy) || 1;
+      if (sr.base != null) {   // angehängter Teilzeiger: Beschriftung neben die Mitte, nach außen
+        const mx = (t.x + t.bx) / 2, my = (t.y + t.by) / 2; let nx = -dy / L, ny = dx / L;
+        if ((mx + nx - cx) ** 2 + (my + ny - cy) ** 2 < (mx - cx) ** 2 + (my - cy) ** 2) { nx = -nx; ny = -ny; }
+        label(ctx, sr.label, mx + nx * 14, my + ny * 14, sr.color, { size: 12, halo: COL.surface });
+      } else label(ctx, sr.label, t.x + dx / L * 13, t.y + dy / L * 13, sr.color, { size: 12, halo: COL.surface });
+    }
+  });
+  ctx.fillStyle = COL.ink; ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, TAU); ctx.fill();
+  return { cx, cy, R };
+}
+
+/* Animationsschleife mit Zeitlupe; alpha in rad */
+function makeClock(opt = {}) {
+  const st = { alpha: opt.alpha || 0, playing: !REDUCED && opt.play !== false, rev: opt.rev || 0.25, last: 0, ticks: [] };
+  st.loop = (t) => {
+    const dt = st.last ? Math.min((t - st.last) / 1000, 0.1) : 0; st.last = t;
+    if (st.playing) st.alpha += TAU * st.rev * dt;
+    st.ticks.forEach((f) => f(dt));
+    requestAnimationFrame(st.loop);
+  };
+  requestAnimationFrame(st.loop);
+  return st;
+}
+function bindPlay(btnId, clock, stepBtnId, stepDeg = 15) {
+  const b = document.getElementById(btnId);
+  const upd = () => { b.textContent = clock.playing ? "Pause" : "Abspielen"; b.setAttribute("aria-pressed", clock.playing ? "true" : "false"); };
+  b.addEventListener("click", () => { clock.playing = !clock.playing; upd(); }); upd();
+  if (stepBtnId) document.getElementById(stepBtnId).addEventListener("click", () => {
+    clock.playing = false; upd(); clock.alpha = (Math.round(clock.alpha / (stepDeg * DEG)) + 1) * stepDeg * DEG; });
+  return upd;
+}
+const wrapDeg = (a) => ((Math.round(a / DEG) % 360) + 360) % 360;
+
+/* ---------- 3D (three.js) ---------- */
+function make3D(host, camPos, target) {
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x000000, 0);
+  host.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  camera.position.set(...camPos);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.target.set(...target); controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.minDistance = 4; controls.maxDistance = 22; controls.enablePan = false; controls.update();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 0.85));
+  const d1 = new THREE.DirectionalLight(0xffffff, 0.75); d1.position.set(5, 8, 6); scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0xffffff, 0.3); d2.position.set(-6, -2, -4); scene.add(d2);
+  const fit = () => { const r = host.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / Math.max(1, r.height); camera.fov = camera.aspect < 1 ? 50 : camera.aspect < 1.3 ? 42 : 34; camera.updateProjectionMatrix(); };
+  try { new ResizeObserver(fit).observe(host); } catch (e) { window.addEventListener("resize", fit); }
+  fit();
+  const home = { pos: camera.position.clone(), target: controls.target.clone() };
+  const view = (pos, tgt) => { camera.position.set(...pos); controls.target.set(...(tgt || target)); controls.update(); };
+  return { renderer, scene, camera, controls, view, home: () => view(home.pos.toArray(), home.target.toArray()) };
+}
+const mat = (color, o = {}) => new THREE.MeshStandardMaterial({ color: new THREE.Color(color), metalness: o.metal ?? 0.2, roughness: o.rough ?? 0.55, transparent: o.opacity != null, opacity: o.opacity ?? 1, emissive: new THREE.Color(o.emissive || "#000000"), side: o.side || THREE.FrontSide, depthWrite: o.opacity != null ? false : true });
+/* Text als Sprite */
+function textSprite(text, color, size = 0.5, bg = null) {
+  const c = document.createElement("canvas"); const S = 128; c.width = S * 2; c.height = S;
+  const g = c.getContext("2d");
+  if (bg) { g.fillStyle = bg; g.beginPath(); g.roundRect ? g.roundRect(8, 8, S * 2 - 16, S - 16, 24) : g.rect(8, 8, S * 2 - 16, S - 16); g.fill(); }
+  g.fillStyle = color; g.font = "700 76px Barlow Semi Condensed, Arial, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillText(text, S, S / 2 + 4);
+  const tex = new THREE.CanvasTexture(c); tex.anisotropy = 4;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+  sp.scale.set(size * 2, size, 1); sp.renderOrder = 10;
+  return sp;
+}
+/* Zylinder zwischen zwei Punkten */
+function rod(a, b, r, material) {
+  const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b);
+  const g = new THREE.CylinderGeometry(r, r, A.distanceTo(B), 16);
+  const m = new THREE.Mesh(g, material);
+  m.position.copy(A).add(B).multiplyScalar(0.5);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), B.clone().sub(A).normalize());
+  return m;
+}
+/* Pfeil (Schaft + Kegel) entlang Richtung */
+function arrow3(color, len = 1, r = 0.05) {
+  const g = new THREE.Group(); const m = mat(color, { rough: 0.4 });
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 1, 12), m); shaft.position.y = 0.5; g.add(shaft);
+  const head = new THREE.Mesh(new THREE.ConeGeometry(r * 2.6, 0.32, 16), m); g.add(head);
+  g.userData = { shaft, head, m, r };
+  g.setLen = (L) => { const l = Math.max(L - 0.3, 0.001); shaft.scale.y = l; shaft.position.y = l / 2; head.position.y = l + 0.15; g.visible = L > 0.05; };
+  g.setLen(len);
+  return g;
+}
+function pointArrow(g, dir) { // richtet Pfeil (lokal +y) nach dir aus
+  const d = new THREE.Vector3(...dir); const L = d.length();
+  if (L < 1e-6) { g.visible = false; return; }
+  g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.clone().normalize()); g.setLen(L);
+}
+
+/* Ständer mit drei Wicklungssträngen (U, V, W um 120° versetzt, Drehsinn gegen den Uhrzeigersinn) */
+const COILS = [
+  { name: "U1", beta: 90, ph: 0, sign: 1 }, { name: "V1", beta: 210, ph: 1, sign: 1 }, { name: "W1", beta: 330, ph: 2, sign: 1 },
+  { name: "U2", beta: 270, ph: 0, sign: -1 }, { name: "V2", beta: 30, ph: 1, sign: -1 }, { name: "W2", beta: 150, ph: 2, sign: -1 }];
+const PHCOL = () => [COL.l1, COL.l2, COL.l3];
+function buildStator(scene) {
+  const g = new THREE.Group(); scene.add(g);
+  const prof = [[2.15, -1.05], [2.8, -1.05], [2.8, 1.05], [2.15, 1.05], [2.15, -1.05]].map(([x, y]) => new THREE.Vector2(x, y));
+  const ringMat = mat(COL.steel, { metal: 0.5, rough: 0.5, opacity: 0.38, side: THREE.DoubleSide });
+  const ring = new THREE.Mesh(new THREE.LatheGeometry(prof, 120), ringMat); ring.rotation.x = Math.PI / 2; g.add(ring);
+  const edgeMat = new THREE.LineBasicMaterial({ color: new THREE.Color(COL.muted), transparent: true, opacity: 0.6 });
+  for (const z of [-1.05, 1.05]) for (const rr of [2.15, 2.8]) {
+    const pts = []; for (let k = 0; k <= 120; k++) { const a = k / 120 * TAU; pts.push(new THREE.Vector3(rr * Math.cos(a), rr * Math.sin(a), z)); }
+    g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), edgeMat));
+  }
+  const coils = COILS.map((c) => {
+    const cg = new THREE.Group();
+    const m = mat(PHCOL()[c.ph], { metal: 0.3, rough: 0.45, emissive: PHCOL()[c.ph] });
+    m.emissiveIntensity = 0;
+    const tor = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.1, 12, 40), m); tor.rotation.x = Math.PI / 2; tor.scale.set(1, 1, 2.0);
+    // Zahn (Eisenkern) in der Spule
+    const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.34, 1.4), mat(COL.steel, { metal: 0.5, rough: 0.5 }));
+    cg.add(tor, tooth);
+    const b = c.beta * DEG; cg.position.set(1.98 * Math.cos(b), 1.98 * Math.sin(b), 0); cg.rotation.z = b - Math.PI / 2;
+    g.add(cg);
+    const sp = textSprite(c.name, COL.ink, 0.34); sp.position.set(1.5 * Math.cos(b), 1.5 * Math.sin(b), 1.25); g.add(sp);
+    return { ...c, mat: m, sprite: sp, group: cg };
+  });
+  const retheme = () => {
+    ringMat.color.set(COL.steel); edgeMat.color.set(COL.muted);
+    coils.forEach((c) => { c.mat.color.set(PHCOL()[c.ph]); c.mat.emissive.set(PHCOL()[c.ph]);
+      const sp = textSprite(c.name, COL.ink, 0.34); c.sprite.material = sp.material; });
+  };
+  return { group: g, coils, retheme };
+}
+
+/* Kartesisches Diagramm. cfg: {x:[min,max], y:[min,max], xt:[[wert,text]], yt:[[wert,text]], xl, yl, pad} → gibt Abbildungen X(), Y() zurück */
+function axes(ctx, cfg) {
+  const W = ctx.W, H = ctx.H, P = Object.assign({ l: 44, r: 12, t: 14, b: 26 }, cfg.pad || {});
+  ctx.clearRect(0, 0, W, H);
+  const X = (v) => P.l + (v - cfg.x[0]) / (cfg.x[1] - cfg.x[0]) * (W - P.l - P.r);
+  const Y = (v) => H - P.b - (v - cfg.y[0]) / (cfg.y[1] - cfg.y[0]) * (H - P.t - P.b);
+  ctx.lineWidth = 1;
+  (cfg.yt || []).forEach(([v, t]) => { ctx.strokeStyle = COL.grid; ctx.beginPath(); ctx.moveTo(P.l, Y(v)); ctx.lineTo(W - P.r, Y(v)); ctx.stroke(); label(ctx, t, P.l - 6, Y(v), COL.muted, { size: 10, weight: 500, align: "right" }); });
+  (cfg.xt || []).forEach(([v, t]) => { ctx.strokeStyle = COL.grid; ctx.beginPath(); ctx.moveTo(X(v), P.t); ctx.lineTo(X(v), H - P.b); ctx.stroke(); label(ctx, t, X(v), H - P.b + 12, COL.muted, { size: 10, weight: 500 }); });
+  if (cfg.y[0] < 0 && cfg.y[1] > 0) { ctx.strokeStyle = COL.muted; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.moveTo(P.l, Y(0)); ctx.lineTo(W - P.r, Y(0)); ctx.stroke(); ctx.globalAlpha = 1; }
+  if (cfg.xl) label(ctx, cfg.xl, W - P.r, H - P.b - 8, COL.muted, { size: 10, weight: 500, align: "right" });
+  if (cfg.yl) label(ctx, cfg.yl, P.l + 4, P.t + 2, COL.muted, { size: 10, weight: 500, align: "left", base: "top" });
+  return { X, Y, P, W, H };
+}
+function curve(ctx, A, f, x0, x1, color, w = 2.2, opt = {}) {
+  const n = Math.max(2, Math.round((A.X(x1) - A.X(x0)) / 1.5));
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineJoin = "round"; if (opt.dash) ctx.setLineDash(opt.dash); if (opt.alpha) ctx.globalAlpha = opt.alpha;
+  ctx.beginPath();
+  for (let k = 0; k <= n; k++) { const x = x0 + (x1 - x0) * k / n; const px = A.X(x), py = A.Y(f(x)); k ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+  ctx.stroke(); ctx.restore();
+}
+function fillBetween(ctx, A, f, g, x0, x1, color, alpha = 0.25, cond = null) {
+  const n = Math.max(2, Math.round((A.X(x1) - A.X(x0)) / 1.5));
+  ctx.save(); ctx.fillStyle = color; ctx.globalAlpha = alpha;
+  let open = false;
+  const pts = [];
+  for (let k = 0; k <= n; k++) { const x = x0 + (x1 - x0) * k / n; pts.push(x); }
+  // Segmente, in denen cond erfüllt ist
+  let seg = [];
+  const flush = () => { if (seg.length > 1) { ctx.beginPath(); seg.forEach((x, i) => (i ? ctx.lineTo(A.X(x), A.Y(f(x))) : ctx.moveTo(A.X(x), A.Y(f(x))))); for (let i = seg.length - 1; i >= 0; i--) ctx.lineTo(A.X(seg[i]), A.Y(g(seg[i]))); ctx.closePath(); ctx.fill(); } seg = []; };
+  pts.forEach((x) => { if (!cond || cond(x)) seg.push(x); else flush(); });
+  flush(); ctx.restore();
+}
+</script>
+<script>
+(() => {
+  const US = 230, UL = 400;
+  /* ---------- Teil A ---------- */
+  let yd = "Y", RA = 46;
+  const cA = hiCanvas($("#schA"), () => drawA());
+  bindSeg("tabs", (v) => { $("#tabA").hidden = v !== "a"; $("#tabB").hidden = v !== "b"; requestAnimationFrame(() => { drawA(); drawB(); }); });
+  bindSeg("yd", (v) => { yd = v; tableA(); drawA(); });
+  bindRange("rA", (v) => v + " Ω", (v) => { RA = v; tableA(); drawA(); });
+  function vA(t) {
+    const Ustr = t === "Y" ? UL / Math.sqrt(3) : UL, Istr = Ustr / RA, IL = t === "Y" ? Istr : Math.sqrt(3) * Istr, P = 3 * Ustr * Istr;
+    return { Ustr, Istr, IL, P };
+  }
+  function tableA() {
+    const y = vA("Y"), d = vA("D");
+    const rows = [["Strangspannung", y.Ustr, d.Ustr, "V", 0], ["Strangstrom", y.Istr, d.Istr, "A", 2], ["Außenleiterstrom", y.IL, d.IL, "A", 2], ["Leistung", y.P / 1000, d.P / 1000, "kW", 2]];
+    const on = (k) => (yd === k ? "font-weight:600;color:var(--ink)" : "color:var(--muted)");
+    $("#cmp tbody").innerHTML = rows.map(([n, a, b, u, dd]) => `<tr style="border-top:1px solid var(--line)"><td style="padding:6px 4px">${n}</td><td style="padding:6px 4px;font-family:var(--f-mono);${on("Y")}">${nf(a, dd)} ${u}</td><td style="padding:6px 4px;font-family:var(--f-mono);${on("D")}">${nf(b, dd)} ${u}</td></tr>`).join("");
+    setText("aTitle", yd === "Y" ? "Sternschaltung" : "Dreieckschaltung");
+  }
+  function resistor(c, x0, y0, x1, y1) {
+    const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
+    const a = 0.3, b = 0.7, w = 8;
+    c.beginPath(); c.moveTo(x0, y0); c.lineTo(x0 + dx * a, y0 + dy * a); c.moveTo(x0 + dx * b, y0 + dy * b); c.lineTo(x1, y1); c.stroke();
+    const p = (t, s) => [x0 + dx * t + nx * w * s, y0 + dy * t + ny * w * s];
+    c.beginPath(); c.moveTo(...p(a, 1)); c.lineTo(...p(b, 1)); c.lineTo(...p(b, -1)); c.lineTo(...p(a, -1)); c.closePath(); c.stroke();
+  }
+  function drawA() {
+    const c = cA, W = c.W, H = c.H; if (!W || $("#tabA").hidden) return; c.clearRect(0, 0, W, H);
+    const v = vA(yd), PC = [COL.l1, COL.l2, COL.l3];
+    const x0 = 34, x1 = W - 16, ys = [44, 100, 156], yStar = 222, yN = 250;
+    const xs = [0.42, 0.62, 0.82].map((f) => x0 + (x1 - x0) * f);
+    c.lineWidth = 2.4;
+    ys.forEach((y, k) => { c.strokeStyle = PC[k]; c.beginPath(); c.moveTo(x0, y); c.lineTo(x1, y); c.stroke(); label(c, "L" + (k + 1), x0 - 16, y, PC[k], { size: 12 }); });
+    if (yd === "Y") { c.strokeStyle = COL.n; c.beginPath(); c.moveTo(x0, yN); c.lineTo(x1, yN); c.stroke(); label(c, "N", x0 - 16, yN, COL.n, { size: 12 }); }
+    const dot = (x, y, col) => { c.fillStyle = col; c.beginPath(); c.arc(x, y, 3.6, 0, TAU); c.fill(); };
+    c.lineWidth = 1.8; c.strokeStyle = COL.ink;
+    if (yd === "Y") {
+      xs.forEach((x, k) => { resistor(c, x, ys[k], x, yStar); dot(x, ys[k], PC[k]); });
+      c.strokeStyle = COL.ink; c.beginPath(); c.moveTo(xs[0], yStar); c.lineTo(xs[2], yStar); c.stroke(); dot(xs[1], yStar, COL.ink);
+      c.strokeStyle = COL.n; c.lineWidth = 2; c.beginPath(); c.moveTo(xs[1], yStar); c.lineTo(xs[1], yN); c.stroke(); dot(xs[1], yN, COL.n);
+      label(c, "Sternpunkt", xs[1] + 8, yStar + 12, COL.muted, { size: 10, align: "left", weight: 500 });
+      label(c, `U_Str = ${nf(v.Ustr, 0)} V`, xs[0] - 14, (ys[0] + yStar) / 2 + 22, COL.u, { align: "right", size: 12, halo: COL.surface });
+    } else {
+      const pairs = [[0, 1], [1, 2], [2, 0]];
+      pairs.forEach(([a, b], k) => { const ya = ys[a], yb = ys[b]; resistor(c, xs[k], Math.min(ya, yb), xs[k], Math.max(ya, yb)); dot(xs[k], ya, PC[a]); dot(xs[k], yb, PC[b]); });
+      label(c, `U_Str = ${nf(v.Ustr, 0)} V`, xs[0] - 14, (ys[0] + ys[1]) / 2, COL.u, { align: "right", size: 12, halo: COL.surface });
+      label(c, "kein Sternpunkt, kein N", xs[1], yN - 14, COL.muted, { size: 11, weight: 500 });
+    }
+    arrow(c, x0 + 14, ys[0] - 14, x0 + 54, ys[0] - 14, COL.i, 1.8, 7);
+    label(c, `I = ${nf(v.IL, 2)} A`, x0 + 60, ys[0] - 14, COL.i, { align: "left", size: 12 });
+    label(c, `P = ${nf(v.P / 1000, 2)} kW`, x1, 16, COL.p, { align: "right", size: 13 });
+  }
+  tableA();
+
+  /* ---------- Teil B ---------- */
+  const cx = (re, im) => ({ re, im }), add = (a, b) => cx(a.re + b.re, a.im + b.im), sub = (a, b) => cx(a.re - b.re, a.im - b.im), mul = (a, s) => cx(a.re * s, a.im * s), abs = (a) => Math.hypot(a.re, a.im);
+  let P = [2300, 1150, 230], nOpen = false, lOut = -1;
+  const cB = hiCanvas($("#phB"), () => drawB());
+  const lampBox = $("#lamps");
+  lampBox.innerHTML = [0, 1, 2].map((k) => `<div class="lamp"><div class="bulb" id="bulb${k}"></div><b class="c-l${k + 1}">L${k + 1}</b><span class="m" id="lu${k}"></span><span class="m" id="lp${k}"></span><span class="w" id="lw${k}"></span></div>`).join("");
+  const sl = [0, 1, 2].map((k) => bindRange("p" + (k + 1), (v) => nf(v, 0) + " W", (v) => { P[k] = v; drawB(); }));
+  const PRE = { sym: [1000, 1000, 1000], ex: [2300, 1150, 230], two: [2760, 2760, 0] };
+  bindSeg("pre", (v) => PRE[v].forEach((p, k) => sl[k].set(p)));
+  bindSeg("nfault", (v) => { nOpen = v === "1"; drawB(); });
+  bindSeg("lfault", (v) => { lOut = +v; drawB(); });
+  function solveB() {
+    const Usrc = [90, -30, 210].map((d) => cx(US * Math.cos(d * DEG), US * Math.sin(d * DEG)));
+    const Y = P.map((p, k) => (k === lOut || p <= 0 ? 0 : p / (US * US)));
+    let VN = cx(0, 0);
+    if (nOpen) { const sY = Y.reduce((a, b) => a + b, 0); if (sY > 0) VN = mul(Y.reduce((acc, y, k) => add(acc, mul(Usrc[k], y)), cx(0, 0)), 1 / sY); }
+    const Ustr = Usrc.map((u, k) => (Y[k] === 0 ? cx(0, 0) : sub(u, VN)));
+    const I = Ustr.map((u, k) => mul(u, Y[k]));
+    const IN = I.reduce((a, b) => add(a, b), cx(0, 0));
+    return { Usrc, VN, Ustr, I, IN: nOpen ? cx(0, 0) : IN, Y };
+  }
+  function drawB() {
+    const r = solveB(), c = cB, W = c.W, H = c.H;
+    // Lampen + Werte
+    [0, 1, 2].forEach((k) => {
+      const U = abs(r.Ustr[k]), Pk = r.Y[k] * U * U, rel = P[k] > 0 ? Pk / P[k] : 0;
+      const b = $("#bulb" + k); b.style.opacity = P[k] > 0 ? (0.15 + 0.85 * Math.min(rel, 1.6) / 1.6).toFixed(2) : 0.08;
+      b.style.boxShadow = rel > 0.05 ? `0 0 ${(8 + 26 * Math.min(rel, 2)).toFixed(0)}px rgba(255,190,40,${Math.min(0.9, rel * 0.6).toFixed(2)})` : "none";
+      setText("lu" + k, P[k] > 0 && r.Y[k] > 0 ? nf(U, 0) + " V" : "–"); setText("lp" + k, P[k] > 0 && r.Y[k] > 0 ? nf(Pk, 0) + " W" : "aus");
+      const w = $("#lw" + k);
+      if (r.Y[k] > 0 && U > 253) { w.textContent = "Überspannung!"; w.style.color = "var(--warn)"; }
+      else if (r.Y[k] > 0 && U < 207) { w.textContent = "Unterspannung"; w.style.color = "var(--q)"; }
+      else if (k === lOut) { w.textContent = "Außenleiter fehlt"; w.style.color = "var(--muted)"; }
+      else { w.textContent = r.Y[k] > 0 ? "normal" : ""; w.style.color = "var(--ok)"; }
+    });
+    setText("vIN", nOpen ? "– (unterbrochen)" : nf(abs(r.IN), 2) + " A");
+    setText("vVN", nf(abs(r.VN), 0) + " V");
+    setText("bState", nOpen ? "N-Leiter unterbrochen – Sternpunkt verschoben" : "N-Leiter angeschlossen – Sternpunkt fest");
+    const maxU = Math.max(...r.Ustr.map(abs));
+    setText("bMsg", nOpen && abs(r.VN) > 5 ? `Der Sternpunkt wandert um ${nf(abs(r.VN), 0)} V. Der schwächer belastete Strang bekommt bis zu ${nf(maxU, 0)} V.`
+      : nOpen ? "Bei gleicher Last bleibt der Sternpunkt in der Mitte – die Unterbrechung bleibt folgenlos."
+      : "Der N-Leiter hält jeden Strang auf 230 V und führt den Ausgleichsstrom.");
+    // Zeigerbild
+    if (!W || $("#tabB").hidden) return; c.clearRect(0, 0, W, H);
+    const s = Math.min(W, H) / 2 - 22, ox = W / 2, oy = H / 2 + 14, k = s / 262, PC = [COL.l1, COL.l2, COL.l3];
+    const pt = (z) => [ox + z.re * k, oy - z.im * k];
+    // Dreieck der Außenleiterspannungen
+    c.strokeStyle = COL.grid; c.lineWidth = 1; c.beginPath(); r.Usrc.forEach((u, i) => { const [x, y] = pt(u); i ? c.lineTo(x, y) : c.moveTo(x, y); }); c.closePath(); c.stroke();
+    r.Usrc.forEach((u, i) => { arrow(c, ox, oy, ...pt(u), PC[i], 1, 7, [3, 4]); const [x, y] = pt(mul(u, 1.13)); label(c, "L" + (i + 1), x, y, PC[i], { size: 12 }); });
+    const [nx, ny] = pt(r.VN);
+    if (abs(r.VN) > 2) arrow(c, ox, oy, nx, ny, COL.warn, 1.8, 8);
+    r.Ustr.forEach((u, i) => { if (r.Y[i] > 0) arrow(c, nx, ny, ...pt(add(r.VN, u)), PC[i], 2.8, 10); });
+    // Ströme (Maßstab: 1 A ≙ 12 V)
+    const ki = 12;
+    r.I.forEach((iz, i) => { if (abs(iz) > 0.05) arrow(c, nx, ny, ...pt(add(r.VN, mul(iz, ki))), PC[i], 1.4, 7); });
+    if (!nOpen && abs(r.IN) > 0.05) { arrow(c, ox, oy, ...pt(mul(r.IN, ki)), COL.n, 2.6, 9); const [x, y] = pt(mul(r.IN, ki * 1.15)); label(c, "I_N", x + 10, y, COL.n, { size: 12, halo: COL.surface }); }
+    c.fillStyle = COL.n; c.beginPath(); c.arc(ox, oy, 4, 0, TAU); c.fill(); label(c, "N", ox - 10, oy + 12, COL.n, { size: 11 });
+    if (abs(r.VN) > 2) { c.fillStyle = COL.warn; c.beginPath(); c.arc(nx, ny, 4.5, 0, TAU); c.fill(); label(c, "N'", nx + 12, ny - 8, COL.warn, { size: 12, halo: COL.surface }); }
+    label(c, "Ströme: 1 A ≙ 12 V", W - 8, H - 10, COL.muted, { align: "right", size: 10, weight: 500 });
+  }
+  onTheme(() => { drawA(); drawB(); });
+  drawB();
+})();
+</script>
+
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span></footer>
+<script src="hfs-app.js"></script>
+</body></html>

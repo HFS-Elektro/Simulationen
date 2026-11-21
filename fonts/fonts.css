@@ -206,15 +206,6 @@
   src: url(jetbrainsmono-400-greek.woff2) format('woff2');
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
 }
-/* latin-ext */
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(jetbrainsmono-400-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
 /* latin */
 @font-face {
   font-family: 'JetBrains Mono';
@@ -232,15 +223,6 @@
   font-display: swap;
   src: url(jetbrainsmono-600-greek.woff2) format('woff2');
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url(jetbrainsmono-600-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
@@ -269,26 +251,6 @@
   src: url(ibmplexmono-600-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* greek */
-@font-face {
-  font-family: 'IBM Plex Sans';
-  font-style: normal;
-  font-weight: 400;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(ibmplexsans-400-greek.woff2) format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'IBM Plex Sans';
-  font-style: normal;
-  font-weight: 400;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(ibmplexsans-400-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
 /* latin */
 @font-face {
   font-family: 'IBM Plex Sans';
@@ -298,26 +260,6 @@
   font-display: swap;
   src: url(ibmplexsans-400-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* greek */
-@font-face {
-  font-family: 'IBM Plex Sans';
-  font-style: normal;
-  font-weight: 500;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(ibmplexsans-500-greek.woff2) format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'IBM Plex Sans';
-  font-style: normal;
-  font-weight: 500;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(ibmplexsans-500-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
@@ -329,26 +271,6 @@
   src: url(ibmplexsans-500-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* greek */
-@font-face {
-  font-family: 'IBM Plex Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(ibmplexsans-600-greek.woff2) format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'IBM Plex Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(ibmplexsans-600-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
 /* latin */
 @font-face {
   font-family: 'IBM Plex Sans';
@@ -359,15 +281,6 @@
   src: url(ibmplexsans-600-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* latin-ext */
-@font-face {
-  font-family: 'IBM Plex Sans Condensed';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url(ibmplexsanscondensed-500-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
 /* latin */
 @font-face {
   font-family: 'IBM Plex Sans Condensed';
@@ -376,15 +289,6 @@
   font-display: swap;
   src: url(ibmplexsanscondensed-500-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'IBM Plex Sans Condensed';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url(ibmplexsanscondensed-600-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
@@ -395,15 +299,6 @@
   src: url(ibmplexsanscondensed-600-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* latin-ext */
-@font-face {
-  font-family: 'IBM Plex Sans Condensed';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(ibmplexsanscondensed-700-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
 /* latin */
 @font-face {
   font-family: 'IBM Plex Sans Condensed';
@@ -412,15 +307,6 @@
   font-display: swap;
   src: url(ibmplexsanscondensed-700-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* greek-ext */
-@font-face {
-  font-family: 'Source Sans 3';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(sourcesans3-400-greek-ext.woff2) format('woff2');
-  unicode-range: U+1F00-1FFF;
 }
 /* greek */
 @font-face {
@@ -449,15 +335,6 @@
   src: url(sourcesans3-400-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* greek-ext */
-@font-face {
-  font-family: 'Source Sans 3';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url(sourcesans3-600-greek-ext.woff2) format('woff2');
-  unicode-range: U+1F00-1FFF;
-}
 /* greek */
 @font-face {
   font-family: 'Source Sans 3';
@@ -484,15 +361,6 @@
   font-display: swap;
   src: url(sourcesans3-600-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* greek-ext */
-@font-face {
-  font-family: 'Source Sans 3';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(sourcesans3-700-greek-ext.woff2) format('woff2');
-  unicode-range: U+1F00-1FFF;
 }
 /* greek */
 @font-face {
@@ -523,138 +391,12 @@
 }
 /* greek */
 @font-face {
-  font-family: 'Press Start 2P';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(pressstart2p-400-greek.woff2) format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Press Start 2P';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(pressstart2p-400-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Press Start 2P';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(pressstart2p-400-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'VT323';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(vt323-400-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'VT323';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(vt323-400-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Atkinson Hyperlegible';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(atkinsonhyperlegible-400-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Atkinson Hyperlegible';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(atkinsonhyperlegible-400-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Atkinson Hyperlegible';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(atkinsonhyperlegible-700-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Atkinson Hyperlegible';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(atkinsonhyperlegible-700-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Baloo 2';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url(baloo2-600-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Baloo 2';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url(baloo2-600-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Baloo 2';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url(baloo2-800-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Baloo 2';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url(baloo2-800-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* greek */
-@font-face {
   font-family: 'JetBrains Mono';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
   src: url(jetbrainsmono-500-greek.woff2) format('woff2');
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url(jetbrainsmono-500-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
@@ -673,15 +415,6 @@
   font-display: swap;
   src: url(jetbrainsmono-700-greek.woff2) format('woff2');
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(jetbrainsmono-700-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
