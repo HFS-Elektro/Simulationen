@@ -1,0 +1,275 @@
+<!doctype html><html><head><meta charset=utf8>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="kompensationsrechner|sim|2bab6eee1f41">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Kompensationsrechner">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="hfs-app.css">
+</head><body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Kompensationsrechner</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<title>Kompensationsrechner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* Layout: Schaltschrank-Look – Eingaben links als Bedienfeld, rechts Ergebnis, Leistungsdreieck, Lösungsweg */
+:root{
+  --bg:#e7eae7;        /* angelehnt an RAL 7035 Lichtgrau */
+  --panel:#f7f8f6;
+  --ink:#283034;       /* RAL 7016 Anthrazit */
+  --muted:#5b656a;
+  --line:#c3c9c5;
+  --accent:#c9560c;    /* Signalorange: Kompensation */
+  --after:#2d68ad;     /* Blau: Zustand nachher */
+  --before:#8a7360;    /* Braun: Zustand vorher */
+  --warn-bg:#fbe9dc;
+  --f-display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Barlow","Segoe UI",Roboto,Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#161a1c;--panel:#1f2528;--ink:#e2e6e3;--muted:#9aa4a8;--line:#353d42;
+  --accent:#f08a42;--after:#6ea4e4;--before:#c09a7c;--warn-bg:#3a2617;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161a1c;--panel:#1f2528;--ink:#e2e6e3;--muted:#9aa4a8;--line:#353d42;
+  --accent:#f08a42;--after:#6ea4e4;--before:#c09a7c;--warn-bg:#3a2617;color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:20px}
+header{display:grid;gap:4px;border-bottom:3px solid var(--ink);padding-bottom:12px}
+.eyebrow{font:600 12px/1.2 var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font:700 clamp(30px,6vw,44px)/1.05 var(--f-display);margin:0;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:62ch}
+h2{font:600 14px/1.2 var(--f-display);letter-spacing:.1em;text-transform:uppercase;margin:0 0 12px;color:var(--muted)}
+
+.grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px}
+.controls{display:grid;gap:18px}
+.field{display:grid;gap:6px}
+.field-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+label{font-weight:600}
+.field-head input[type=number]{width:96px;font:500 15px var(--f-mono);text-align:right;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+.unit{color:var(--muted);font:13px var(--f-mono)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.seg button{font:600 14px var(--f-display);padding:8px 4px;border:0;background:transparent;color:var(--ink);cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+select,.plain{font:500 15px var(--f-mono);padding:6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.note{font-size:13px;color:var(--muted);margin:0}
+
+.out{display:grid;gap:20px}
+.headline{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.big{border-left:4px solid var(--accent);padding:4px 0 4px 12px}
+.big .k{font:600 13px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.big .v{font:600 clamp(26px,5vw,36px)/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
+.big .v small{font-size:.5em;color:var(--muted);margin-left:4px}
+.cmp{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.cmp th,.cmp td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right}
+.cmp th:first-child,.cmp td:first-child{text-align:left}
+.cmp thead th{font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cmp td{font-family:var(--f-mono);font-size:14px}
+.cmp td:first-child{font-family:var(--f-body);font-size:15px}
+.tag-b{color:var(--before)}.tag-a{color:var(--after)}
+.svgbox{overflow-x:auto}
+svg{display:block;width:100%;max-width:560px;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px}
+ol.steps{margin:0;padding-left:22px;display:grid;gap:10px}
+ol.steps li{padding-left:4px}
+.f{font-family:var(--f-mono);font-size:14px;display:block;overflow-x:auto;white-space:nowrap;color:var(--ink);margin-top:2px}
+.warn{background:var(--warn-bg);border-left:4px solid var(--accent);padding:10px 12px;border-radius:4px;margin:0}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Elektrotechnik · Blindleistungskompensation</span>
+    <h1>Kompensationsrechner</h1>
+    <p>Wirkleistung und Leistungsfaktor einstellen: Der Rechner bestimmt die nötige Kondensatorleistung, die Kapazität pro Kondensator und zeigt den vollständigen Lösungsweg.</p>
+  </header>
+
+  <div class="grid">
+    <section class="panel controls" aria-label="Eingaben">
+      <h2>Anlage</h2>
+      <div class="field">
+        <label id="netzlbl">Netz &amp; Kondensatorschaltung</label>
+        <div class="seg" role="group" aria-labelledby="netzlbl">
+          <button type="button" id="m3d" data-m="3d" aria-pressed="true">3~ Dreieck</button>
+          <button type="button" id="m3s" data-m="3s" aria-pressed="false">3~ Stern</button>
+          <button type="button" id="m1" data-m="1" aria-pressed="false">1~</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="P">Wirkleistung P</label><span><input type="number" id="Pn" min="0.1" max="500" step="0.1" aria-label="Wirkleistung in kW"> <span class="unit">kW</span></span></div>
+        <input type="range" id="P" min="0.5" max="100" step="0.5">
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="c1">cos φ<sub>1</sub> vorher</label><input type="number" id="c1n" min="0.3" max="0.99" step="0.01" aria-label="cos phi 1"></div>
+        <input type="range" id="c1" min="0.40" max="0.99" step="0.01">
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="c2">cos φ<sub>2</sub> Ziel</label><input type="number" id="c2n" min="0.5" max="1" step="0.01" aria-label="cos phi 2"></div>
+        <input type="range" id="c2" min="0.80" max="1.00" step="0.01">
+      </div>
+      <div class="row2">
+        <div class="field"><label for="U">Spannung U in V</label><input class="plain" type="number" id="U" min="1" step="1"></div>
+        <div class="field"><label for="f">Frequenz</label><select id="f"><option value="50">50 Hz</option><option value="60">60 Hz</option></select></div>
+      </div>
+      <p class="note" id="unote"></p>
+      <p class="note">Beispielwerte: Drehstrommotor 22 kW, cos φ = 0,72, verbessert auf 0,95.</p>
+    </section>
+
+    <section class="out" aria-live="polite">
+      <div class="panel">
+        <h2>Ergebnis</h2>
+        <p class="warn" id="warn" hidden>cos φ<sub>2</sub> muss größer als cos φ<sub>1</sub> sein, sonst ist keine Kompensation nötig.</p>
+        <div class="headline" id="headline">
+          <div class="big"><div class="k">Kondensatorleistung Q<sub>C</sub></div><div class="v" id="Qc"></div></div>
+          <div class="big"><div class="k" id="Clbl">Kapazität je Kondensator</div><div class="v" id="C"></div></div>
+        </div>
+        <div style="overflow-x:auto;margin-top:16px">
+        <table class="cmp">
+          <thead><tr><th>Größe</th><th class="tag-b">vorher</th><th class="tag-a">nachher</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Leistungsdreieck (maßstäblich)</h2>
+        <div class="svgbox"><svg id="tri" viewBox="0 0 540 270" role="img" aria-label="Leistungsdreieck vorher und nachher"></svg></div>
+        <div class="legend">
+          <span><i style="background:var(--ink)"></i>Wirkleistung P</span>
+          <span><i style="background:var(--before)"></i>vorher Q<sub>1</sub>, S<sub>1</sub></span>
+          <span><i style="background:var(--after)"></i>nachher Q<sub>2</sub>, S<sub>2</sub></span>
+          <span><i style="background:var(--accent)"></i>Q<sub>C</sub></span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Lösungsweg</h2>
+        <ol class="steps" id="steps"></ol>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const st = {m:'3d', P:22, c1:0.72, c2:0.95, U:400, f:50};
+  const n = (x,d)=> Number.isFinite(x) ? x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d}) : '–';
+  const deg = r => r*180/Math.PI;
+
+  function pair(rangeId, numId, key){
+    const r=$(rangeId), nm=$(numId);
+    r.value=st[key]; nm.value=st[key];
+    r.addEventListener('input',()=>{st[key]=+r.value; nm.value=r.value; calc();});
+    nm.addEventListener('input',()=>{const v=parseFloat(nm.value); if(v>0){st[key]=v; r.value=v; calc();}});
+  }
+  pair('P','Pn','P'); pair('c1','c1n','c1'); pair('c2','c2n','c2');
+  $('U').value=st.U;
+  $('U').addEventListener('input',e=>{const v=parseFloat(e.target.value); if(v>0){st.U=v;calc();}});
+  $('f').addEventListener('change',e=>{st.f=+e.target.value;calc();});
+  document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    const old=st.m; st.m=b.dataset.m;
+    if(st.m==='1' && old!=='1'){st.U=230;$('U').value=230;}
+    if(st.m!=='1' && old==='1'){st.U=400;$('U').value=400;}
+    calc();
+  }));
+
+  function calc(){
+    const {m,P,c1,c2,U,f}=st;
+    const three = m!=='1';
+    const p1=Math.acos(Math.min(c1,1)), p2=Math.acos(Math.min(c2,1));
+    const t1=Math.tan(p1), t2=Math.tan(p2);
+    const Q1=P*t1, Q2=P*t2, Qc=Q1-Q2;
+    const S1=P/c1, S2=P/c2;
+    const k = three ? Math.sqrt(3)*U : U;
+    const I1=S1*1000/k, I2=S2*1000/k;
+    const w=2*Math.PI*f;
+    let C;
+    if(m==='3d') C=Qc*1000/(3*w*U*U);
+    else C=Qc*1000/(w*U*U);
+    const Cuf=C*1e6;
+    const bad = c2<=c1;
+    $('warn').hidden=!bad;
+    $('headline').style.opacity = bad ? .35 : 1;
+
+    $('Qc').innerHTML = n(Qc,2)+'<small>kvar</small>';
+    $('C').innerHTML = n(Cuf, Cuf<10?2:1)+'<small>µF</small>';
+    $('Clbl').textContent = m==='1' ? 'Kapazität des Kondensators' : (m==='3d'?'Kapazität je Kondensator (Δ)':'Kapazität je Kondensator (Y)');
+    $('unote').innerHTML = m==='1' ? 'Wechselstrom: U ist die Spannung am Kondensator.' : (m==='3d' ? 'Dreieck: Jeder Kondensator liegt an der Außenleiterspannung U.' : 'Stern: Jeder Kondensator liegt an U/√3 = '+n(U/Math.sqrt(3),0)+' V.');
+
+    const rows=[
+      ['Leistungsfaktor cos φ', n(c1,2), n(c2,2)],
+      ['Phasenwinkel φ', n(deg(p1),1)+'°', n(deg(p2),1)+'°'],
+      ['Blindleistung Q', n(Q1,2)+' kvar', n(Q2,2)+' kvar'],
+      ['Scheinleistung S', n(S1,2)+' kVA', n(S2,2)+' kVA'],
+      ['Strom I', n(I1,1)+' A', n(I2,1)+' A'],
+    ];
+    $('tbody').innerHTML = rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')
+      + `<tr><td>Stromreduzierung</td><td></td><td>−${n((1-I2/I1)*100,1)} %</td></tr>`;
+
+    // Lösungsweg
+    const s=[];
+    s.push(`Phasenwinkel bestimmen<span class="f">φ₁ = arccos ${n(c1,2)} = ${n(deg(p1),2)}°  →  tan φ₁ = ${n(t1,4)}</span><span class="f">φ₂ = arccos ${n(c2,2)} = ${n(deg(p2),2)}°  →  tan φ₂ = ${n(t2,4)}</span>`);
+    s.push(`Blindleistung vorher und nachher<span class="f">Q₁ = P · tan φ₁ = ${n(P,2)} kW · ${n(t1,4)} = ${n(Q1,2)} kvar</span><span class="f">Q₂ = P · tan φ₂ = ${n(P,2)} kW · ${n(t2,4)} = ${n(Q2,2)} kvar</span>`);
+    s.push(`Benötigte Kondensatorleistung<span class="f">Q<sub>C</sub> = Q₁ − Q₂ = P · (tan φ₁ − tan φ₂) = ${n(Qc,2)} kvar</span>`);
+    s.push(`Kreisfrequenz<span class="f">ω = 2 · π · f = 2 · π · ${f} Hz = ${n(w,2)} 1/s</span>`);
+    if(m==='3d') s.push(`Kapazität je Kondensator in Dreieckschaltung (jeder Kondensator an U, trägt Q<sub>C</sub>/3)<span class="f">C = Q<sub>C</sub> / (3 · ω · U²) = ${n(Qc*1000,0)} var / (3 · ${n(w,2)} 1/s · (${n(U,0)} V)²) = ${n(Cuf,1)} µF</span>`);
+    else if(m==='3s') s.push(`Kapazität je Kondensator in Sternschaltung (jeder Kondensator an U/√3, trägt Q<sub>C</sub>/3)<span class="f">C = Q<sub>C</sub> / (ω · U²) = ${n(Qc*1000,0)} var / (${n(w,2)} 1/s · (${n(U,0)} V)²) = ${n(Cuf,1)} µF</span>`);
+    else s.push(`Kapazität des Kondensators<span class="f">C = Q<sub>C</sub> / (ω · U²) = ${n(Qc*1000,0)} var / (${n(w,2)} 1/s · (${n(U,0)} V)²) = ${n(Cuf,1)} µF</span>`);
+    s.push(`Netzstrom vorher und nachher<span class="f">I = P / (${three?'√3 · ':''}U · cos φ)  →  I₁ = ${n(I1,1)} A,  I₂ = ${n(I2,1)} A</span>`);
+    if(m!=='1'){
+      const Cs = Qc*1000/(w*U*U)*1e6, Cd = Qc*1000/(3*w*U*U)*1e6;
+      s.push(`Vergleich: In Dreieckschaltung reicht ein Drittel der Kapazität der Sternschaltung<span class="f">C<sub>Y</sub> = ${n(Cs,1)} µF  ·  C<sub>Δ</sub> = ${n(Cd,1)} µF  →  C<sub>Y</sub> = 3 · C<sub>Δ</sub></span>`);
+    }
+    $('steps').innerHTML = s.map(x=>`<li>${x}</li>`).join('');
+
+    draw(P,Q1,Q2,p1,p2,bad);
+  }
+
+  function draw(P,Q1,Q2,p1,p2,bad){
+    const ox=48, oy=232, W=330, H=200;
+    const Qmax=Math.max(Q1,Q2,0.0001);
+    const s=Math.min(W/P, H/Qmax);
+    const ax=ox+P*s, b1=oy-Q1*s, b2=oy-Q2*s;
+    const arc=(r,phi,col)=>{const x=ox+r*Math.cos(phi), y=oy-r*Math.sin(phi); return `<path d="M${ox+r} ${oy} A${r} ${r} 0 0 0 ${x} ${y}" fill="none" stroke="${col}" stroke-width="1.5"/>`;};
+    const lbl=(x,y,t,col,anchor='middle')=>`<text x="${x}" y="${y}" fill="${col}" font-family="JetBrains Mono, monospace" font-size="13" text-anchor="${anchor}">${t}</text>`;
+    let g='';
+    g+=`<line x1="${ox}" y1="${oy}" x2="${ax}" y2="${oy}" stroke="var(--ink)" stroke-width="3"/>`;
+    g+=`<line x1="${ax}" y1="${oy}" x2="${ax}" y2="${b1}" stroke="var(--before)" stroke-width="2" stroke-dasharray="6 4"/>`;
+    g+=`<line x1="${ox}" y1="${oy}" x2="${ax}" y2="${b1}" stroke="var(--before)" stroke-width="2" stroke-dasharray="6 4"/>`;
+    if(!bad){
+      g+=`<line x1="${ax}" y1="${b2}" x2="${ax}" y2="${b1}" stroke="var(--accent)" stroke-width="6" stroke-linecap="butt"/>`;
+      g+=lbl(ax+10,(b1+b2)/2+4,'QC = '+n(Q1-Q2,1)+' kvar','var(--accent)','start');
+    }
+    g+=`<line x1="${ax}" y1="${oy}" x2="${ax}" y2="${b2}" stroke="var(--after)" stroke-width="3"/>`;
+    g+=`<line x1="${ox}" y1="${oy}" x2="${ax}" y2="${b2}" stroke="var(--after)" stroke-width="3"/>`;
+    g+=arc(70,p1,'var(--before)')+arc(50,p2,'var(--after)');
+    g+=lbl(ox+76,oy-8,'φ₁','var(--before)','start');
+    g+=lbl(ox+56,oy-4,'φ₂','var(--after)','start');
+    g+=lbl((ox+ax)/2,oy+22,'P = '+n(P,1)+' kW','var(--ink)');
+    if(Q2*s>16) g+=lbl(ax+10,(oy+b2)/2+4,'Q₂','var(--after)','start');
+    const mx1=(ox+ax)/2, my1=(oy+b1)/2;
+    g+=lbl(mx1-10,my1-8,'S₁','var(--before)','end');
+    const mx2=(ox+ax)/2, my2=(oy+b2)/2;
+    g+=lbl(mx2+6,my2+18,'S₂','var(--after)','start');
+    $('tri').innerHTML=g;
+  }
+
+  calc();
+})();
+</script>
+
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span></footer>
+<script src="hfs-app.js"></script>
+</body></html>

@@ -1,0 +1,894 @@
+<!doctype html><html><head><meta charset=utf8>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="ls-schalter|sim|2046e18c3a85">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Leitungsschutzschalter i">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="hfs-app.css">
+</head><body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Leitungsschutzschalter im Schnitt</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<title>Leitungsschutzschalter im Schnitt</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* Layout: Werkbank – 3D-Bühne links mit Ablauf-Erklärung darunter, Bedienpult rechts; darunter Bauteil-Legende und Merksätze */
+:root{
+  --bg:#E8EBE6; --surface:#F6F7F4; --raised:#FFFFFF; --ink:#1B211F; --muted:#56615C; --line:#C8CFC9;
+  --accent:#0F5F8A; --accent-ink:#FFFFFF; --accent-soft:#D6E7F1;
+  --thermal:#BF3F0B; --thermal-soft:#F6E1D6; --magnetic:#3644A8; --magnetic-soft:#DFE2F6; --ok:#26734A; --off:#8A5A00;
+  --stage-a:#F3F4F0; --stage-b:#CDD4CC; --tag-bg:rgba(255,255,255,.9); --tag-ink:#1B211F; --shadow:0 1px 2px rgba(20,30,25,.08),0 6px 18px rgba(20,30,25,.06);
+  --f-display:'Barlow Semi Condensed','Arial Narrow',system-ui,sans-serif;
+  --f-body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1311; --surface:#161B19; --raised:#1D2320; --ink:#E3E8E4; --muted:#9AA59F; --line:#2D3632;
+  --accent:#62B4E0; --accent-ink:#04202F; --accent-soft:#16303F;
+  --thermal:#FF8B52; --thermal-soft:#3A2218; --magnetic:#98A6FF; --magnetic-soft:#1F2442; --ok:#6FCB95; --off:#E2B24A;
+  --stage-a:#252C29; --stage-b:#0B0E0D; --tag-bg:rgba(22,27,25,.88); --tag-ink:#E3E8E4; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.3);
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0F1311; --surface:#161B19; --raised:#1D2320; --ink:#E3E8E4; --muted:#9AA59F; --line:#2D3632;
+  --accent:#62B4E0; --accent-ink:#04202F; --accent-soft:#16303F;
+  --thermal:#FF8B52; --thermal-soft:#3A2218; --magnetic:#98A6FF; --magnetic-soft:#1F2442; --ok:#6FCB95; --off:#E2B24A;
+  --stage-a:#252C29; --stage-b:#0B0E0D; --tag-bg:rgba(22,27,25,.88); --tag-ink:#E3E8E4; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.3);
+  color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1360px;margin:0 auto;padding-inline:20px;padding-block:22px 40px;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(1.7rem,3vw,2.4rem);line-height:1.05;margin:4px 0 0;text-wrap:balance;letter-spacing:-.005em}
+.sub{color:var(--muted);max-width:62ch;margin:6px 0 0}
+.marking{font-family:var(--f-mono);font-size:12px;display:flex;gap:6px;align-items:center;color:var(--muted)}
+.marking b{font-weight:500;color:var(--ink);border:1px solid var(--line);padding:2px 6px;border-radius:3px;background:var(--surface)}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;align-items:start}
+.stagecol{display:flex;flex-direction:column;gap:12px;min-width:0}
+.stage{position:relative;height:min(68vh,640px);min-height:420px;border-radius:10px;overflow:hidden;
+  background:radial-gradient(120% 90% at 45% 35%,var(--stage-a),var(--stage-b));border:1px solid var(--line)}
+.stage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.tags{position:absolute;inset:0;pointer-events:none}
+.tag{position:absolute;left:0;top:0;pointer-events:auto;display:flex;align-items:center;gap:6px;border:0;padding:0;background:none;cursor:pointer;font:inherit;color:var(--tag-ink);transform-origin:0 0}
+.tag .n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:11.5px;font-weight:500;
+  background:var(--tag-bg);border:1.5px solid var(--accent);color:var(--tag-ink);box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.tag .nm{font-family:var(--f-display);font-weight:600;font-size:13px;background:var(--tag-bg);padding:2px 7px;border-radius:4px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.14);display:none}
+.stage.names .tag .nm,.tag:hover .nm,.tag.on .nm{display:block}
+.tag.on .n{background:var(--accent);color:var(--accent-ink)}
+.tag:focus-visible .n{outline:2px solid var(--accent);outline-offset:2px}
+.callout{position:absolute;left:0;top:0;pointer-events:none;font-family:var(--f-display);font-weight:600;font-size:13px;line-height:1.25;
+  background:var(--raised);color:var(--ink);border:1px solid var(--line);border-left:3px solid var(--off);padding:5px 9px;border-radius:4px;max-width:210px;box-shadow:var(--shadow)}
+.hover{position:absolute;pointer-events:none;font-family:var(--f-display);font-weight:600;font-size:13px;background:var(--tag-bg);padding:3px 8px;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--muted);background:var(--tag-bg);padding:3px 8px;border-radius:4px;pointer-events:none}
+.speedtag{position:absolute;right:12px;top:12px;font-family:var(--f-mono);font-size:12px;padding:4px 9px;border-radius:4px;background:var(--tag-bg);border:1px solid var(--line)}
+.narr{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px}
+.narr .ph{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.narr h2{font-family:var(--f-display);font-size:1.3rem;font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+.narr p{margin:4px 0 0;max-width:72ch;min-width:0}
+.clock{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.clock .t{font-size:1.35rem;font-weight:500}
+.clock .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.steps{grid-column:1/-1;display:flex;gap:4px;margin-top:8px}
+.steps i{flex:1;height:5px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.steps i b{position:absolute;inset:0;width:0;background:var(--accent)}
+.narr .act{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.panel{display:flex;flex-direction:column;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.grp{display:flex;flex-direction:column;gap:8px}
+.grp + .grp{border-top:1px solid var(--line);padding-top:14px}
+.lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.chip{background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:6px 9px;display:flex;flex-direction:column;min-width:0}
+.chip span{font-size:11.5px;color:var(--muted)}
+.chip strong{font-family:var(--f-display);font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.dot.ok{background:var(--ok)} .dot.off{background:var(--off)} .dot.hot{background:var(--thermal)} .dot.mag{background:var(--magnetic)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button.b{font:inherit;font-family:var(--f-display);font-weight:600;font-size:15px;border-radius:7px;border:1px solid var(--line);background:var(--raised);color:var(--ink);
+  padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:9px;flex:1;min-width:0;justify-content:center;transition:background .15s,border-color .15s,transform .05s}
+button.b:hover:not(:disabled){border-color:var(--accent)}
+button.b:active:not(:disabled){transform:translateY(1px)}
+button.b:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.b:disabled{opacity:.45;cursor:not-allowed}
+button.b.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.b.th{background:var(--thermal-soft);border-color:color-mix(in srgb,var(--thermal) 40%,var(--line))}
+button.b.mg{background:var(--magnetic-soft);border-color:color-mix(in srgb,var(--magnetic) 40%,var(--line))}
+.sym{font-family:var(--f-mono);font-size:12px;font-weight:500;padding:1px 5px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.th .sym{color:var(--thermal)} .mg .sym{color:var(--magnetic)}
+.seg{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{flex:1;font:inherit;font-family:var(--f-mono);font-size:12.5px;border:0;background:var(--raised);color:var(--ink);padding:7px 4px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+label.tg{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+label.tg input{accent-color:var(--accent);width:16px;height:16px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.kl svg{width:100%;height:auto;display:block}
+.klcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+.klchart,.klside{display:flex;flex-direction:column;gap:8px;min-width:0}
+@media (max-width:760px){.klcard{grid-template-columns:1fr}}
+.kl text{font-family:var(--f-mono);font-size:9px;fill:var(--muted)}
+.kl .cap{font-size:11px;color:var(--muted);margin-top:2px}
+.selrow{display:grid;grid-template-columns:auto 1fr;gap:8px 10px;align-items:center;font-size:13.5px;color:var(--muted)}
+select.sel{font:inherit;font-family:var(--f-mono);font-size:13px;background:var(--raised);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:6px 8px;width:100%}
+select.sel:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.fault{display:flex;flex-direction:column;gap:6px;background:var(--raised);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+.fault.th{border-left:3px solid var(--thermal)} .fault.mg{border-left:3px solid var(--magnetic)}
+.fault .val{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted);gap:8px}
+.fault .val b{font-family:var(--f-mono);font-weight:500;font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
+.pre{display:flex;flex-wrap:wrap;gap:4px}
+.pre button{font:inherit;font-family:var(--f-mono);font-size:11.5px;padding:3px 7px;border-radius:5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.pre button:hover:not(:disabled){border-color:var(--accent)} .pre button.on{background:var(--accent-soft);border-color:var(--accent)}
+.pre button:disabled,.fault input:disabled{opacity:.45;cursor:not-allowed}
+.res{background:var(--raised);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:13px;line-height:1.45}
+.res .big{font-family:var(--f-display);font-weight:700;font-size:1.15rem;color:var(--ink)}
+.res .ok{color:var(--ok)}
+.din{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.din td,.din th{padding:3px 5px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.din th{font-family:var(--f-mono);font-size:10.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.din td:first-child{font-family:var(--f-mono);white-space:nowrap}
+.din tr.hit td{background:var(--accent-soft)}
+.kl .modelc{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-dasharray:4 2.5}
+.kl .lim{stroke:var(--muted);stroke-width:.8;stroke-dasharray:2 2}
+.lower{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+.legend{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.legend h3,.notes h3{font-family:var(--f-display);font-size:1.15rem;margin:0 0 10px;font-weight:700}
+.leg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px;list-style:none;margin:0;padding:0}
+.leg li button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;padding:7px 6px;border-radius:6px;cursor:pointer}
+.leg li button:hover,.leg li button.on{background:var(--accent-soft)}
+.leg li button:focus-visible{outline:2px solid var(--accent)}
+.leg .n{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--accent);display:grid;place-items:center;font-family:var(--f-mono);font-size:11px}
+.leg b{font-family:var(--f-display);font-weight:600;font-size:15px;display:block;line-height:1.2}
+.leg small{color:var(--muted);font-size:13px;line-height:1.35;display:block;margin-top:2px}
+.notes{display:flex;flex-direction:column;gap:10px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.note h4{margin:0 0 4px;font-family:var(--f-display);font-size:1.05rem;font-weight:700;display:flex;gap:8px;align-items:center}
+.note p{margin:0;font-size:14px;color:var(--ink)}
+.note .sym{font-size:11px}
+.note.t h4 .sym{color:var(--thermal)} .note.m h4 .sym{color:var(--magnetic)}
+.err{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted)}
+@media (max-width:980px){.bench{grid-template-columns:minmax(0,1fr)}.lower{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.wrap{padding-inline:16px}.stage{height:58vh;min-height:360px}.leg{grid-template-columns:minmax(0,1fr)}.narr{grid-template-columns:minmax(0,1fr)}.clock{text-align:left}.hint{display:none}}
+@media (prefers-reduced-motion:reduce){button.b{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Lernsimulation · Schutzorgane nach DIN EN 60898-1</div>
+      <h1>Leitungsschutzschalter im Schnitt</h1>
+      <p class="sub">Das Gehäuse ist vorne aufgeschnitten. Löse Überlast oder Kurzschluss aus und verfolge, wie Bimetall, Schlaganker, Schaltschloss und Löschkammer zusammenarbeiten.</p>
+    </div>
+    <div class="marking" aria-label="Gerätedaten">Modell: <b id="mkType">C16</b><b>230/400 V~</b><b>6000</b><b>3</b></div>
+  </header>
+
+  <div class="bench">
+    <div class="stagecol">
+      <div class="stage" id="stage">
+        <canvas id="cv" aria-label="3D-Modell eines Leitungsschutzschalters. Mit der Maus drehen, mit dem Mausrad zoomen."></canvas>
+        <div class="tags" id="tags"></div>
+        <div class="hover" id="hover" hidden></div>
+        <div class="callout" id="callout" hidden></div>
+        <div class="callout" id="handcall" hidden>Hand hält den Knebel in Stellung I</div>
+        <div class="speedtag" id="speedtag" hidden></div>
+        <div class="hint">Ziehen: drehen · Mausrad: zoomen · Rechte Maustaste oder Umschalt: verschieben</div>
+      </div>
+      <section class="narr" aria-live="polite">
+        <div style="min-width:0">
+          <div class="ph" id="nPh">Betriebszustand</div>
+          <h2 id="nTitle">Eingeschaltet – Nennbetrieb</h2>
+          <p id="nText">Der Strom fließt von Klemme 1 durch die Spule, über Fest- und Kontakthebel, die Litze und das Bimetall zu Klemme 2. Bei Bemessungsstrom bleiben beide Auslöser in Ruhe.</p>
+        </div>
+        <div class="clock"><div class="l" id="cL">Echtzeit</div><div class="t" id="cT">–</div></div>
+        <div class="steps" id="steps"></div>
+        <div class="act" id="nAct"></div>
+      </section>
+      <section class="klcard kl"><div class="klchart">
+        <div class="lbl" id="klLbl">Auslösekennlinie C16</div>
+        <svg id="kl" viewBox="0 0 290 206" role="img" aria-label="Zeit-Strom-Kennlinie mit Arbeitspunkt"></svg>
+        <div class="cap">Blaue Fläche: Toleranzband nach DIN EN 60898-1. Gestrichelt: Kennlinie dieses Geräts. Der Punkt zeigt Strom und vergangene Zeit.</div>
+        <label class="tg"><input type="checkbox" id="cBand" checked> Toleranzband und Gerätekennlinie zeigen</label>
+      </div><div class="klside">
+        <div class="res" id="klRes">Stell einen Strom ein und löse aus. Lies vorher die Auslösezeit aus deiner Tabelle ab und vergleiche.</div>
+        <table class="din" id="dinT"></table>
+      </div></section>
+    </div>
+
+    <aside class="panel" aria-label="Bedienung">
+      <div class="grp">
+        <div class="lbl">Zustand</div>
+        <div class="chips">
+          <div class="chip"><span>Schaltknebel</span><strong id="sLever"><i class="dot ok"></i>I · EIN</strong></div>
+          <div class="chip"><span>Kontakte</span><strong id="sCont"><i class="dot ok"></i>geschlossen</strong></div>
+          <div class="chip"><span>Schaltschloss</span><strong id="sLatch"><i class="dot ok"></i>verklinkt</strong></div>
+          <div class="chip"><span>Strom</span><strong id="sI"><i class="dot ok"></i>16 A</strong></div>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Bedienen</div>
+        <div class="row">
+          <button class="b pri" id="bOn" type="button">Einschalten</button>
+          <button class="b" id="bOff" type="button">Ausschalten</button>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Gerät einstellen</div>
+        <div class="selrow">
+          <span>Charakteristik</span>
+          <div class="seg" id="segChar" role="group" aria-label="Auslösecharakteristik"><button type="button" data-ch="B">B</button><button type="button" data-ch="C" class="on">C</button></div>
+          <label for="selIn">Bemessungsstrom I<sub>n</sub></label>
+          <select class="sel" id="selIn"><option>6</option><option>10</option><option>13</option><option selected>16</option><option>20</option><option>25</option><option>32</option><option>40</option><option>50</option><option>63</option></select>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Fehler auslösen</div>
+        <div class="fault th">
+          <div class="val"><span>Überlaststrom</span><b id="olV">2,55 · I<sub>n</sub> = 40,8 A</b></div>
+          <input type="range" id="rOL" min="1.05" max="10" step="0.01" value="2.55" aria-label="Überlaststrom als Vielfaches von In">
+          <div class="pre" id="preOL"></div>
+          <button class="b th" id="bOL" type="button"><span class="sym">I &gt; I<sub>n</sub></span>Überlast auslösen</button>
+        </div>
+        <div class="fault mg">
+          <div class="val"><span>Kurzschlussstrom</span><b id="scV">30 · I<sub>n</sub> = 480 A</b></div>
+          <input type="range" id="rSC" min="3" max="100" step="0.5" value="30" aria-label="Kurzschlussstrom als Vielfaches von In">
+          <div class="pre" id="preSC"></div>
+          <button class="b mg" id="bSC" type="button"><span class="sym">I ≫ I<sub>n</sub></span>Kurzschluss auslösen</button>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Freiauslösung</div>
+        <button class="b" id="bFree" type="button">Freiauslösung vorführen</button>
+        <label class="tg"><input type="checkbox" id="cHold"> Knebel bei Auslösung festhalten</label>
+      </div>
+      <div class="grp">
+        <div class="lbl">Ablauf</div>
+        <div class="row" style="align-items:center">
+          <button class="b" id="bPause" type="button" style="flex:0 0 auto;min-width:104px">Pause</button>
+          <div class="seg" id="segSpeed" role="group" aria-label="Tempo" style="flex:1">
+            <button type="button" data-s="0.5">0,5×</button><button type="button" data-s="1" class="on">1×</button><button type="button" data-s="2">2×</button>
+          </div>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Ansicht</div>
+        <div class="seg" id="segCam" role="group" aria-label="Kameraposition">
+          <button type="button" data-c="gesamt" class="on">Gesamt</button><button type="button" data-c="schloss">Schloss</button><button type="button" data-c="ausloeser">Auslöser</button><button type="button" data-c="kammer">Kammer</button>
+        </div>
+        <label for="rCover" style="font-size:13.5px;color:var(--muted)">Gehäusedeckel: <span id="covV">transparent</span></label>
+        <input type="range" id="rCover" min="0" max="100" value="12">
+        <label class="tg"><input type="checkbox" id="cNames"> Bauteilnamen anzeigen</label>
+        <label class="tg"><input type="checkbox" id="cFlow" checked> Stromfluss anzeigen</label>
+        <label class="tg"><input type="checkbox" id="cFollow" checked> Kamera folgt dem Ablauf</label>
+      </div>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="legend">
+      <h3>Bauteile</h3>
+      <ul class="leg" id="leg"></ul>
+    </section>
+    <section class="notes">
+      <div class="note t"><h4><span class="sym">I &gt; I<sub>n</sub></span>Thermischer Auslöser</h4><p>Schützt die Leitung vor Überlast. Das Bimetall erwärmt sich durch den Strom und biegt sich. Je größer der Strom, desto schneller löst es aus (stromabhängig verzögert). Bei 1,45 · I<sub>n</sub> löst der LS-Schalter innerhalb einer Stunde aus.</p></div>
+      <div class="note m"><h4><span class="sym">I ≫ I<sub>n</sub></span>Elektromagnetischer Auslöser</h4><p>Schützt bei Kurzschluss. Ab einem festen Vielfachen von I<sub>n</sub> zieht die Spule den Schlaganker an und löst praktisch unverzögert aus. Typ B: zwischen 3 · I<sub>n</sub> und 5 · I<sub>n</sub>, Typ C: zwischen 5 · I<sub>n</sub> und 10 · I<sub>n</sub>, Auslösung in unter 0,1 s.</p></div>
+      <div class="note"><h4>Freiauslösung</h4><p>Das Schaltschloss trennt bei jeder Auslösung die Verbindung zwischen Knebel und Kontakthebel. Wird der Knebel festgehalten, öffnen die Kontakte trotzdem. Ein Fehler lässt sich so nicht „zuhalten“.</p></div>
+      <div class="note"><h4>Funkenlöschkammer</h4><p>Beim Öffnen unter Last entsteht ein Lichtbogen. Die Leitschienen führen ihn in die Löschkammer. Die Bleche teilen ihn in viele Teillichtbögen mit je etwa 20 bis 30 V Brennspannung, kühlen ihn und löschen ihn in wenigen Millisekunden.</p></div>
+    </section>
+  </div>
+</div>
+
+<script src="three-r128.min.js"></script>
+<script>
+(function(){
+'use strict';
+const stageEl=document.getElementById('stage');
+if(!window.THREE){stageEl.insertAdjacentHTML('beforeend','<div class="err">Das 3D-Modell konnte nicht geladen werden. Bitte die Seite neu laden.</div>');return;}
+const $=s=>document.querySelector(s);
+const D=Math.PI/180;
+const lerp=(a,b,t)=>a+(b-a)*t, clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2, eOut=t=>1-Math.pow(1-t,3), eIn=t=>t*t*t;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=(n,d=1)=>n.toFixed(d).replace('.',',');
+/* ---------- Gerätedaten und Auslösezeiten (DIN EN 60898-1) ---------- */
+const DEV={ch:'C',In:16};
+const CH={B:{lo:3,hi:5,mag:4.2},C:{lo:5,hi:10,mag:7.5}};
+const ch=()=>CH[DEV.ch];
+function li(arr,k){if(k<=arr[0][0])return arr[0][1];let i=1;while(i<arr.length-1&&arr[i][0]<k)i++;const [a,ta]=arr[i-1],[b,tb]=arr[i];
+  return Math.exp(Math.log(ta)+(Math.log(tb)-Math.log(ta))*(Math.log(k)-Math.log(a))/(Math.log(b)-Math.log(a)))}
+/* Kennlinie dieses Exemplars (thermisch) – liegt innerhalb des Normbands */
+const THM=[[1.35,2700],[1.45,1500],[1.6,600],[2,150],[2.55,40],[3,25],[4,11],[5,6],[7,3],[10,1.5],[20,.4]];
+function tTherm(k){if(k<=1.3)return Infinity;if(k<1.35)return 2700*Math.pow(.05/(k-1.3),1.5);return li(THM,k)}
+function tMag(k){return .0025+.006*ch().mag/k}
+function tripOf(k){return k>=ch().mag?{mode:'mag',t:tMag(k)}:{mode:'th',t:tTherm(k)}}
+/* Toleranzband */
+const LOW=[[1.13,10000],[1.25,1000],[1.5,120],[2,12],[2.55,1],[3,.6],[4,.35],[5,.25],[7,.2],[10,.15]];
+function upTherm(){const f=DEV.In>32?2:1;return [[1.45,3600],[2.55,60*f],[3,35*f],[4,17*f],[5,10*f],[7,5*f],[10,2.5*f],[15,1.3*f]]}
+function upMag(){const h=ch().hi;return [[h,.1],[1.5*h,.015],[100,.01]]}
+function bandLo(k){if(k<1.13)return Infinity;return k>=ch().lo?.002:li(LOW,k)}
+function bandHi(k){if(k<1.45)return Infinity;return k>=ch().hi?li(upMag(),k):li(upTherm(),k)}
+
+/* ---------- Kinematik (Maße in mm, Schnittebene XY) ---------- */
+const G={T:[0,22],P:[6,-9],R:[14,10],rA:5,a0:275,rB:16,b0:65};
+const QREL=[11.5,12.3];             // Klinkendrehpunkt relativ zum Kontakthebel-Drehpunkt
+const PHI_ON=30, PHI_OFF=-30;
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]], add=(a,b)=>[a[0]+b[0],a[1]+b[1]], mul=(a,k)=>[a[0]*k,a[1]*k];
+const len=a=>Math.hypot(a[0],a[1]), nrmz=a=>{const l=len(a)||1;return [a[0]/l,a[1]/l]};
+const dist=(a,b)=>len(sub(a,b));
+const rot2=(p,c,a)=>{const s=Math.sin(a*D),k=Math.cos(a*D),x=p[0]-c[0],y=p[1]-c[1];return [c[0]+x*k-y*s,c[1]+x*s+y*k]};
+function crank(phi){const a=(G.a0+phi)*D;return [G.T[0]+G.rA*Math.cos(a),G.T[1]+G.rA*Math.sin(a)]}
+const Bc=[G.P[0]+G.rB*Math.cos(G.b0*D),G.P[1]+G.rB*Math.sin(G.b0*D)];
+const LB=dist(crank(PHI_ON),Bc);
+function solveE(phi,prev){
+  const a=crank(phi),d=dist(a,G.P),l=(LB*LB-G.rB*G.rB+d*d)/(2*d),h=Math.sqrt(Math.max(0,LB*LB-l*l));
+  const ex=[(G.P[0]-a[0])/d,(G.P[1]-a[1])/d],m=[a[0]+ex[0]*l,a[1]+ex[1]*l];
+  const s1=[m[0]-ex[1]*h,m[1]+ex[0]*h],s2=[m[0]+ex[1]*h,m[1]-ex[0]*h];
+  return dist(s1,prev)<dist(s2,prev)?s1:s2;
+}
+const cFromE=E=>Math.atan2(E[1]-G.P[1],E[0]-G.P[0])/D-G.b0;
+let C_OPEN=0;{let p=Bc;for(let f=PHI_ON;f>=PHI_OFF;f-=1)p=solveE(f,p);C_OPEN=cFromE(p);}
+const Bopen=rot2(Bc,G.P,C_OPEN);
+const dirOn=nrmz(sub(Bc,crank(PHI_ON))), dirOff=nrmz(sub(Bopen,crank(PHI_OFF)));
+const BEND_TOUCH=0.9, BEND_FULL=2.85, PL_MAX=3.5;
+
+/* ---------- Zustand ---------- */
+const S={phi:PHI_ON,c:0,latched:true,k:0,plunger:0,bend:0,heat:0,I:1,flowVis:1,field:0,arc:null,plateHeat:0,hold:false,Eprev:Bc.slice(),E:Bc.slice(),gas:0,tripCurve:null};
+
+/* ---------- Three.js ---------- */
+const canvas=$('#cv');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+renderer.setClearColor(0x000000,0);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(30,1,1,2000);
+scene.add(new THREE.HemisphereLight(0xffffff,0x7d837c,0.78));
+const dl=new THREE.DirectionalLight(0xffffff,0.72);dl.position.set(50,90,130);scene.add(dl);
+const dl2=new THREE.DirectionalLight(0xdfe8ff,0.32);dl2.position.set(-80,10,60);scene.add(dl2);
+scene.add(new THREE.AmbientLight(0xffffff,0.12));
+const arcLight=new THREE.PointLight(0x9fd6ff,0,70,2);scene.add(arcLight);
+
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.5,metalness:0},o));
+const MAT={
+  house:M(0xCBD0C9,{roughness:.75}), houseDark:M(0xB7BDB5,{roughness:.8}),
+  cover:M(0xE6EAE4,{transparent:true,opacity:.12,roughness:.3,depthWrite:false}),
+  copper:M(0xC97D4C,{metalness:.45,roughness:.38}), coil:M(0xB36A3B,{metalness:.35,roughness:.42}),
+  silver:M(0xDCDFE1,{metalness:.55,roughness:.22}), steel:M(0x9CA5AB,{metalness:.5,roughness:.38}),
+  zinc:M(0xBCC3B6,{metalness:.5,roughness:.35}), plastic:M(0x2E3337,{roughness:.55}), lever:M(0x2A2F33,{roughness:.42}),
+  trip:M(0x5B6973,{roughness:.5}), brass:M(0xC9A24A,{metalness:.45,roughness:.35}), invar:M(0x8F979D,{metalness:.5,roughness:.35}),
+  fiber:M(0x7A3E29,{roughness:.85}), plate:M(0x7E878D,{metalness:.5,roughness:.42}), rail:M(0xAFB6BC,{metalness:.55,roughness:.35}),
+  wireL:M(0x6E4A2C,{roughness:.6}), print:M(0x3B4146), skin:M(0xE0B293,{roughness:.7,transparent:true,opacity:.93}),
+  slot:M(0x1E2224,{roughness:.6})
+};
+
+/* Bauteil-Registry */
+const PARTS=[
+ {id:'lever',n:'Schaltknebel',d:'Zum Ein- und Ausschalten von Hand. Stellung I = EIN, Stellung 0 = AUS.',cam:'schloss'},
+ {id:'schloss',n:'Schaltschloss mit Freiauslösung',d:'Bügel und Klinke koppeln Knebel und Kontakthebel. Bei Auslösung klinkt es aus, auch wenn der Knebel festgehalten wird.',cam:'schloss'},
+ {id:'spule',n:'Elektromagnetischer Auslöser',d:'Spule mit Schlaganker. Löst bei Kurzschluss unverzögert aus (Typ B: 3 bis 5 · In, Typ C: 5 bis 10 · In).',cam:'spule'},
+ {id:'bimetall',n:'Thermischer Auslöser (Bimetall)',d:'Zwei verschweißte Metalle mit unterschiedlicher Wärmedehnung. Biegt sich bei Überlast und löst verzögert aus.',cam:'bimetall'},
+ {id:'bruecke',n:'Auslösebrücke',d:'Überträgt die Bewegung von Bimetall und Schlaganker auf die Klinke im Schaltschloss.',cam:'ausloeser'},
+ {id:'fest',n:'Festkontakt',d:'Fest mit der Spule verbunden. Kontaktauflage aus Silberlegierung.',cam:'kammer'},
+ {id:'beweg',n:'Beweglicher Kontakt',d:'Drehbar gelagerter Kontakthebel. Über eine Kupferlitze mit dem Bimetall verbunden.',cam:'ausloeser'},
+ {id:'feder',n:'Ausschaltfeder',d:'Wird beim Einschalten gespannt und reißt die Kontakte bei der Auslösung schnell auf.',cam:'schloss'},
+ {id:'schienen',n:'Lichtbogen-Leitschienen',d:'Führen die Fußpunkte des Lichtbogens von den Kontakten weg in die Löschkammer.',cam:'kammer'},
+ {id:'kammer',n:'Funkenlöschkammer',d:'Parallele Stahlbleche teilen, kühlen und löschen den Lichtbogen in wenigen Millisekunden.',cam:'kammer'},
+ {id:'k1',n:'Klemme 1 (Eingang)',d:'Anschluss der Zuleitung von der Netzseite.',cam:'gesamt'},
+ {id:'k2',n:'Klemme 2 (Abgang)',d:'Anschluss der Leitung zum Verbraucher.',cam:'gesamt'},
+ {id:'hut',n:'Hutschiene TH35',d:'Tragschiene nach DIN EN 60715, 35 mm breit. Der LS-Schalter wird aufgeschnappt.',cam:'gesamt'}
+];
+const PM={};PARTS.forEach((p,i)=>{p.i=i+1;p.meshes=[];PM[p.id]=p});
+function reg(id,mesh){mesh.material=mesh.material.clone();mesh.material.userData.dyn=new THREE.Color(0,0,0);mesh.userData.part=id;PM[id].meshes.push(mesh);return mesh}
+
+/* Geometrie-Helfer */
+function shapeOf(pts){const s=new THREE.Shape();pts.forEach((p,i)=>i?s.lineTo(p[0],p[1]):s.moveTo(p[0],p[1]));s.closePath();return s}
+function ext(pts,z0,z1,mat){const g=new THREE.ExtrudeGeometry(shapeOf(pts),{depth:z1-z0,bevelEnabled:false,curveSegments:16});g.translate(0,0,z0);return new THREE.Mesh(g,mat)}
+function strip(poly,w){const h=w/2,L=[],Rt=[],n=poly.length;
+  const perp=(a,b)=>nrmz([-(b[1]-a[1]),b[0]-a[0]]);
+  for(let i=0;i<n;i++){let v;
+    if(i===0)v=perp(poly[0],poly[1]);else if(i===n-1)v=perp(poly[n-2],poly[n-1]);
+    else{const n1=perp(poly[i-1],poly[i]),n2=perp(poly[i],poly[i+1]);let m=nrmz(add(n1,n2));const c=Math.max(.35,m[0]*n1[0]+m[1]*n1[1]);v=mul(m,1/c);}
+    L.push(add(poly[i],mul(v,h)));Rt.push(sub(poly[i],mul(v,h)));}
+  return L.concat(Rt.reverse());}
+function box(x0,x1,y0,y1,z0,z1,mat){const m=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),mat);m.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2);return m}
+function cylY(x,z,y0,y1,r,mat,seg=28){const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,y1-y0,seg),mat);m.position.set(x,(y0+y1)/2,z);return m}
+function cylZ(x,y,z0,z1,r,mat,seg=28){const g=new THREE.CylinderGeometry(r,r,z1-z0,seg);g.rotateX(Math.PI/2);const m=new THREE.Mesh(g,mat);m.position.set(x,y,(z0+z1)/2);return m}
+function cylX(y,z,x0,x1,r,mat,seg=24){const g=new THREE.CylinderGeometry(r,r,x1-x0,seg);g.rotateZ(Math.PI/2);const m=new THREE.Mesh(g,mat);m.position.set((x0+x1)/2,y,z);return m}
+function helixY(cx,cz,r,y0,y1,turns,tr,mat,a0=0){const pts=[];const N=Math.round(turns*36);for(let i=0;i<=N;i++){const t=i/N,a=a0+t*turns*2*Math.PI;pts.push(new THREE.Vector3(cx+r*Math.cos(a),lerp(y0,y1,t),cz+r*Math.sin(a)))}
+  return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),N*2,tr,8,false),mat)}
+function helixZ(cx,cy,r,z0,z1,turns,tr,mat){const pts=[];const N=Math.round(turns*36);for(let i=0;i<=N;i++){const t=i/N,a=t*turns*2*Math.PI;pts.push(new THREE.Vector3(cx+r*Math.cos(a),cy+r*Math.sin(a),lerp(z0,z1,t)))}
+  return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),N*2,tr,8,false),mat)}
+const V3=(x,y,z=0)=>new THREE.Vector3(x,y,z);
+function rod(mesh,a,b){const d=new THREE.Vector3().subVectors(b,a),l=d.length();mesh.position.copy(a).addScaledVector(d,.5);mesh.scale.set(1,l,1);mesh.quaternion.setFromUnitVectors(V3(0,1,0),d.normalize())}
+function texPlane(w,h,px,draw){const c=document.createElement('canvas');c.width=px;c.height=Math.round(px*h/w);const x=c.getContext('2d');draw(x,c.width,c.height);
+  const t=new THREE.CanvasTexture(c);t.anisotropy=4;return new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:t,transparent:true,roughness:.7,depthWrite:false}))}
+
+const root=new THREE.Group();scene.add(root);
+const add3=(m,parent=root)=>{parent.add(m);return m};
+
+/* --- Gehäuse --- */
+const OUT=[[-45,-35],[45,-35],[45,15],[20,15],[20,30],[-20,30],[-20,15],[-45,15]];
+add3(ext(OUT,-9,-7.5,MAT.house));
+const cover=add3(ext(OUT,7.5,9,MAT.cover));cover.renderOrder=10;cover.raycast=()=>{};
+[[-45,45,-35,-33.5],[-45,-43.5,-33.5,-31],[-45,-43.5,-27,-1],[-45,-43.5,7,15],[43.5,45,-33.5,-1],[43.5,45,7,15],
+ [-43.5,-40.4,13.5,15],[-35.6,-20,13.5,15],[20,35.6,13.5,15],[40.4,43.5,13.5,15],
+ [-20,-18.5,13.5,30],[18.5,20,13.5,30],[-18.5,-6.5,28.5,30],[6.5,18.5,28.5,30]
+].forEach(w=>add3(box(w[0],w[1],w[2],w[3],-9,9,MAT.house)));
+add3(box(-45,-43.5,-31,-27,-9,-4,MAT.houseDark));add3(box(-45,-43.5,-31,-27,4,9,MAT.houseDark));
+// Innenrippen / Führungen
+add3(box(-43.5,-30,-33.5,-32.6,-7.5,-2,MAT.houseDark));add3(box(24,43.5,-15,-14,-7.5,-3,MAT.houseDark));
+// Aufdruck
+const capPrint=texPlane(40,18,520,(x,w,h)=>{x.fillStyle='#3a4044';x.font='600 92px Barlow, Arial, sans-serif';x.textAlign='center';x.textBaseline='middle';
+  x.fillText('I',w*.17,h*.42);x.fillText('0',w*.83,h*.42);x.font='500 34px Barlow, Arial, sans-serif';x.fillText('ON',w*.17,h*.8);x.fillText('OFF',w*.83,h*.8)});
+capPrint.rotation.x=-Math.PI/2;capPrint.position.set(0,30.05,0);add3(capPrint);
+function drawSide(x,w,h){x.clearRect(0,0,w,h);x.fillStyle='#3a4044';x.textAlign='center';x.textBaseline='middle';x.font='700 96px Barlow Semi Condensed, Arial Narrow, sans-serif';x.fillText(DEV.ch+DEV.In,w/2,h*.36);
+  x.font='500 40px IBM Plex Mono, monospace';x.strokeStyle='#3a4044';x.lineWidth=4;x.strokeRect(w*.12,h*.64,w*.5,h*.22);x.fillText('6000',w*.37,h*.76);x.strokeRect(w*.68,h*.64,w*.18,h*.22);x.fillText('3',w*.77,h*.76)}
+const sidePrint=texPlane(18,15,360,drawSide);
+sidePrint.rotation.y=Math.PI/2;sidePrint.position.set(20.06,22.5,0);add3(sidePrint);
+[['1',-29],['2',29]].forEach(([s,xx])=>{const p=texPlane(8,8,160,(x,w,h)=>{x.fillStyle='#3a4044';x.font='700 120px Barlow, Arial, sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(s,w/2,h/2)});p.rotation.x=-Math.PI/2;p.position.set(xx,15.05,0);add3(p)});
+
+/* --- Hutschiene TH35 --- */
+reg('hut',add3(ext([[-17.5,-36],[-12.5,-36],[-12.5,-42.5],[12.5,-42.5],[12.5,-36],[17.5,-36],[17.5,-35],[11.5,-35],[11.5,-41.5],[-11.5,-41.5],[-11.5,-35],[-17.5,-35]],-34,34,MAT.rail)));
+
+/* --- Klemmen + Leitungen --- */
+function terminal(sx,id){const xs=sx<0?[-44,-32]:[32,44],xm=(xs[0]+xs[1])/2;
+  [box(xs[0],xs[1],6.8,8,-5,5,MAT.zinc),box(xs[0],xs[1],-2,-0.8,-5,5,MAT.zinc),box(xs[0],xs[1],-2,8,4,5,MAT.zinc),box(xs[0],xs[1],-2,8,-5,-4,MAT.zinc),
+   cylY(xm,0,2.1,13.2,1.5,MAT.zinc),cylY(xm,0,12.6,14.6,3,MAT.zinc),box(xm-2.6,xm+2.6,14.0,14.65,-.45,.45,MAT.slot)].forEach(m=>reg(id,add3(m)));
+  reg(id,add3(box(sx<0?-44:31,sx<0?-31:44,-0.8,0.4,-3.8,3.8,MAT.copper)));
+  const w0=sx<0?-64:45,w1=sx<0?-45:64;add3(cylX(1.25,0,w0,w1,1.9,MAT.wireL));
+  add3(cylX(1.25,0,sx<0?-45:35,sx<0?-35:45,.85,MAT.copper));
+}
+terminal(-1,'k1');terminal(1,'k2');
+
+/* --- Leiterbahnen --- */
+reg('k1',add3(ext(strip([[-32,-0.2],[-29.5,-0.2],[-28,9.5],[-25,9.5]],1.2),-2.5,2.5,MAT.copper)));
+reg('spule',add3(cylY(-25,0,7,9.6,.75,MAT.coil)));
+reg('fest',add3(ext(strip([[-15,-5.2],[-14.5,-7],[-14.5,-11.3],[-25,-11.3]],1.2),-2.5,2.5,MAT.copper)));
+reg('fest',add3(box(-19.5,-15.5,-12.5,-11.9,-2,2,MAT.silver)));
+reg('schienen',add3(ext(strip([[-25,-11.3],[-32,-15],[-37.5,-21],[-37.5,-33]],1.0),-2.5,2.5,MAT.copper)));
+reg('schienen',add3(ext(strip([[-13.5,-22.3],[-6.5,-23.4],[-5.6,-24.6],[-5.6,-33]],1.0),-2.5,2.5,MAT.copper)));
+add3(ext(strip([[20,-28],[20,-30.2],[38,-30.2],[38,-0.8]],1.2),-2.5,2.5,MAT.copper));
+reg('bimetall',add3(box(18.6,21.4,-30,-27.2,-2.8,2.8,MAT.copper)));
+
+/* --- Spule / Schlaganker --- */
+reg('spule',add3(cylY(-20,0,-6,-5.2,6,MAT.steel)));reg('spule',add3(cylY(-20,0,7.2,8,6,MAT.steel)));
+const coilMesh=reg('spule',add3(helixY(-20,0,5,7,-5,6.5,.75,MAT.coil,Math.PI)));
+// Joch hinten
+reg('spule',add3(box(-27,-13,-6,8,-6.6,-5.8,MAT.steel)));
+const plG=new THREE.Group();add3(plG);
+[cylY(-20,0,-4.5,13.3,2.2,MAT.steel),cylY(-20,0,-12.5,-4.5,.8,MAT.steel),box(-18,-10.2,12.3,13.3,-1.2,4.8,MAT.steel),helixY(-20,0,1.4,-9.5,-6.2,3.5,.18,MAT.steel)].forEach(m=>{reg('spule',m);plG.add(m)});
+
+/* --- Löschkammer --- */
+const PLATE_X=[];for(let i=0;i<11;i++)PLATE_X.push(-35+i*2.7);
+const plateMeshes=[];
+PLATE_X.forEach(x=>{const g=new THREE.ExtrudeGeometry(shapeOf([[-5,-33],[5,-33],[5,-23.5],[1.6,-23.5],[0,-26.5],[-1.6,-23.5],[-5,-23.5]]),{depth:.8,bevelEnabled:false});
+  g.rotateY(-Math.PI/2);g.translate(x+.8,0,0);const m=reg('kammer',add3(new THREE.Mesh(g,MAT.plate)));plateMeshes.push(m)});
+reg('kammer',add3(box(-38.4,-4.8,-34,-22.6,-6.2,-5.4,MAT.fiber)));
+reg('kammer',add3(box(-38.4,-4.8,-34,-33.2,-5.4,5,MAT.fiber)));
+
+/* --- Bimetall (verformbar) --- */
+function bimLayer(x0,mat){const g=new THREE.BoxGeometry(.6,24.5,5,1,28,1);const m=reg('bimetall',add3(new THREE.Mesh(g,mat)));m.position.set(x0+.3,-28+12.25,0);m.userData.orig=g.attributes.position.array.slice();return m}
+const bimA=bimLayer(19.4,MAT.brass),bimB=bimLayer(20.0,MAT.invar);
+function bendBim(disp){[bimA,bimB].forEach(m=>{const pos=m.geometry.attributes.position,o=m.userData.orig;
+  for(let i=0;i<pos.count;i++){const y=o[i*3+1]+m.position.y;const t=clamp((y+28)/24.5);pos.array[i*3]=o[i*3]+disp*t*t}
+  pos.needsUpdate=true;m.geometry.computeVertexNormals();m.geometry.computeBoundingSphere()})}
+
+/* --- Kontakthebel (beweglich) --- */
+const armG=new THREE.Group();armG.position.set(G.P[0],G.P[1],0);add3(armG);
+[ext(strip([[0,0],[-29,-6.54]],1.6),-2,2,MAT.copper),cylZ(0,0,-2.2,2.2,2.1,MAT.copper)].forEach(m=>{reg('beweg',m);armG.add(m)});
+const movSilver=reg('beweg',box(-25.5,-21.5,-4.9,-3.5,-2,2,MAT.silver));armG.add(movSilver);
+reg('feder',armG.add(helixZ(0,0,2.7,2.3,5.2,4,.32,MAT.steel))&&armG.children[armG.children.length-1]);
+const fLeg=reg('feder',box(-7,0,1.6,2.2,4.9,5.4,MAT.steel));armG.add(fLeg);
+add3(cylZ(G.P[0],G.P[1],-7.5,5.6,.9,MAT.steel));
+
+/* --- Schaltschloss: Träger + Klinke --- */
+const carG=new THREE.Group();carG.position.set(G.P[0],G.P[1],0);add3(carG);
+reg('schloss',carG.add(ext([[-2.2,-1.8],[2.6,-2.4],[9.2,8.6],[10.8,14.2],[9.6,17.2],[5.4,16.8],[3.0,12.2],[-2.8,1.8]],-6,-3.5,MAT.plastic))&&carG.children[0]);
+const klG=new THREE.Group();klG.position.set(QREL[0],QREL[1],0);carG.add(klG);
+const klMesh=reg('schloss',ext([[1.4,1.0],[-2.9,3.3],[-4.1,2.4],[-4.3,1.4],[-2.8,0.5],[-0.9,-0.4],[-0.9,-4.8],[0.9,-4.8],[1.3,-1.0]],-3.4,-2.2,MAT.steel));klG.add(klMesh);
+reg('schloss',klG.add(cylZ(0,0,-6.2,-1.8,.6,MAT.steel))&&klG.children[1]);
+// Bügel
+const bueWire=reg('schloss',add3(new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,1,14),MAT.steel)));
+const bueBend=reg('schloss',add3(new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,1,14),MAT.steel)));
+const ePin=reg('schloss',add3(cylZ(0,0,-6.6,-1.4,.78,MAT.steel)));
+
+/* --- Schaltknebel --- */
+const levG=new THREE.Group();levG.position.set(G.T[0],G.T[1],0);add3(levG);
+const ca=crank(0);const crankLoc=[ca[0]-G.T[0],ca[1]-G.T[1]];
+[cylZ(0,0,-4,4,4,MAT.lever),ext([[-2.6,3],[2.6,3],[2.3,13.2],[-2.3,13.2]],-3.5,3.5,MAT.lever),cylZ(0,13.2,-3.5,3.5,2.3,MAT.lever),
+ ext([[-1.6,-2.6],[2.2,-2.6],[2.0,-6.4],[-1.0,-6.4]],-1,4,MAT.lever),cylZ(crankLoc[0],crankLoc[1],-4.6,-1,.7,MAT.steel)].forEach(m=>{reg('lever',m);levG.add(m)});
+for(let i=0;i<5;i++){const r=reg('lever',box(-2.5,2.5,7+i*1.2,7.35+i*1.2,3.5,3.75,MAT.plastic));levG.add(r)}
+reg('feder',add3(helixZ(G.T[0],G.T[1],3.2,-6.8,-4.4,3,.28,MAT.steel)));
+add3(cylZ(G.T[0],G.T[1],-7.5,5,.9,MAT.steel));
+
+/* --- Auslösebrücke --- */
+const trG=new THREE.Group();trG.position.set(G.R[0],G.R[1],0);add3(trG);
+[ext(strip([[-25,1.5],[0,0],[2.5,-12],[8,-12],[8,-14]],1.6),3,4.6,MAT.trip),cylZ(0,0,2.6,5,1.9,MAT.trip),box(7.4,8.6,-15,-12.6,-2,4.6,MAT.trip),cylZ(2.1,-10.5,-3.8,4.6,.6,MAT.steel)].forEach(m=>{reg('bruecke',m);trG.add(m)});
+add3(cylZ(G.R[0],G.R[1],-7.5,5.4,.7,MAT.steel));
+
+/* --- Litze (Kupferlitze) dynamisch --- */
+const braidMat=MAT.copper.clone();braidMat.color.set(0xB8733F);braidMat.roughness=.7;
+let braid=reg('beweg',add3(new THREE.Mesh(new THREE.BufferGeometry(),braidMat)));
+
+/* --- Hand für Freiauslösung --- */
+const hand=new THREE.Group();add3(hand);
+{const f=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.7,1,20),MAT.skin);rod(f,V3(15,47,0),V3(-3.2,34.6,0));hand.add(f);
+ const tip=new THREE.Mesh(new THREE.SphereGeometry(2.5,20,14),MAT.skin);tip.position.set(-3.2,34.6,0);hand.add(tip);}
+hand.visible=false;
+
+/* --- Freiauslösung: Markierungen --- */
+const ringE=add3(new THREE.Mesh(new THREE.TorusGeometry(1.7,.2,8,40),new THREE.MeshBasicMaterial({color:0xF2B233})));
+const ringN=add3(new THREE.Mesh(new THREE.TorusGeometry(1.7,.2,8,40),new THREE.MeshBasicMaterial({color:0x35B6E8})));
+const gapLine=add3(new THREE.Line(new THREE.BufferGeometry().setFromPoints([V3(0,0),V3(1,0)]),new THREE.LineDashedMaterial({color:0xF2B233,dashSize:.6,gapSize:.4})));
+[ringE,ringN,gapLine].forEach(m=>{m.visible=false;m.renderOrder=20;m.material.depthTest=false});
+
+/* --- Lichtbogen --- */
+const arcCoreMat=new THREE.MeshBasicMaterial({color:0xF2FAFF,transparent:true,depthWrite:false});
+const arcGlowMat=new THREE.MeshBasicMaterial({color:0x3D7DFF,transparent:true,opacity:.4,depthWrite:false});
+const arcCore=add3(new THREE.Mesh(new THREE.BufferGeometry(),arcCoreMat)),arcGlow=add3(new THREE.Mesh(new THREE.BufferGeometry(),arcGlowMat));arcGlow.renderOrder=30;arcCore.renderOrder=31;
+const subArcs=[];for(let i=0;i<12;i++){const a=add3(new THREE.Mesh(new THREE.BufferGeometry(),arcCoreMat)),b=add3(new THREE.Mesh(new THREE.BufferGeometry(),arcGlowMat));subArcs.push([a,b])}
+const puffTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,2,32,32,32);g.addColorStop(0,'rgba(200,205,210,.9)');g.addColorStop(1,'rgba(200,205,210,0)');x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c)})();
+const puffs=[];for(let i=0;i<7;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:puffTex,transparent:true,depthWrite:false,opacity:0}));add3(s);puffs.push(s)}
+
+/* --- Stromfluss & Magnetfeld --- */
+const NP=96;
+const flowMat=new THREE.MeshBasicMaterial({color:0xFFD54A,transparent:true});
+const flow=add3(new THREE.InstancedMesh(new THREE.SphereGeometry(.55,10,8),flowMat,NP));flow.raycast=()=>{};
+const FL_N=4,FL_P=14;
+const fieldMat=new THREE.MeshBasicMaterial({color:0x5C6CFF,transparent:true,opacity:0});
+const fieldDots=add3(new THREE.InstancedMesh(new THREE.ConeGeometry(.55,1.5,10),fieldMat,FL_N*FL_P));fieldDots.raycast=()=>{};
+const fieldLines=[];
+const loops=[];
+for(let i=0;i<FL_N;i++){const side=i%2?1:-1,plane=i<2?'xy':'zy',pts=[];
+  for(let j=0;j<=64;j++){const a=j/64*2*Math.PI;const u=-side*(5.2*Math.cos(a))+side*8, v=13*Math.sin(a);
+    pts.push(plane==='xy'?V3(-20+u,1+v,0):V3(-20,1+v,u))}
+  loops.push(pts);
+  const ln=add3(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x5C6CFF,transparent:true,opacity:0})));fieldLines.push(ln)}
+
+/* ---------- Kamera / Orbit ---------- */
+const CAMS={gesamt:{t:[0,-3,0],r:176,th:.32,ph:1.3},schloss:{t:[8,9,0],r:56,th:.24,ph:1.36},ausloeser:{t:[-1,-4,0],r:96,th:-.1,ph:1.36},
+  kammer:{t:[-21,-23,0],r:56,th:.26,ph:1.24},bimetall:{t:[17,-12,0],r:58,th:-.22,ph:1.38},spule:{t:[-15,0,0],r:60,th:.28,ph:1.32}};
+const orb={tg:V3(0,-3,0),r:176,th:.32,ph:1.3,anim:null};
+function applyCam(){const a=camera.aspect,k=a<1.35?Math.min(2.1,1.35/a):1,s=Math.sin(orb.ph),r=orb.r*k;
+  camera.position.set(orb.tg.x+r*s*Math.sin(orb.th),orb.tg.y+r*Math.cos(orb.ph),orb.tg.z+r*s*Math.cos(orb.th));camera.lookAt(orb.tg)}
+function fly(name,dur=1.2){const c=CAMS[name];if(!c)return;document.querySelectorAll('#segCam button').forEach(b=>b.classList.toggle('on',b.dataset.c===name));
+  const to={tg:V3(...c.t),r:c.r,th:c.th,ph:c.ph};
+  if(reduced){orb.tg.copy(to.tg);orb.r=to.r;orb.th=to.th;orb.ph=to.ph;orb.anim=null;return}
+  let th0=orb.th;while(to.th-th0>Math.PI)th0+=2*Math.PI;while(th0-to.th>Math.PI)th0-=2*Math.PI;
+  orb.anim={t:0,dur,f:{tg:orb.tg.clone(),r:orb.r,th:th0,ph:orb.ph},to}}
+function flyTo(v,r){if(reduced){orb.tg.copy(v);orb.r=r;return}orb.anim={t:0,dur:1,f:{tg:orb.tg.clone(),r:orb.r,th:orb.th,ph:orb.ph},to:{tg:v.clone(),r,th:orb.th,ph:orb.ph}};document.querySelectorAll('#segCam button').forEach(b=>b.classList.remove('on'))}
+const ptrs=new Map();let drag=null,pinch0=0,moved=0;
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});orb.anim=null;moved=0;
+  drag=(e.button===2||e.shiftKey)?'pan':'rot';if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch0=Math.hypot(a.x-b.x,a.y-b.y);drag='pinch'}});
+canvas.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p){hoverPick(e);return}
+  const dx=e.clientX-p.x,dy=e.clientY-p.y;moved+=Math.abs(dx)+Math.abs(dy);p.x=e.clientX;p.y=e.clientY;
+  if(drag==='pinch'&&ptrs.size===2){const [a,b]=[...ptrs.values()],d=Math.hypot(a.x-b.x,a.y-b.y);if(pinch0)orb.r=clamp(orb.r*pinch0/d,30,320);pinch0=d;return}
+  if(drag==='rot'){orb.th-=dx*.0065;orb.ph=clamp(orb.ph-dy*.0065,.12,Math.PI-.12)}
+  else if(drag==='pan'){const k=orb.r*.0016,right=V3().setFromMatrixColumn(camera.matrix,0),up=V3().setFromMatrixColumn(camera.matrix,1);orb.tg.addScaledVector(right,-dx*k).addScaledVector(up,dy*k)}
+  document.querySelectorAll('#segCam button').forEach(b=>b.classList.remove('on'))});
+const endPtr=e=>{ptrs.delete(e.pointerId);if(ptrs.size<2)pinch0=0;if(!ptrs.size){if(moved<4&&hoverId)selectPart(hoverId,false);drag=null}};
+canvas.addEventListener('pointerup',endPtr);canvas.addEventListener('pointercancel',endPtr);
+canvas.addEventListener('pointerleave',()=>{if(!ptrs.size){setHover(null)}});
+canvas.addEventListener('wheel',e=>{e.preventDefault();orb.anim=null;orb.r=clamp(orb.r*Math.exp(e.deltaY*.0011),30,320)},{passive:false});
+
+/* Picking */
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let hoverId=null,selId=null,lastPick=0;
+const pickables=[];PARTS.forEach(p=>p.meshes.forEach(m=>pickables.push(m)));
+function hoverPick(e){const now=performance.now();if(now-lastPick<40)return;lastPick=now;const r=canvas.getBoundingClientRect();
+  mouse.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);
+  const hit=ray.intersectObjects(pickables,false)[0];setHover(hit?hit.object.userData.part:null,e.clientX-r.left,e.clientY-r.top)}
+const hov=$('#hover');
+function setHover(id,x,y){hoverId=id;if(!id){hov.hidden=true;canvas.style.cursor='';return}hov.hidden=false;hov.textContent=PM[id].i+' · '+PM[id].n;hov.style.transform=`translate(${x+14}px,${y+10}px)`;canvas.style.cursor='pointer'}
+
+/* ---------- Beschriftung ---------- */
+const tagsEl=$('#tags');
+const anchorFns={
+  lever:()=>levG.localToWorld(V3(0,13.5,3.5)), schloss:()=>V3(S.E[0],S.E[1],-1.4), spule:()=>V3(-26,4,0),
+  bimetall:()=>V3(20.6+bendDisp()*.4,-15,2.5), bruecke:()=>trG.localToWorld(V3(-12,.8,4.6)), fest:()=>V3(-15,-9,2.5),
+  beweg:()=>armG.localToWorld(V3(-10,-2.3,2)), feder:()=>armG.localToWorld(V3(0,2.7,5.2)), schienen:()=>V3(-37.5,-26,2.5),
+  kammer:()=>V3(-21,-33,5), k1:()=>V3(-38,8,5), k2:()=>V3(38,8,5), hut:()=>V3(12,-42.5,26)};
+PARTS.forEach(p=>{const b=document.createElement('button');b.className='tag';b.type='button';b.innerHTML=`<span class="n">${p.i}</span><span class="nm">${p.n}</span>`;
+  b.addEventListener('click',()=>selectPart(p.id,true));b.addEventListener('mouseenter',()=>{hoverId=p.id});b.addEventListener('mouseleave',()=>{hoverId=null});
+  tagsEl.appendChild(b);p.tag=b});
+const legEl=$('#leg');
+PARTS.forEach(p=>{const li=document.createElement('li');li.innerHTML=`<button type="button"><span class="n">${p.i}</span><span><b>${p.n}</b><small>${p.d}</small></span></button>`;
+  const b=li.firstChild;b.addEventListener('click',()=>selectPart(p.id,true));b.addEventListener('mouseenter',()=>{hoverId=p.id});b.addEventListener('mouseleave',()=>{hoverId=null});
+  legEl.appendChild(li);p.leg=b});
+function selectPart(id,move){selId=selId===id&&!move?null:id;PARTS.forEach(p=>{p.tag.classList.toggle('on',p.id===selId);p.leg.classList.toggle('on',p.id===selId)});
+  if(move&&selId){const a=anchorFns[id]();if(id==='hut'||id==='k1'||id==='k2')fly('gesamt');else flyTo(V3(a.x,a.y,0),Math.max(48,PM[id].cam==='kammer'?52:56))}}
+const v=new THREE.Vector3();
+function toScreen(p,w,h){v.copy(p).project(camera);return {x:(v.x+1)/2*w,y:(1-v.y)/2*h,ok:v.z<1&&v.z>-1}}
+
+/* ---------- Kennlinie ---------- */
+const KL=(()=>{const svg=$('#kl'),W=290,H=206,x0=40,x1=280,y0=14,y1=170;
+  const X=i=>x0+(Math.log10(i)/2)*(x1-x0),Y=t=>y1-((Math.log10(t)+3)/7)*(y1-y0);
+  let dot,halo,mk;
+  function build(){const c=ch(),band=$('#cBand').checked;
+    const up=[[1.45,10000]].concat(upTherm().filter(p=>p[0]<c.hi),[[c.hi,bandHi(c.hi-1e-6)]],upMag());
+    const lo=LOW.filter(p=>p[0]<c.lo).concat([[c.lo,li(LOW,c.lo)],[c.lo,.002],[100,.002]]);
+    const pts=up.map(p=>`${X(p[0])},${Y(p[1])}`).concat([...lo].reverse().map(p=>`${X(p[0])},${Y(p[1])}`));
+    let s=`<rect x="${x0}" y="${y0}" width="${x1-x0}" height="${y1-y0}" fill="none" stroke="var(--line)"/>`;
+    [1,2,3,5,10,20,50,100].forEach(i=>{s+=`<line x1="${X(i)}" x2="${X(i)}" y1="${y0}" y2="${y1}" stroke="var(--line)" stroke-width=".6"/><text x="${X(i)}" y="${y1+12}" text-anchor="middle">${i}</text>`});
+    [[.001,'1 ms'],[.01,'10 ms'],[.1,'0,1 s'],[1,'1 s'],[10,'10 s'],[60,'1 min'],[3600,'1 h']].forEach(([t,l])=>{s+=`<line x1="${x0}" x2="${x1}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)" stroke-width=".6"/><text x="${x0-4}" y="${Y(t)+3}" text-anchor="end">${l}</text>`});
+    if(band){s+=`<polygon points="${pts.join(' ')}" fill="var(--accent)" fill-opacity=".16" stroke="var(--accent)" stroke-width="1.3"/>`;
+      let d='';for(let k=1.31;k<c.mag;k*=1.02)d+=(d?'L':'M')+X(k).toFixed(1)+','+Y(Math.min(9999,tTherm(k))).toFixed(1);
+      d+=`L${X(c.mag)},${Y(tTherm(c.mag))}L${X(c.mag)},${Y(tMag(c.mag))}`;for(let k=c.mag;k<=100;k*=1.1)d+=`L${X(k).toFixed(1)},${Y(tMag(k)).toFixed(1)}`;
+      s+=`<path class="modelc" d="${d}"/>`;
+      s+=`<text x="${X(1.6)}" y="${Y(4)}" style="fill:var(--thermal)">thermisch</text><text x="${X(c.hi*2.2)}" y="${Y(.5)}" style="fill:var(--magnetic)">magnetisch</text>`}
+    [[1.13,'1,13',0],[1.45,'1,45',1],[2.55,'2,55',0],[c.lo,'',0],[c.hi,'',0]].forEach(([k,l,r])=>{s+=`<line class="lim" x1="${X(k)}" x2="${X(k)}" y1="${y0}" y2="${y1}"/>`;if(l)s+=`<text x="${X(k)+2}" y="${y0+9+r*9}" style="font-size:8px">${l}</text>`});
+    s+=`<text x="${(x0+x1)/2}" y="${H-2}" text-anchor="middle">I / In</text>`;
+    s+=`<g id="klMk" visibility="hidden"><line id="mkV" stroke="var(--off)" stroke-width="1" stroke-dasharray="3 2"/><line id="mkH" stroke="var(--off)" stroke-width="1" stroke-dasharray="3 2"/><text id="mkT" style="fill:var(--ink);font-size:9.5px"></text></g>`;
+    s+=`<circle id="klHalo" r="9" fill="var(--off)" fill-opacity=".25" visibility="hidden"/><circle id="klDot" r="4" fill="var(--off)" stroke="var(--raised)" stroke-width="1.5" visibility="hidden"/>`;
+    svg.innerHTML=s;dot=svg.querySelector('#klDot');halo=svg.querySelector('#klHalo');mk=svg.querySelector('#klMk')}
+  build();
+  return {build,set(i,t){if(i==null){dot.setAttribute('visibility','hidden');halo.setAttribute('visibility','hidden');mk.setAttribute('visibility','hidden');return}
+    const cx=X(i),cy=Y(clamp(t,.001,10000));[dot,halo].forEach(e=>{e.setAttribute('cx',cx);e.setAttribute('cy',cy);e.setAttribute('visibility','visible')})},
+   mark(i,t,txt){const cx=X(i),cy=Y(clamp(t,.001,10000));const v=mk.querySelector('#mkV'),h=mk.querySelector('#mkH'),tx=mk.querySelector('#mkT');
+    v.setAttribute('x1',cx);v.setAttribute('x2',cx);v.setAttribute('y1',cy);v.setAttribute('y2',y1);h.setAttribute('x1',x0);h.setAttribute('x2',cx);h.setAttribute('y1',cy);h.setAttribute('y2',cy);
+    tx.textContent=txt;const right=cx<x1-70;tx.setAttribute('x',right?cx+7:cx-7);tx.setAttribute('text-anchor',right?'start':'end');tx.setAttribute('y',cy<y0+14?cy+13:cy-6);mk.setAttribute('visibility','visible')}}})();
+
+/* ---------- Ablaufsteuerung ---------- */
+let seq=null,paused=false,speed=1,lastNarr=null;
+const narr={ph:$('#nPh'),ti:$('#nTitle'),tx:$('#nText'),cL:$('#cL'),cT:$('#cT'),steps:$('#steps'),act:$('#nAct')};
+function fmtReal(s){if(s==null)return '–';if(s===0)return '0 s';if(!isFinite(s))return '∞';if(s>=3600){const h=Math.floor(s/3600),m=Math.round((s%3600)/60);return h+' h '+(m<10?'0':'')+m+' min'}if(s<1)return fmt(s*1000,s<.01?1:0)+' ms';if(s<60)return fmt(s,0)+' s';const m=Math.floor(s/60),r=Math.round(s%60);return m+' min '+(r<10?'0':'')+r+' s'}
+function startSeq(name,steps,opts={}){seq={name,steps,i:0,t:0,opts};narr.steps.innerHTML=steps.map(()=>'<i><b></b></i>').join('');enterStep();refreshButtons()}
+function enterStep(){const st=seq.steps[seq.i];st.enter&&st.enter();narr.ph.textContent=seq.name+' · Schritt '+(seq.i+1)+' von '+seq.steps.length;narr.ti.textContent=st.title;narr.tx.textContent=st.text;
+  narr.act.innerHTML='';if(st.wait&&st.btn){const b=document.createElement('button');b.className='b pri';b.type='button';b.textContent=st.btn;b.style.flex='0 0 auto';b.onclick=()=>{st.done=true;S.hold=false;$('#cHold').checked=false};narr.act.appendChild(b)}
+  if(st.cam&&$('#cFollow').checked)fly(st.cam,1.3);
+  const tag=$('#speedtag');if(seq.opts.tag){tag.hidden=false;tag.textContent=seq.opts.tag}else tag.hidden=true}
+function endSeq(){const fin=seq.opts.final;seq=null;$('#speedtag').hidden=true;narr.act.innerHTML='';
+  if(fin){narr.ph.textContent=fin.ph;narr.ti.textContent=fin.title;narr.tx.textContent=fin.text}refreshButtons()}
+function tickSeq(dt){if(!seq||paused)return;const st=seq.steps[seq.i];let u;
+  if(st.wait){st.update&&st.update(dt);u=st.done?1:0;if(!st.done){setProg(seq.i,1);return}}
+  else{seq.t+=dt*speed;u=clamp(seq.t/st.dur);st.update&&st.update(u)}
+  setProg(seq.i,u);
+  if(st.real){const r=lerp(st.real[0],st.real[1],u);narr.cT.textContent=fmtReal(r);narr.cL.textContent=seq.opts.clockLabel||'Echtzeit';if(seq.opts.kl&&S.I>0.05)KL.set(seq.opts.kl,Math.max(r,.001))}
+  if(u>=1){st.exit&&st.exit();seq.i++;seq.t=0;if(seq.i>=seq.steps.length)endSeq();else enterStep()}}
+function setProg(i,u){const bars=narr.steps.querySelectorAll('i b');bars.forEach((b,j)=>b.style.width=(j<i?100:j===i?u*100:0)+'%')}
+
+/* Bausteine */
+const isOn=()=>S.latched&&S.phi>PHI_ON-1&&S.c<.5;
+function leverOffStep(title,text){return {title,text,dur:1.5,cam:'schloss',enter(){this.p0=S.phi;this.pl0=S.plunger},update(u){
+  S.phi=lerp(this.p0,PHI_OFF,eIn(clamp(u/.6)));S.plunger=lerp(this.pl0,0,eOut(clamp(u/.5)));
+  if(u>.62&&!S.latched){S.k=lerp(1,0,eOut(clamp((u-.62)/.3)));if(u>=.92){S.latched=true;S.k=0;S.Eprev=Bopen.slice()}}
+  if(u>=1){S.latched=true;S.k=0}}}}
+function holdStep(){return {title:'Freiauslösung: Kontakte offen, Knebel in I',text:'Der Knebel wird weiter in Stellung I festgehalten – trotzdem sind die Kontakte offen. Die Klinke hat den Bügel freigegeben, Knebel und Kontakthebel sind mechanisch entkoppelt (gelbe und blaue Markierung). Erst nach dem Loslassen springt der Knebel auf 0 und das Schaltschloss rastet wieder ein.',
+  wait:true,btn:'Knebel loslassen',cam:'schloss',done:false}}
+function finish(text){return {ph:'Betriebszustand',title:'Ausgeschaltet',text}}
+
+function scOn(){return [{title:'Einschalten',text:'Der Knebel dreht sich nach I. Über den Bügel drückt er das Schaltschloss und den Kontakthebel gegen die Ausschaltfeder auf den Festkontakt. Kurz vor der Endlage liegen Kurbel und Bügel fast in einer Linie (Kniehebel nahe Totpunkt) – das hält die Kontakte sicher geschlossen.',
+  dur:2,cam:null,enter(){this.p0=S.phi},update(u){S.phi=lerp(this.p0,PHI_ON,ease(u));if(u>=1){S.I=1;S.flowVis=1}}}]}
+function scOff(){return [{title:'Ausschalten von Hand',text:'Der Knebel geht auf 0. Das Schaltschloss bleibt verklinkt, der Bügel zieht den Kontakthebel vom Festkontakt weg. Unter Last entsteht dabei ein kleiner Lichtbogen, der sofort erlischt.',
+  dur:1.8,cam:null,enter(){this.p0=S.phi},update(u){S.phi=lerp(this.p0,PHI_OFF,ease(u));
+    const open=S.c>.4;if(open&&u<.75){S.arc={s:clamp((u-.25)/.5)*.55,amp:.35};S.flowVis=Math.max(0,S.flowVis-.08)}else if(u>=.75){S.arc=null;S.I=0;S.flowVis=0}}}]}
+
+const amps=k=>{const a=k*DEV.In;return (a>=1000?fmt(a/1000,a>=10000?1:2)+' kA':a>=100?Math.round(a)+' A':fmt(a,1).replace(/,0$/,'')+' A')};
+const kTxt=k=>fmt(k,k%1?(Math.abs(k*10-Math.round(k*10))>1e-6?2:1):0);
+function scNoTrip(k){const tb=BEND_TOUCH/BEND_FULL*clamp((k*k-1)/(1.69-1))*.85;return [
+ {title:'Leichte Überlast',text:`Es fließen dauerhaft ${amps(k)}, das sind ${kTxt(k)} · In. Das Bimetall wird wärmer, bleibt aber unter der Auslösetemperatur.`,
+  dur:3,real:[0,0],cam:'gesamt',update(u){S.I=lerp(1,k,ease(u))}},
+ {title:'Bimetall erwärmt sich – erreicht die Brücke aber nicht',text:`Wärmezufuhr und Wärmeabgabe gleichen sich aus, bevor das Bimetall die Auslösebrücke erreicht. ${k<=1.13?'Nach DIN EN 60898-1 darf der LS-Schalter beim kleinen Prüfstrom 1,13 · In mindestens 1 Stunde lang nicht auslösen.':'Dieser Strom liegt unter dem Ansprechwert dieses Geräts (etwa 1,3 · In).'} Die Animation ist stark zeitgerafft.`,
+  dur:7,real:[0,3600],cam:'bimetall',update(u){S.heat=lerp(0,.55,u);S.bend=lerp(0,tb,eOut(u))}},
+ {title:'Keine Auslösung nach 1 Stunde',text:`Auch nach einer Stunde hat der LS-Schalter nicht ausgelöst. ${k<1.45?'Erst ab dem großen Prüfstrom 1,45 · In ist eine Auslösung innerhalb von 1 Stunde vorgeschrieben.':''} Jetzt wird die Last wieder auf den Bemessungsstrom reduziert, das Bimetall kühlt ab.`,
+  dur:3,real:[3600,3700],cam:'bimetall',update(u){S.I=lerp(k,1,ease(u));S.bend=lerp(tb,0,ease(u));S.heat=lerp(.55,0,u)}}]}
+function scOverload(k){const t=tTherm(k);return [
+ {title:'Überlast tritt auf',text:`Es sind zu viele Verbraucher eingeschaltet. Dauerhaft fließen ${amps(k)}, das sind ${kTxt(k)} · In. Die Leitung würde sich unzulässig erwärmen. Für den Magnetauslöser ist dieser Strom zu klein – er spricht bei diesem Gerät erst ab ${fmt(ch().mag,1)} · In an.`,
+  dur:3,real:[0,0],cam:'gesamt',update(u){S.I=lerp(1,k,ease(u))}},
+ {title:'Bimetall erwärmt sich und biegt sich',text:'Der Strom fließt durch das Bimetall und erwärmt es. Die linke Schicht dehnt sich stärker aus als die rechte, deshalb biegt sich der Streifen langsam zur Seite. Je größer der Strom, desto schneller geht das. Die Animation ist stark zeitgerafft.',
+  dur:clamp(3+1.6*Math.log10(t),3,9),real:[0,.95*t],cam:'bimetall',update(u){S.heat=lerp(0,.8,u);S.bend=lerp(0,BEND_TOUCH/BEND_FULL,u)}},
+ {title:'Bimetall drückt die Auslösebrücke',text:'Das Bimetall berührt die Auslösebrücke und dreht sie. Ihr Mitnehmerstift drückt gegen das Ende der Klinke im Schaltschloss.',
+  dur:2.5,real:[.95*t,.99*t],cam:'ausloeser',update(u){S.heat=lerp(.8,1,u);S.bend=lerp(BEND_TOUCH/BEND_FULL,.78,u);S.k=klFromTrip()}},
+ {title:'Schaltschloss klinkt aus',text:'Die Klinke dreht sich weg und gibt das Ende des Bügels frei. Damit ist die Verbindung zwischen Knebel und Kontakthebel gelöst.',
+  dur:2,real:[.99*t,t],cam:'schloss',update(u){S.bend=lerp(.78,1,u);S.k=Math.max(klFromTrip(),ease(u));if(u>=1){S.latched=false;S.k=1}}},
+ {title:'Ausschaltfeder öffnet die Kontakte',text:`Nach ${fmtReal(t)} ist es so weit: Die beim Einschalten gespannte Ausschaltfeder reißt den Kontakthebel schlagartig vom Festkontakt weg. Zwischen den Kontakten zündet ein Lichtbogen.`,
+  dur:1.6,real:[t,t+.002],cam:'kammer',update(u){S.c=lerp(0,C_OPEN,eOut(u));S.flowVis=1-u;S.arc={s:u*.25,amp:.55}}},
+ {title:'Lichtbogen erlischt in der Löschkammer',text:'Über die Leitschienen läuft der Lichtbogen in die Löschkammer. Dort wird er geteilt und gekühlt und erlischt. Der Stromkreis ist unterbrochen.',
+  dur:3.2,real:[t+.002,t+.008],cam:'kammer',update(u){S.arc={s:lerp(.25,1,u),amp:.6};S.plateHeat=Math.max(S.plateHeat,.45*Math.sin(Math.PI*u));if(u>.7)S.gas=Math.max(S.gas,(u-.7)/.3);if(u>=1){S.arc=null;S.I=0}}},
+ ...(S.hold?[holdStep()]:[]),
+ Object.assign(leverOffStep('Knebel springt auf 0','Die Rückstellfeder dreht den Knebel in Stellung 0. Der Bügel gleitet dabei zurück in die Klinke, das Schaltschloss rastet wieder ein.'),{real:[t+.01,t+1]}),
+ {title:'Bimetall kühlt ab',text:'Ohne Strom kühlt das Bimetall ab und biegt sich zurück. Die Auslösebrücke kehrt in ihre Ruhelage zurück. Danach kann wieder eingeschaltet werden, sobald die Ursache der Überlast beseitigt ist.',
+  dur:3.2,real:[t+1,t+1+Math.max(60,Math.min(t,600))],cam:'bimetall',enter(){this.b0=S.bend;this.h0=S.heat},update(u){S.bend=lerp(this.b0,0,ease(u));S.heat=lerp(this.h0,0,u)}}
+]}
+function scShort(free,k){const camL=free?'schloss':null,f=tMag(k)/.008,R=(a,b)=>[a*f,b*f];return [
+ {title:'Kurzschluss',text:`Zwischen Außenleiter und Neutralleiter entsteht eine fast widerstandslose Verbindung. Der Strom steigt in wenigen Millisekunden auf ein Vielfaches des Bemessungsstroms, hier ${kTxt(k)} · In = ${amps(k)}.`,
+  dur:2.2,real:R(0,.001),cam:free?'schloss':'spule',update(u){S.I=lerp(1,k,eIn(u));S.field=u*.7}},
+ {title:'Magnetfeld zieht den Schlaganker an',text:`Der Strom liegt über dem Ansprechwert des Magnetauslösers (bei diesem Gerät ${fmt(ch().mag,1)} · In, Norm Typ ${DEV.ch}: ${ch().lo} bis ${ch().hi} · In). Er fließt durch die Spule und erzeugt ein starkes Magnetfeld. Es zieht den Schlaganker schlagartig nach unten. Das Bimetall ist für diese kurze Zeit viel zu träge.`,
+  dur:1.8,real:R(.001,.002),cam:camL||'spule',update(u){S.field=lerp(.7,1,u);S.plunger=lerp(0,1.5,eIn(u))}},
+ {title:'Schlaganker schlägt den Kontakt auf',text:'Der Stößel trifft den Kontakthebel und drückt ihn vom Festkontakt weg, noch bevor das Schaltschloss ausgeklinkt ist. Gleichzeitig dreht der Anker die Auslösebrücke.',
+  dur:1.8,real:R(.002,.003),cam:camL||'ausloeser',update(u){S.plunger=lerp(1.5,PL_MAX,eOut(u));S.k=klFromTrip();const a=armAngle();if(a>.3){S.arc={s:clamp(a/12)*.25,amp:1};S.flowVis=Math.max(0,1-a/2)}}},
+ {title:'Schaltschloss klinkt aus',text:'Die Auslösebrücke hat die Klinke weggedreht, der Bügel ist frei. Die Ausschaltfeder öffnet die Kontakte vollständig. Der Lichtbogen brennt weiter und führt den Strom.',
+  dur:1.8,real:R(.003,.0036),cam:camL||'ausloeser',update(u){S.k=1;if(!S.latched)S.c=lerp(0,C_OPEN,eOut(u));S.latched=false;S.arc={s:lerp(Math.min(.25,armAngle()/12*.25),.25,u),amp:1};S.flowVis=0}},
+ {title:'Lichtbogen läuft in die Löschkammer',text:'Das Magnetfeld des Lichtbogens selbst treibt ihn von den Kontakten weg. Seine Fußpunkte springen auf die Leitschienen und wandern nach unten in die Löschkammer. So werden die Kontakte geschont.',
+  dur:2.8,real:R(.0036,.005),cam:'kammer',update(u){S.arc={s:lerp(.25,.6,u),amp:1};S.field=lerp(1,.5,u)}},
+ {title:'Löschbleche teilen den Lichtbogen',text:`Die Stahlbleche zerlegen den Lichtbogen in viele kurze Teillichtbögen. Jeder braucht etwa 20 bis 30 V, um zu brennen, und die Bleche entziehen ihm Wärme. Zusammen ist das mehr, als das Netz liefern kann: Der Lichtbogen erlischt, der Strom ist null – ${fmtReal(tMag(k))} nach Beginn des Kurzschlusses.`,
+  dur:3.6,real:R(.005,.008),cam:'kammer',update(u){S.arc={s:lerp(.6,1,u),amp:1};S.field=lerp(.5,0,u);S.I=lerp(k,0,eIn(u));S.plateHeat=Math.max(S.plateHeat,Math.sin(Math.PI*clamp(u*1.2)));if(u>.55)S.gas=Math.max(S.gas,(u-.55)/.45);if(u>=1){S.arc=null;S.I=0;S.field=0}}},
+ ...(S.hold?[holdStep()]:[]),
+ Object.assign(leverOffStep('Ausgeschaltet','Der Schlaganker federt zurück, der Knebel springt auf 0 und das Schaltschloss rastet wieder ein. Vor dem Wiedereinschalten muss der Kurzschluss beseitigt werden.'),{real:[tMag(k),tMag(k)+.012]})
+]}
+function klFromTrip(){return clamp((tripAngle()-.3)/.7)}
+const finalTxt='Fehler beseitigen, dann wieder einschalten.';
+
+/* ---------- Abgeleitete Größen ---------- */
+function bendDisp(){return BEND_FULL*S.bend}
+function tripAngle(){const fb=clamp((bendDisp()-BEND_TOUCH)/(BEND_FULL-BEND_TOUCH)),fp=clamp((S.plunger-.2)/(PL_MAX-.2));return Math.max(fb,fp)}
+function armAngle(){const push=Math.max(0,(S.plunger-1.56)/26.9)/D;return Math.max(S.c,push)}
+
+/* ---------- Szene aktualisieren ---------- */
+const tmpA=new THREE.Vector3(),tmpB=new THREE.Vector3();
+function updateMech(){
+  if(S.latched){S.E=solveE(S.phi,S.Eprev);S.Eprev=S.E;S.c=Math.max(0,cFromE(S.E))}
+  else{const A=crank(S.phi),t=clamp((PHI_ON-S.phi)/(PHI_ON-PHI_OFF)),d=nrmz([lerp(dirOn[0],dirOff[0],t),lerp(dirOn[1],dirOff[1],t)]);S.E=add(A,mul(d,LB))}
+  levG.rotation.z=S.phi*D; carG.rotation.z=S.c*D; armG.rotation.z=armAngle()*D; klG.rotation.z=S.k*22*D;
+  trG.rotation.z=tripAngle()*8*D; plG.position.y=-S.plunger; bendBim(bendDisp());
+  const A=crank(S.phi),kink=add(A,mul(nrmz(sub(S.E,A)),2.2));
+  rod(bueBend,V3(A[0],A[1],-4.2),V3(kink[0],kink[1],-1.9));rod(bueWire,V3(kink[0],kink[1],-1.9),V3(S.E[0],S.E[1],-1.9));
+  ePin.position.set(S.E[0],S.E[1],-4);
+  // Litze
+  const a0=armG.localToWorld(tmpA.set(-2.5,-1.6,2.6)).clone(),bt=V3(19.2+bendDisp(),-5.5,2.6);
+  const crv=new THREE.CatmullRomCurve3([a0,V3(a0.x+3,a0.y-6,3.4),V3((a0.x+bt.x)/2+3,-17.5,3.6),V3(bt.x-1.2,bt.y-7,3.2),bt]);
+  braid.geometry.dispose();braid.geometry=new THREE.TubeGeometry(crv,40,.62,8,false);
+  // Freiauslösungsmarker
+  const notch=rot2(Bc,G.P,S.c),gap=dist(notch,S.E),show=!S.latched&&gap>.6;
+  ringE.visible=ringN.visible=gapLine.visible=show;
+  if(show){ringE.position.set(S.E[0],S.E[1],-1);ringN.position.set(notch[0],notch[1],-1);gapLine.geometry.setFromPoints([V3(S.E[0],S.E[1],-1),V3(notch[0],notch[1],-1)]);gapLine.computeLineDistances()}
+  hand.visible=S.hold&&S.phi>PHI_ON-2;
+}
+function silverTop(){return armG.localToWorld(V3(-23.5,-3.5,0))}
+const LPATH=[[-17.5,-12.5],[-25,-12.1],[-31.6,-15.7],[-36.9,-21.4],[-36.9,-28]];
+function along(path,u){const segs=[];let tot=0;for(let i=1;i<path.length;i++){const l=dist(path[i-1],path[i]);segs.push(l);tot+=l}
+  let d=u*tot;for(let i=0;i<segs.length;i++){if(d<=segs[i]||i===segs.length-1){const t=segs[i]?clamp(d/segs[i]):0;return [lerp(path[i][0],path[i+1][0],t),lerp(path[i][1],path[i+1][1],t)]}d-=segs[i]}return path[path.length-1]}
+let T0=0;
+function setTube(m,pts,r){m.geometry.dispose();if(pts.length<2){m.geometry=new THREE.BufferGeometry();return}m.geometry=new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),Math.max(8,pts.length*3),r,6,false)}
+function jit(a){return (Math.sin(T0*37+a*13.1)+Math.sin(T0*61+a*7.7)*.6)}
+function updateArc(){
+  const A=S.arc;subArcs.forEach(p=>{p[0].visible=p[1].visible=false});
+  if(!A||A.amp<=0){arcCore.visible=arcGlow.visible=false;arcLight.intensity=0;return}
+  const s=A.s,ms=silverTop(),F=[-17.5,-12.5],M2=[ms.x,ms.y];let pts=[],inten=A.amp,cx,cy;
+  if(s<.25){for(let i=0;i<=8;i++){const t=i/8,b=Math.sin(Math.PI*t)*(1.2+2*s);pts.push(V3(lerp(F[0],M2[0],t)-b+jit(i)*.25,lerp(F[1],M2[1],t)+jit(i+3)*.2,jit(i+9)*.25))}inten*=.6+1.6*s;}
+  else if(s<.6){const u=(s-.25)/.35,L=along(LPATH,u),Rp=along([M2,[-13.2,-21.6],[-6.3,-23.0],[-6.3,-28]],u),mid0=[(L[0]+Rp[0])/2,(L[1]+Rp[1])/2],
+      mid=[lerp(mid0[0],-21.5,Math.pow(u,.8)),lerp(mid0[1],-27.6,Math.pow(u,.8))],ctl=[2*mid[0]-mid0[0],2*mid[1]-mid0[1]];
+    for(let i=0;i<=16;i++){const t=i/16,a=(1-t)*(1-t),b=2*(1-t)*t,c=t*t;pts.push(V3(a*L[0]+b*ctl[0]+c*Rp[0]+jit(i)*.35,a*L[1]+b*ctl[1]+c*Rp[1]+jit(i+5)*.35,jit(i+2)*.3))}}
+  else{const w=(s-.6)/.4;inten*=Math.max(0,1-w*1.05);
+    if(w<.12){for(let i=0;i<=20;i++){const t=i/20;pts.push(V3(lerp(-36.9,-6.3,t),-27.8+Math.sin(t*9+T0*20)*.5,jit(i)*.3))}}
+    else{const xs=[-36.9].concat(...PLATE_X.map(x=>[x,x+.8]),[-6.3]);for(let g=0;g<12;g++){const a=xs[g*2],b=xs[g*2+1];if(b-a<.3)continue;const y=-28.2+Math.sin(g*1.7+T0*14)*.9;
+      const q=[V3(a,y+jit(g)*.2,0),V3((a+b)/2,y+jit(g+4)*.5,jit(g)*.3),V3(b,y+jit(g+8)*.2,0)];setTube(subArcs[g][0],q,.18+.18*inten);setTube(subArcs[g][1],q,.6+.6*inten);
+      subArcs[g][0].visible=subArcs[g][1].visible=inten>.02}}
+  }
+  if(pts.length){setTube(arcCore,pts,.22+.22*inten);setTube(arcGlow,pts,.8+.9*inten);arcCore.visible=arcGlow.visible=inten>.02;
+    const c=pts[pts.length>>1];cx=c.x;cy=c.y}else{arcCore.visible=arcGlow.visible=false;cx=-21;cy=-28}
+  const fl=.75+.25*Math.sin(T0*90)*Math.sin(T0*53);arcCoreMat.opacity=clamp(inten*1.4)*fl;arcGlowMat.opacity=.5*clamp(inten*1.3)*fl;
+  arcLight.position.set(cx,cy,6);arcLight.intensity=3.2*inten*fl;
+}
+let flowOff=0;const dummy=new THREE.Object3D();
+function flowPath(){
+  const p=[V3(-43,.9,4.1),V3(-31.5,.9,4.1),V3(-29.5,-.2,2.9),V3(-28,9.5,2.9),V3(-25,9.6,2.9),V3(-25.9,7,0)];
+  for(let i=1;i<=78;i++){const t=i/78,a=Math.PI+t*6.5*2*Math.PI;p.push(V3(-20+5.95*Math.cos(a),lerp(7,-5,t),5.95*Math.sin(a)))}
+  p.push(V3(-14.5,-7,2.9),V3(-14.5,-11.3,2.9),V3(-17.5,-12.2,2.9));const ms=silverTop();p.push(V3(ms.x,ms.y-.5,2.9));
+  p.push(armG.localToWorld(V3(-12,-3,2.5)),armG.localToWorld(V3(-2.5,-1.6,3.3)));
+  const bc=braid.geometry.parameters&&braid.geometry.parameters.path;if(bc)for(let i=1;i<=10;i++){const q=bc.getPoint(i/10);p.push(V3(q.x,q.y,q.z+.9))}
+  const bd=bendDisp();for(let i=1;i<=6;i++){const y=lerp(-5.5,-27,i/6),t=clamp((y+28)/24.5);p.push(V3(20+bd*t*t,y,2.9))}
+  p.push(V3(20,-30.2,2.9),V3(38,-30.2,2.9),V3(38,-.8,2.9),V3(43,.9,4.1));return p}
+function updateFlow(dt){
+  const vis=$('#cFlow').checked?S.flowVis*(S.I>.01?1:0):0;flow.visible=vis>.02;if(!flow.visible)return;
+  const p=flowPath(),cum=[0];for(let i=1;i<p.length;i++)cum.push(cum[i-1]+p[i].distanceTo(p[i-1]));const tot=cum[cum.length-1];
+  flowOff=(flowOff+dt*(9+12*Math.pow(S.I,.65)))%tot;const sp=tot/NP;let j=1;
+  const idx=[];for(let i=0;i<NP;i++)idx.push((flowOff+i*sp)%tot);idx.sort((a,b)=>a-b);
+  for(let i=0;i<NP;i++){const d=idx[i];while(j<p.length-1&&cum[j]<d)j++;const t=(d-cum[j-1])/((cum[j]-cum[j-1])||1);dummy.position.lerpVectors(p[j-1],p[j],t);const s=.7+.3*clamp(S.I/4);dummy.scale.setScalar(s);dummy.updateMatrix();flow.setMatrixAt(i,dummy.matrix)}
+  flow.instanceMatrix.needsUpdate=true;
+  flowMat.color.set(S.I>=ch().mag-.01?0xE9F4FF:S.I>1.3?0xFF8C33:0xFFD54A);flowMat.opacity=vis;
+}
+let fieldOff=0;const up=V3(0,1,0);
+function updateField(dt){const f=S.field;fieldDots.visible=f>.02;fieldLines.forEach(l=>{l.material.opacity=.45*f;l.visible=f>.02});if(!fieldDots.visible)return;
+  fieldOff=(fieldOff+dt*.18*(1+f))%1;fieldMat.opacity=f;
+  for(let i=0;i<FL_N;i++){const L=loops[i];for(let j=0;j<FL_P;j++){const u=(fieldOff+j/FL_P)%1,k=u*64,i0=Math.floor(k),t=k-i0,a=L[i0],b=L[Math.min(64,i0+1)];
+    dummy.position.lerpVectors(a,b,t);const dir=V3().subVectors(b,a).normalize();dummy.quaternion.setFromUnitVectors(up,dir);dummy.scale.setScalar(.8+.5*f);dummy.updateMatrix();fieldDots.setMatrixAt(i*FL_P+j,dummy.matrix)}}
+  fieldDots.instanceMatrix.needsUpdate=true}
+function updateGas(dt){if(S.gas>0){S.gas=Math.min(2,S.gas+dt*.5*speed)}puffs.forEach((s,i)=>{const g=S.gas-i*.06;if(g<=0||g>1.4){s.material.opacity=0;return}
+  s.position.set(-46-g*14-i*1.5,-29+Math.sin(i*2.1)*2+g*3,Math.cos(i*1.7)*3);const sc=3+g*9;s.scale.set(sc,sc,1);s.material.opacity=.55*Math.sin(Math.PI*clamp(g/1.4))});if(S.gas>=1.9)S.gas=0}
+const accentHL=new THREE.Color(0x1b7fb8);
+function updateMats(){
+  const h=S.heat;[bimA,bimB].forEach(m=>m.material.userData.dyn.setRGB(.85*h,.22*h,.04*h));
+  braid.material.userData.dyn.setRGB(.25*h,.06*h,0);
+  plateMeshes.forEach(m=>m.material.userData.dyn.setRGB(.9*S.plateHeat,.35*S.plateHeat,.05*S.plateHeat));
+  coilMesh.material.userData.dyn.setRGB(.05*S.field,.08*S.field,.28*S.field);
+  const hl=hoverId||selId;
+  PARTS.forEach(p=>{const on=p.id===hl;p.meshes.forEach(m=>{m.material.emissive.copy(m.material.userData.dyn);if(on)m.material.emissive.add(accentHL)})});
+}
+/* Beschriftungen positionieren */
+const callout=$('#callout'),handcall=$('#handcall');
+function updateTags(){const w=stageEl.clientWidth,h=stageEl.clientHeight;
+  PARTS.forEach(p=>{const s=toScreen(anchorFns[p.id](),w,h);p.tag.style.display=s.ok?'':'none';p.tag.style.transform=`translate(${s.x-11}px,${s.y-11}px)`});
+  if(ringE.visible){const m=toScreen(V3((ringE.position.x+ringN.position.x)/2,(ringE.position.y+ringN.position.y)/2+2.5,0),w,h);callout.hidden=false;
+    callout.textContent=S.hold?'Bügel frei: Knebel in I, Kontakte trotzdem offen':'Klinke offen: Bügel ausgeklinkt';callout.style.transform=`translate(${Math.min(w-220,m.x+18)}px,${m.y-48}px)`}else callout.hidden=true;
+  if(hand.visible){const m=toScreen(V3(10,46,0),w,h);handcall.hidden=false;handcall.style.transform=`translate(${Math.min(w-220,m.x+8)}px,${m.y-30}px)`}else handcall.hidden=true;
+  $('#stage').classList.toggle('names',$('#cNames').checked)}
+
+/* Statusanzeige */
+const sL=$('#sLever'),sC=$('#sCont'),sLa=$('#sLatch'),sI=$('#sI');
+function chip(el,cls,txt){const k=cls+'|'+txt;if(el._k===k)return;el._k=k;el.innerHTML=`<i class="dot ${cls}"></i>${txt}`}
+function updateStatus(){const on=S.phi>0;chip(sL,on?'ok':'off',on?'I · EIN':'0 · AUS');
+  const cl=armAngle()<.3;chip(sC,cl?'ok':(S.arc?'mag':'off'),cl?'geschlossen':(S.arc?'offen · Lichtbogen':'offen'));
+  chip(sLa,S.latched?'ok':'off',S.latched?'verklinkt':'ausgeklinkt');
+  const a=S.I*DEV.In;chip(sI,S.I<.01?'off':S.I>=ch().mag-.01?'mag':S.I>1.3?'hot':'ok',S.I<.01?'0 A':(a>=1000?fmt(a/1000,2)+' kA':a>=100?Math.round(a/10)*10+' A':Math.round(a)+' A'))}
+function refreshButtons(){const busy=!!seq,on=isOn();
+  $('#bOn').disabled=busy||on||!S.latched;$('#bOff').disabled=busy||!on;$('#bOL').disabled=busy||!on;$('#bSC').disabled=busy||!on;$('#bFree').disabled=busy;
+  $('#bPause').disabled=!busy;document.querySelectorAll('#segChar button,#selIn,#rOL,#rSC,#preOL button,#preSC button').forEach(e=>e.disabled=busy);$('#bPause').textContent=paused?'Weiter':'Pause'}
+
+/* ---------- Bedienung ---------- */
+$('#bOn').onclick=()=>{KL.set(null);narr.cT.textContent='–';startSeq('Bedienung',scOn(),{final:{ph:'Betriebszustand',title:'Eingeschaltet – Nennbetrieb',text:'Der Strom fließt von Klemme 1 durch die Spule, über Fest- und Kontakthebel, die Litze und das Bimetall zu Klemme 2. Bei Bemessungsstrom bleiben beide Auslöser in Ruhe.'}})};
+$('#bOff').onclick=()=>{KL.set(null);narr.cT.textContent='–';startSeq('Bedienung',scOff(),{final:finish('Der LS-Schalter ist von Hand ausgeschaltet. Das Schaltschloss bleibt dabei verklinkt.')})};
+function runFault(k,kind){S.hold=$('#cHold').checked;KL.set(null);const tr=tripOf(k),name=kind==='sc'?'Kurzschluss':'Überlast';
+  const tag=tr.mode==='mag'?'Zeitlupe':'Zeitraffer';let steps,fin;
+  if(tr.mode==='mag'){steps=scShort(false,k);
+    fin=finish(`Ausgelöst durch den elektromagnetischen Auslöser nach ${fmtReal(tr.t)} bei ${kTxt(k)} · In = ${amps(k)}. `+finalTxt);
+    if(kind!=='sc')steps[0]=Object.assign(steps[0],{title:'Sehr hoher Überstrom',text:`Es fließen ${amps(k)} (${kTxt(k)} · In). Das liegt bereits über dem Ansprechwert des Magnetauslösers – das Bimetall kommt gar nicht zum Zug.`})}
+  else if(!isFinite(tr.t)){steps=scNoTrip(k);fin={ph:'Betriebszustand',title:'Eingeschaltet – keine Auslösung',text:`Bei ${kTxt(k)} · In = ${amps(k)} hat der LS-Schalter nicht ausgelöst. Die Last ist wieder auf Bemessungsstrom zurückgegangen.`}}
+  else{steps=scOverload(k);fin=finish(`Ausgelöst durch den thermischen Auslöser nach ${fmtReal(tr.t)} bei ${kTxt(k)} · In = ${amps(k)}. `+finalTxt);
+    if(kind==='sc')steps[0]=Object.assign(steps[0],{title:'Kurzschluss mit kleinem Strom',text:`Der Kurzschlussstrom beträgt nur ${amps(k)} (${kTxt(k)} · In), zum Beispiel wegen einer langen Leitung mit hoher Schleifenimpedanz. Der Magnetauslöser spricht bei diesem Gerät erst ab ${fmt(ch().mag,1)} · In an – jetzt muss das träge Bimetall abschalten.`})}
+  fin.res={k,tr};startSeq(name,steps,{kl:k,tag,final:fin})}
+$('#bOL').onclick=()=>runFault(+$('#rOL').value,'ol');
+$('#bSC').onclick=()=>runFault(+$('#rSC').value,'sc');
+function showResult(r){const {k,tr}=r,lo=bandLo(k),hi=bandHi(k),dv=DEV.ch+DEV.In;
+  const band=`${isFinite(lo)?fmtReal(lo):'–'} bis ${isFinite(hi)?fmtReal(hi):'keine Vorgabe'}`;
+  let h;if(!isFinite(tr.t)){h=`<div class="big">Keine Auslösung</div>${dv} · ${kTxt(k)} · I<sub>n</sub> = ${amps(k)}<br>${k<1.45?'Norm: bis 1,13 · I<sub>n</sub> mindestens 1 h keine Auslösung; Auslösung in &lt; 1 h erst ab 1,45 · I<sub>n</sub> vorgeschrieben.':''}`;KL.mark(k,9000,'keine Auslösung')}
+  else{const inB=tr.t>=lo*.999&&tr.t<=hi*1.001;h=`<div class="big">${fmtReal(tr.t)} · ${tr.mode==='mag'?'magnetisch':'thermisch'}</div>${dv} · I = ${kTxt(k)} · I<sub>n</sub> = ${amps(k)}<br>Toleranzband laut Kennlinie: ${band} <span class="ok">${inB?'✓':''}</span>`;
+    if(k>=ch().lo&&k<ch().hi)h+=`<br>${kTxt(k)} · I<sub>n</sub> liegt im Streubereich des Magnetauslösers (${ch().lo} bis ${ch().hi} · I<sub>n</sub>): Je nach Exemplar löst er thermisch oder magnetisch aus. Dieses Gerät spricht ab ${fmt(ch().mag,1)} · I<sub>n</sub> magnetisch an.`;
+    if(k*DEV.In>6000)h+=`<br><b>Achtung:</b> ${amps(k)} liegt über dem Bemessungsschaltvermögen von 6000 A.`;
+    KL.mark(k,tr.t,fmtReal(tr.t))}
+  $('#klRes').innerHTML=h}
+const _endSeq=endSeq;endSeq=function(){const r=seq&&seq.opts.final&&seq.opts.final.res;_endSeq();if(r)showResult(r)};
+function dinTable(k){const c=ch(),big=DEV.In>32?120:60,rows=[
+  [1.13,'1,13 · I<sub>n</sub>','keine Auslösung in ≥ 1 h'],[1.45,'1,45 · I<sub>n</sub>','Auslösung in &lt; 1 h'],[2.55,'2,55 · I<sub>n</sub>',`Auslösung in 1 s bis ${big} s`],
+  [c.lo,kTxt(c.lo)+' · I<sub>n</sub>','keine Auslösung in &lt; 0,1 s'],[c.hi,kTxt(c.hi)+' · I<sub>n</sub>','Auslösung in &lt; 0,1 s']];
+  $('#dinT').innerHTML=`<tr><th>Prüfstrom</th><th>Typ ${DEV.ch} · I<sub>n</sub> ${DEV.In} A</th></tr>`+rows.map(r=>`<tr class="${k!=null&&Math.abs(k-r[0])<.006?'hit':''}"><td>${r[1]} = ${amps(r[0])}</td><td>${r[2]}</td></tr>`).join('')}
+function presets(){const c=ch();
+  const ol=[1.13,1.45,2,2.55,3,4,c.lo].filter((v,i,a)=>a.indexOf(v)===i),sc=[c.lo,c.mag,c.hi,20,50,100].filter((v,i,a)=>a.indexOf(v)===i);
+  const mk=(id,arr,r)=>{$(id).innerHTML=arr.map(v=>`<button type="button" data-v="${v}">${kTxt(v)}×</button>`).join('');$(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{$(r).value=b.dataset.v;updVals()})};
+  mk('#preOL',ol,'#rOL');mk('#preSC',sc,'#rSC')}
+function updVals(){const ko=+$('#rOL').value,ks=+$('#rSC').value;
+  $('#olV').innerHTML=`${kTxt(ko)} · I<sub>n</sub> = ${amps(ko)}`;$('#scV').innerHTML=`${kTxt(ks)} · I<sub>n</sub> = ${amps(ks)}`;
+  [['#preOL',ko],['#preSC',ks]].forEach(([id,k])=>$(id).querySelectorAll('button').forEach(b=>b.classList.toggle('on',Math.abs(+b.dataset.v-k)<.006)));
+  dinTable(ko)}
+let sideCtx=null;
+function applyDevice(){const dv=DEV.ch+DEV.In;$('#mkType').textContent=dv;$('#klLbl').textContent='Auslösekennlinie '+dv;
+  const tex=sidePrint.material.map,c=tex.image;drawSide(c.getContext('2d'),c.width,c.height);tex.needsUpdate=true;
+  KL.build();KL.set(null);presets();updVals();
+  $('#klRes').innerHTML=`Gerät ${dv} eingestellt. Lies die Auslösezeit für den gewählten Strom aus deiner Tabelle ab und löse dann aus.`;refreshButtons()}
+document.querySelectorAll('#segChar button').forEach(b=>b.onclick=()=>{DEV.ch=b.dataset.ch;document.querySelectorAll('#segChar button').forEach(x=>x.classList.toggle('on',x===b));applyDevice()});
+$('#selIn').onchange=e=>{DEV.In=+e.target.value;applyDevice()};
+$('#rOL').oninput=updVals;$('#rSC').oninput=updVals;
+$('#cBand').onchange=()=>{KL.build();KL.set(null);$('#klRes').innerHTML='Kennlinie neu gezeichnet. Löse erneut aus, um das Ergebnis zu sehen.'};
+applyDevice();
+$('#bFree').onclick=()=>{$('#cHold').checked=true;
+  const intro={title:'Knebel wird festgehalten',text:'Jemand hält den Knebel in Stellung I fest, zum Beispiel weil er auf einen bestehenden Kurzschluss einschaltet. Achte auf das Schaltschloss: Das Ende des Bügels sitzt in der Klinke und verbindet Knebel und Kontakthebel.',dur:3.2,cam:'schloss',enter(){S.hold=true}};
+  const pre=isOn()?[]:scOn();
+  S.hold=true;const kf=Math.max(+$('#rSC').value,2*ch().hi);const steps=pre.concat([intro],scShort(true,kf));
+  startSeq('Freiauslösung',steps,{kl:kf,tag:'Zeitlupe',final:finish('Die Freiauslösung hat funktioniert: Obwohl der Knebel festgehalten wurde, hat der LS-Schalter abgeschaltet. '+finalTxt)})};
+$('#cHold').onchange=e=>{if(!seq)S.hold=e.target.checked};
+$('#bPause').onclick=()=>{paused=!paused;refreshButtons()};
+document.querySelectorAll('#segSpeed button').forEach(b=>b.onclick=()=>{speed=+b.dataset.s;document.querySelectorAll('#segSpeed button').forEach(x=>x.classList.toggle('on',x===b))});
+document.querySelectorAll('#segCam button').forEach(b=>b.onclick=()=>fly(b.dataset.c));
+$('#rCover').oninput=e=>{const o=e.target.value/100;cover.material.opacity=o;cover.visible=o>0.005;cover.material.depthWrite=o>.7;$('#covV').textContent=o<.02?'ausgeblendet':o<.4?'transparent':o<.85?'halbtransparent':'geschlossen'};
+
+/* ---------- Render-Schleife ---------- */
+function resize(){const w=stageEl.clientWidth,h=stageEl.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(stageEl);resize();
+fly('gesamt',0);orb.anim=null;Object.assign(orb,{tg:V3(...CAMS.gesamt.t),r:CAMS.gesamt.r,th:CAMS.gesamt.th,ph:CAMS.gesamt.ph});
+let last=performance.now();
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;T0+=dt;
+  if(orb.anim){const a=orb.anim;a.t+=dt;const u=ease(clamp(a.t/a.dur));orb.tg.lerpVectors(a.f.tg,a.to.tg,u);orb.r=lerp(a.f.r,a.to.r,u);orb.th=lerp(a.f.th,a.to.th,u);orb.ph=lerp(a.f.ph,a.to.ph,u);if(u>=1)orb.anim=null}
+  applyCam();
+  tickSeq(dt);
+  const sdt=paused?0:dt*speed;
+  if(!paused)S.plateHeat=Math.max(0,S.plateHeat-sdt*.25);
+  updateMech();updateArc();updateFlow(seq&&paused?0:dt*Math.min(speed,1.5));updateField(sdt);updateGas(sdt);updateMats();
+  scene.updateMatrixWorld();updateTags();updateStatus();
+  renderer.render(scene,camera);requestAnimationFrame(frame)}
+refreshButtons();
+requestAnimationFrame(frame);
+})();
+</script>
+
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span></footer>
+<script src="hfs-app.js"></script>
+</body></html>

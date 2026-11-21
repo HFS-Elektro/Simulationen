@@ -1,0 +1,115 @@
+/* HFS-Simulationen – gemeinsame Schicht für alle Apps (Kopfleiste, Fußzeile, Teilen, Lösungssperre).
+   Alle Regeln beginnen mit .hfs- bzw. #hfs-, damit sie die Apps selbst nicht verändern. */
+:root{
+  --hfs-navy:#13202A; --hfs-blue:#0089C4; --hfs-blue-dk:#006A98; --hfs-blue-lt:#E3F3FA;
+  --hfs-disp:"Barlow Semi Condensed","Barlow",system-ui,sans-serif;
+  --hfs-bg:#EDF2F5; --hfs-line:#D2DDE4; --hfs-muted:#586B78; --hfs-ok:#2E8B4A; --hfs-ok-lt:#E6F4EA;
+  --hfs-font:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+
+/* ---------- Kopfleiste ---------- */
+.hfs-bar{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;
+  min-height:48px;padding:6px max(12px,env(safe-area-inset-right)) 6px max(12px,env(safe-area-inset-left));
+  padding-top:max(6px,env(safe-area-inset-top));
+  background:var(--hfs-navy);color:#fff;font:500 14px/1.2 var(--hfs-font);position:relative;z-index:2147483000;
+  border-bottom:3px solid var(--hfs-blue)}
+.hfs-bar *{box-sizing:border-box;font-family:var(--hfs-font)}
+.hfs-bar a,.hfs-bar button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  min-height:36px;padding:0 10px;border-radius:8px;color:#fff;font:600 14px/1 var(--hfs-font);
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.hfs-bar a:hover,.hfs-bar button:hover{background:rgba(255,255,255,.12)}
+.hfs-bar a:focus-visible,.hfs-bar button:focus-visible{outline:2px solid var(--hfs-blue);outline-offset:2px}
+.hfs-logo{display:inline-grid;place-items:center;height:26px;padding:0 6px;border-radius:5px;background:var(--hfs-blue);
+  color:#fff;font:800 13px/1 var(--hfs-font);letter-spacing:.06em}
+.hfs-home .hfs-back{font-size:18px;line-height:1;opacity:.85}
+.hfs-title{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:.9;font-weight:500}
+.hfs-bar .hfs-share{background:var(--hfs-blue)}
+.hfs-bar .hfs-share:hover{background:var(--hfs-blue-dk)}
+.hfs-bar .hfs-cc{padding:0 6px;opacity:.9;font-weight:500;font-size:12px}
+.hfs-cc svg,.hfs-foot svg{width:18px;height:18px;flex:none}
+.hfs-ico{width:18px;height:18px;flex:none}
+@media (max-width:560px){ .hfs-home-t,.hfs-title,.hfs-cc-t,.hfs-share-t{display:none} .hfs-bar{gap:4px} .hfs-bar .hfs-cc{margin-left:auto} }
+
+/* schwebende Variante für Vollbild-Spiele: kleiner Griff am linken Rand, klappt beim Antippen auf */
+.hfs-bar.hfs-float{position:fixed;top:50%;left:0;transform:translateY(-50%);width:auto;min-height:0;
+  padding:4px 4px 4px max(2px,env(safe-area-inset-left));gap:2px;border:0;border-radius:0 12px 12px 0;
+  background:#13202A;box-shadow:0 2px 10px rgba(0,0,0,.35);opacity:.6;z-index:2147483647;transition:opacity .2s;flex-direction:column;align-items:stretch}
+.hfs-bar.hfs-float:hover,.hfs-bar.hfs-float.hfs-open{opacity:1}
+.hfs-bar.hfs-float > :not(.hfs-tab){display:none!important}
+.hfs-bar.hfs-float.hfs-open > :not(.hfs-tab):not(.hfs-title){display:inline-flex!important}
+.hfs-bar.hfs-float a,.hfs-bar.hfs-float button{min-height:36px;padding:0 8px;font-size:13px}
+.hfs-bar.hfs-float .hfs-tab{padding:0 4px;min-height:40px}
+.hfs-bar.hfs-float.hfs-open .hfs-home-t,.hfs-bar.hfs-float.hfs-open .hfs-share-t,.hfs-bar.hfs-float.hfs-open .hfs-cc-t{display:inline!important}
+.hfs-bar.hfs-float .hfs-home .hfs-logo{display:none}
+.hfs-bar.hfs-float .hfs-logo{height:24px;font-size:11px}
+
+/* ---------- Fußzeile mit CC-Hinweis ---------- */
+.hfs-foot{all:initial;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px;
+  width:100%;padding:14px max(16px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+  margin-top:24px;background:var(--hfs-navy);color:#C9D6DE;font:400 12.5px/1.5 var(--hfs-font);text-align:center}
+.hfs-foot a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+.hfs-foot .hfs-ccb{display:inline-flex;align-items:center;gap:5px;color:#fff;text-decoration:none;font-weight:600}
+
+/* ---------- Teilen-Dialog ---------- */
+.hfs-ov{position:fixed;inset:0;z-index:2147483600;display:grid;place-items:center;padding:16px;background:rgba(10,20,28,.6);
+  font:400 15px/1.45 var(--hfs-font);color:var(--hfs-navy);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.hfs-dlg{box-sizing:border-box;width:min(420px,100%);max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:16px;
+  padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.35);display:grid;gap:14px;text-align:center}
+.hfs-dlg *{box-sizing:border-box;font-family:var(--hfs-font)}
+.hfs-dlg h2{margin:0;font:700 21px/1.2 var(--hfs-disp);color:var(--hfs-navy)}
+.hfs-dlg p{margin:0;color:var(--hfs-muted);font-size:14px}
+.hfs-qr{justify-self:center;display:grid;place-items:center;width:min(260px,70vw);aspect-ratio:1;padding:12px;background:#fff;
+  border:1px solid var(--hfs-line);border-radius:12px}
+.hfs-qr canvas{display:block!important;width:100%;height:auto;image-rendering:pixelated}
+.hfs-qr img{display:none!important}
+.hfs-url{width:100%;padding:10px 12px;border:1px solid var(--hfs-line);border-radius:10px;background:var(--hfs-bg);
+  font:500 14px/1.3 ui-monospace,Consolas,monospace;color:var(--hfs-navy);text-align:center}
+.hfs-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.hfs-b{appearance:none;-webkit-appearance:none;border:1px solid var(--hfs-line);background:#fff;color:var(--hfs-navy);border-radius:10px;
+  padding:10px 14px;min-height:44px;font:600 14px/1 var(--hfs-font);cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.hfs-b:hover{border-color:var(--hfs-blue);color:var(--hfs-blue-dk)}
+.hfs-b.hfs-pri{background:var(--hfs-blue);border-color:var(--hfs-blue);color:#fff}
+.hfs-b.hfs-pri:hover{background:var(--hfs-blue-dk);color:#fff}
+.hfs-b:disabled{opacity:.45;cursor:not-allowed}
+.hfs-b:focus-visible{outline:2px solid var(--hfs-blue);outline-offset:2px}
+.hfs-toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:2147483646;
+  background:var(--hfs-navy);color:#fff;padding:10px 16px;border-radius:999px;font:600 14px/1.2 var(--hfs-font);
+  box-shadow:0 6px 20px rgba(0,0,0,.25);pointer-events:none}
+
+/* ---------- Hinweisbalken neue Fassung ---------- */
+.hfs-upd{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:2147483500;display:flex;gap:10px;
+  align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 14px;border-radius:12px;background:var(--hfs-navy);color:#fff;
+  font:500 14px/1.3 var(--hfs-font);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+
+/* ---------- Lösungssperre: Antwortfeld je Aufgabe ---------- */
+.hfs-ans{all:initial;box-sizing:border-box;display:grid;gap:8px;margin:8px 0 14px;font:400 15px/1.45 var(--hfs-font);color:var(--hfs-navy)}
+.hfs-ans *{box-sizing:border-box;font-family:var(--hfs-font)}
+.hfs-ans textarea{width:100%;min-height:76px;resize:vertical;padding:10px 12px;border:1.5px solid var(--hfs-line);border-radius:10px;
+  background:#fff;color:var(--hfs-navy);font:400 16px/1.4 var(--hfs-font)}
+.hfs-ans textarea:focus{outline:none;border-color:var(--hfs-blue);box-shadow:0 0 0 3px rgba(0,137,196,.18)}
+.hfs-ans textarea[readonly]{background:var(--hfs-bg)}
+.hfs-ans .hfs-row{justify-content:flex-start;align-items:center}
+.hfs-ans .hfs-hint{font-size:13px;color:var(--hfs-muted)}
+.hfs-sol{border-left:4px solid var(--hfs-ok);background:var(--hfs-ok-lt);border-radius:0 10px 10px 0;padding:10px 14px;color:var(--hfs-navy);font-size:15px}
+.hfs-sol b.hfs-sol-h{display:block;margin-bottom:4px;color:var(--hfs-ok);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.hfs-sol p{margin:.3em 0}
+.hfs-tools{all:initial;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 4px;font:400 14px/1.4 var(--hfs-font);color:var(--hfs-muted)}
+.hfs-tools *{font-family:var(--hfs-font)}
+li > .hfs-ans{margin-top:8px}
+.hfs-solve-locked{opacity:.45!important;cursor:not-allowed!important}
+
+/* ---------- Geräte-Anpassungen ---------- */
+html.hfs-touch button,html.hfs-touch summary,html.hfs-touch label,html.hfs-touch a,html.hfs-touch [role=button]{touch-action:manipulation}
+html.hfs-ios input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]):not([type=color]),
+html.hfs-ios select,html.hfs-ios textarea{font-size:max(16px,1em)}
+html.hfs-touch body{-webkit-tap-highlight-color:rgba(0,137,196,.15)}
+
+/* ---------- Drucken: nur QR-Dialog ---------- */
+@media print{
+  body.hfs-printing > *:not(.hfs-ov){display:none!important}
+  body.hfs-printing .hfs-ov{position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+  body.hfs-printing .hfs-dlg{box-shadow:none;width:100%}
+  body.hfs-printing .hfs-row{display:none}
+  .hfs-bar,.hfs-upd,.hfs-ans .hfs-row,.hfs-tools{display:none!important}
+}

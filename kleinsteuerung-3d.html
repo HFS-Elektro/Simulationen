@@ -1,0 +1,576 @@
+<!doctype html><html><head><meta charset=utf8>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="kleinsteuerung-3d|sim|d9dfb0c825e4">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Kleinsteuerung 3D">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="hfs-app.css">
+</head><body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Kleinsteuerung 3D</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<title>Kleinsteuerung 3D</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* Layout: Werkbank – 3D-Bühne mit Bauteilkarte, darunter Simulator als Schaltplanblatt mit Rasterpapier */
+:root{
+  --bg:#e8ebe6; --surface:#f6f7f3; --sunk:#dde2dc; --fg:#1b2220; --muted:#56625d; --line:#c3cbc4;
+  --accent:#0e5a62; --accent-ink:#ffffff; --sig1:#d4680f; --sig1-soft:#f7dcc3; --sig0:#99a39e;
+  --stage:#d6dcd5; --grid:rgba(14,90,98,.08);
+  --f-display:'IBM Plex Sans Condensed','Arial Narrow',sans-serif;
+  --f-body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121715; --surface:#1a201e; --sunk:#232b28; --fg:#e4e9e5; --muted:#9aa6a0; --line:#2f3935;
+  --accent:#63b6b9; --accent-ink:#0b1514; --sig1:#f2903d; --sig1-soft:#4a2d14; --sig0:#5b6661;
+  --stage:#0e1211; --grid:rgba(99,182,185,.08); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121715; --surface:#1a201e; --sunk:#232b28; --fg:#e4e9e5; --muted:#9aa6a0; --line:#2f3935;
+  --accent:#63b6b9; --accent-ink:#0b1514; --sig1:#f2903d; --sig1-soft:#4a2d14; --sig0:#5b6661;
+  --stage:#0e1211; --grid:rgba(99,182,185,.08); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15.5px;line-height:1.55;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+header{padding-block:28px 20px;display:grid;gap:10px}
+header h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.01em}
+header p.lead{max-width:66ch;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);font-family:var(--f-mono)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:22px;height:4px;border-radius:2px;display:inline-block}
+section{margin-top:34px;display:grid;gap:16px}
+section > h2{font-size:26px;font-weight:600}
+section > p.sub{color:var(--muted);max-width:70ch}
+
+/* 3D lab */
+.lab{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:860px){.lab{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;height:clamp(340px,62vh,600px);border-radius:10px;overflow:hidden;background:var(--stage);border:1px solid var(--line)}
+.stage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.tools{position:absolute;top:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.hint{position:absolute;left:12px;bottom:10px;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);background:color-mix(in srgb,var(--surface) 80%,transparent);padding:4px 8px;border-radius:4px;max-width:calc(100% - 24px)}
+button{font:inherit;color:inherit}
+.tbtn{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-family:var(--f-mono);font-size:12.5px;cursor:pointer;min-width:34px}
+.tbtn:hover{border-color:var(--accent)}
+.tbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.panel{display:grid;gap:14px}
+.info{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:8px;min-height:210px}
+.info h3{font-size:22px;font-weight:600}
+.tag{justify-self:start;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:3px;border:1px solid currentColor}
+.tag.E{color:var(--accent)} .tag.V{color:var(--sig1)} .tag.A{color:#7a5cc4} .tag.X{color:var(--muted)}
+.info p{color:var(--fg);font-size:14.5px}
+.chips{display:grid;gap:8px}
+.chips h4{margin:0;font-family:var(--f-mono);font-size:11.5px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:transparent;border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:13px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* EVA */
+.eva{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);position:relative}
+@media (max-width:640px){.eva{grid-template-columns:minmax(0,1fr)}}
+.eva > div{padding:14px 16px;display:grid;gap:6px;align-content:start;border-right:1px solid var(--line);min-width:0}
+.eva > div:last-of-type{border-right:0}
+@media (max-width:640px){.eva > div{border-right:0;border-bottom:1px solid var(--line)}.eva > div:last-of-type{border-bottom:0}}
+.eva h3{font-size:18px;font-weight:600}
+.eva small{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+.bits{display:flex;flex-wrap:wrap;gap:6px}
+.bit{font-family:var(--f-mono);font-size:13px;padding:2px 8px;border-radius:4px;background:var(--sunk);color:var(--muted);font-variant-numeric:tabular-nums}
+.bit.on{background:var(--sig1);color:#fff}
+.formula{font-family:var(--f-mono);font-size:15px;font-weight:600;overflow-wrap:anywhere}
+.cycle{position:absolute;left:0;right:0;bottom:0;height:3px;background:transparent;overflow:hidden}
+.cycle i{position:absolute;top:0;left:0;height:3px;width:33.4%;background:var(--accent);animation:scan 2.4s steps(3,end) infinite}
+@keyframes scan{from{transform:translateX(0)}to{transform:translateX(300%)}}
+@media (prefers-reduced-motion:reduce){.cycle i{animation:none;width:100%;opacity:.35}}
+
+.sim{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.sim{grid-template-columns:minmax(0,1fr)}}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.preset{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:14.5px}
+.preset[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.inputs{display:grid;gap:8px}
+.inp{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.inp .id{font-family:var(--f-mono);font-weight:600;font-size:14px}
+.inp .lbl{font-size:13px;color:var(--muted);line-height:1.3;min-width:0}
+.inp .lbl b{color:var(--fg);font-weight:600}
+.ctl{border:1px solid var(--line);background:var(--sunk);border-radius:6px;padding:8px 12px;font-family:var(--f-mono);font-size:13px;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;min-width:84px;text-align:center}
+.ctl.on{background:var(--sig1);color:#fff;border-color:var(--sig1)}
+.story{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:6px}
+.story h3{font-size:19px;font-weight:600}
+.story p{font-size:14.5px}
+.sheet{background-color:var(--surface);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;border:1px solid var(--line);border-radius:10px;padding:8px;overflow-x:auto}
+.sheet svg{display:block;width:100%;min-width:480px;height:auto}
+.wire{fill:none;stroke:var(--sig0);stroke-width:2.5;stroke-linejoin:round}
+.wire.on{stroke:var(--sig1);stroke-width:3.5}
+.dot{fill:var(--sig0)} .dot.on{fill:var(--sig1)}
+.gate{fill:var(--surface);stroke:var(--fg);stroke-width:2}
+.gsym{fill:var(--fg);font-family:var(--f-mono);font-size:20px;font-weight:600;text-anchor:middle}
+.gneg{fill:var(--surface);stroke:var(--fg);stroke-width:2}
+.pin{fill:var(--sunk);stroke:var(--line);stroke-width:1.5}
+.pin.on{fill:var(--sig1);stroke:var(--sig1)}
+.pintxt{font-family:var(--f-mono);font-size:13px;font-weight:600;fill:var(--fg);text-anchor:middle;dominant-baseline:middle}
+.pin.on + .pintxt{fill:#fff}
+.small{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
+.val{font-family:var(--f-mono);font-size:12px;font-weight:600;fill:var(--muted)}
+.val.on{fill:var(--sig1)}
+.load{fill:var(--surface);stroke:var(--fg);stroke-width:2}
+.load.on{fill:var(--sig1-soft);stroke:var(--sig1)}
+.loadx{stroke:var(--fg);stroke-width:2}
+.loadx.on{stroke:var(--sig1)}
+.loadm{font-family:var(--f-display);font-weight:700;font-size:17px;text-anchor:middle;dominant-baseline:central;fill:var(--fg)}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;font-family:var(--f-mono);font-size:13.5px;font-variant-numeric:tabular-nums;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+th,td{padding:5px 14px;text-align:center;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--muted);font-size:12px}
+td.q,th.q{border-left:2px solid var(--fg)}
+tr.cur td{background:var(--sig1-soft);font-weight:600}
+td.one{color:var(--sig1);font-weight:600}
+.right{display:grid;gap:14px;min-width:0}
+.note{font-size:13.5px;color:var(--muted);max-width:70ch}
+
+/* Aufgaben */
+.tasks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.tasks{grid-template-columns:minmax(0,1fr)}}
+.task{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:8px;align-content:start}
+.lvl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.task p{font-size:14.5px}
+.op{font-weight:600;color:var(--accent)}
+details{border-top:1px dashed var(--line);padding-top:8px}
+summary{cursor:pointer;font-size:13.5px;color:var(--accent);font-weight:500}
+details p{margin-top:6px;font-size:14px;color:var(--fg)}
+footer{margin-top:36px;font-size:12.5px;color:var(--muted);max-width:80ch}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Steuerungstechnik · EVA-Prinzip · Logikgatter</span>
+  <h1>Kleinsteuerung in 3D</h1>
+  <p class="lead">Dreh das Gerät, tippe Bauteile an und schalte unten im Simulator die Eingänge. Display, Eingangsstufe und Ausgangsrelais im 3D-Modell reagieren auf jedes Signal.</p>
+  <div class="legend"><span><i class="sw" style="background:var(--sig1)"></i>1-Signal</span><span><i class="sw" style="background:var(--sig0)"></i>0-Signal</span></div>
+</header>
+
+<section aria-labelledby="h-hw">
+  <h2 id="h-hw">Hardware</h2>
+  <div class="lab">
+    <div class="stage" id="stage">
+      <div class="tools">
+        <button class="tbtn" id="xray" aria-pressed="false">Innenleben</button>
+        <button class="tbtn" id="zin" aria-label="Vergrößern">+</button>
+        <button class="tbtn" id="zout" aria-label="Verkleinern">−</button>
+        <button class="tbtn" id="reset">Ansicht zurücksetzen</button>
+      </div>
+      <div class="hint" id="hint">Ziehen = drehen · Mausrad oder zwei Finger = zoomen · Bauteil antippen</div>
+    </div>
+    <div class="panel">
+      <div class="info" id="info" aria-live="polite"></div>
+      <div class="chips">
+        <h4>Außen sichtbar</h4>
+        <div class="chiprow" id="chipsOut"></div>
+        <h4>Innenleben</h4>
+        <div class="chiprow" id="chipsIn"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-eva">
+  <h2 id="h-eva">Vom Signal zur Reaktion: EVA im Zyklus</h2>
+  <p class="sub">Die CPU liest zu Beginn jedes Zyklus alle Eingänge in das Prozessabbild der Eingänge (PAE), arbeitet das Programm ab und schreibt die Ergebnisse in das Prozessabbild der Ausgänge (PAA). Danach beginnt der Zyklus von vorn, typischerweise nach wenigen Millisekunden.</p>
+  <div class="eva">
+    <div><small>EINGABE · PAE</small><h3>Eingänge lesen</h3><div class="bits" id="evaIn"></div></div>
+    <div><small>VERARBEITUNG · PROGRAMM</small><h3>Verknüpfen</h3><div class="formula" id="evaF"></div></div>
+    <div><small>AUSGABE · PAA</small><h3>Ausgänge schreiben</h3><div class="bits" id="evaOut"></div></div>
+    <div class="cycle" aria-hidden="true"><i></i></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-sim">
+  <h2 id="h-sim">Logik-Simulator</h2>
+  <p class="sub">Wähle eine Grundverknüpfung oder ein Anwendungsbeispiel. Die Symbole folgen DIN EN 60617 (Funktionsplan, FUP).</p>
+  <div class="presets" id="presets" role="group" aria-label="Schaltung wählen"></div>
+  <div class="sim">
+    <div class="inputs" id="inputs"></div>
+    <div class="right">
+      <div class="story" id="story"></div>
+      <div class="sheet"><svg id="fup" viewBox="0 0 560 240" role="img" aria-label="Funktionsplan der gewählten Schaltung"></svg></div>
+      <div class="tblwrap" id="tbl"></div>
+      <p class="note" id="tnote"></p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-auf">
+  <h2 id="h-auf">Aufgaben</h2>
+  <div class="tasks">
+    <div class="task"><span class="lvl">Basis</span>
+      <p><span class="op">Nenne</span> die drei Bereiche des EVA-Prinzips und ordne jedem Bereich mindestens eine Hardwarekomponente der Kleinsteuerung zu.</p>
+      <details><summary>Lösung anzeigen</summary><p>Eingabe: Digitaleingänge I1 bis I8 mit Eingangsstufe (angeschlossen sind Taster, Schalter, Sensoren). Verarbeitung: CPU mit Programmspeicher. Ausgabe: Relaisausgänge Q1 bis Q4 (angeschlossen sind Schütze, Lampen, Ventile).</p></details>
+    </div>
+    <div class="task"><span class="lvl">Standard</span>
+      <p><span class="op">Erkläre</span> mithilfe der Funktionstabelle, warum die XOR-Verknüpfung eine Wechselschaltung nachbildet. Prüfe deine Aussage im Simulator.</p>
+      <details><summary>Lösung anzeigen</summary><p>Q1 führt genau dann 1-Signal, wenn die beiden Eingänge ungleich sind. Jede Betätigung eines beliebigen Schalters ändert daher den Zustand der Lampe, unabhängig von der Stellung des anderen Schalters. Das ist das Verhalten einer Wechselschaltung.</p></details>
+    </div>
+    <div class="task"><span class="lvl">Experte</span>
+      <p>Bei der Selbsthaltung ist der AUS-Taster S0 als Öffner angeschlossen. <span class="op">Begründe</span>, warum I2 im Programm ohne NICHT-Glied auf das UND-Glied geht, und <span class="op">beurteile</span> diese Verdrahtung bei einem Drahtbruch.</p>
+      <details><summary>Lösung anzeigen</summary><p>Ein Öffner liefert in Ruhe 1-Signal, das UND-Glied gibt Q1 also frei, solange S0 nicht betätigt ist. Wird S0 gedrückt oder bricht die Leitung, fällt I2 auf 0 und der Motor schaltet ab (drahtbruchsicher). Mit einem Schließer und NICHT-Glied bliebe ein Drahtbruch unbemerkt und die Anlage ließe sich nicht mehr ausschalten.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>Generisches Modell einer Kleinsteuerung mit 8 Digitaleingängen und 4 Relaisausgängen, angelehnt an gängige Geräte im Unterricht. Grenzwerte für Signalpegel und Schaltströme sind typische Angaben; maßgeblich ist das Datenblatt des eingesetzten Geräts.</footer>
+</div>
+
+<script src="three-r128.min.js"></script>
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+
+/* ---------------- Bauteile ---------------- */
+const TAGS={E:'Eingabe',V:'Verarbeitung',A:'Ausgabe',X:'Versorgung & Mechanik'};
+const COMP=[
+ {id:'power',name:'Versorgung L+ / M',tag:'X',view:[0.25,0.55],text:'Hier wird die Versorgungsspannung angeschlossen, bei dieser Variante 12/24 V DC (L+ = Plus, M = Masse). Andere Varianten werden mit 230 V AC über L1 und N versorgt. Die Versorgung speist CPU, Display und Eingangsstufe, aber nicht die Lasten an den Relaisausgängen.'},
+ {id:'inputs',name:'Digitaleingänge I1–I8',tag:'E',view:[0.15,0.5],text:'Hier werden Signalgeber angeschlossen: Taster, Schalter, Endschalter, Sensoren. Liegt Spannung gegen M an, führt der Eingang 1-Signal. Typisch bei 24-V-Geräten: 0-Signal unter 5 V, 1-Signal ab etwa 8 V. Einige Eingänge (häufig I1, I2, I7, I8) lassen sich auch als Analogeingänge 0–10 V nutzen.'},
+ {id:'outputs',name:'Relaisausgänge Q1–Q4',tag:'A',view:[0.2,-0.45],text:'Jeder Ausgang ist ein Relaiskontakt (Schließer) mit zwei Klemmen. Der Laststromkreis ist von der Steuerung galvanisch getrennt, so lassen sich z. B. 230-V-Schützspulen oder Lampen schalten. Der zulässige Strom hängt von Lastart und Gerät ab (ohmsche Last oft bis 10 A).'},
+ {id:'display',name:'Display',tag:'X',view:[0.1,0.1],text:'Zeigt die Zustände der Ein- und Ausgänge (hier live aus dem Simulator), Parameter von Zeitgliedern und Zählern sowie Meldetexte. Im Programmiermodus wird der Funktionsplan Block für Block angezeigt.'},
+ {id:'keys',name:'Bedientasten',tag:'X',view:[0.35,0.1],text:'Mit den Cursortasten, ESC und OK lässt sich das Gerät direkt programmieren und parametrieren. In der Praxis wird meist am PC im Funktionsplan (FUP) oder Kontaktplan (KOP) programmiert und das Programm dann übertragen.'},
+ {id:'eth',name:'Ethernet (RJ45)',tag:'X',view:[-0.2,-0.15],text:'Verbindung zum PC für das Übertragen und Testen von Programmen, außerdem zur Vernetzung mehrerer Steuerungen oder mit einem Bediengerät (HMI).'},
+ {id:'sd',name:'Speicherkarte',tag:'X',view:[0,-0.25],text:'Steckplatz für eine micro-SD-Karte. Damit werden Programme gesichert und auf andere Geräte kopiert oder Messwerte aufgezeichnet (Datalog).'},
+ {id:'led',name:'RUN/STOP-Anzeige',tag:'X',view:[0.25,-0.2],text:'Zeigt den Betriebszustand. Im RUN arbeitet die CPU das Programm zyklisch ab, im STOP sind alle Ausgänge abgeschaltet.'},
+ {id:'expansion',name:'Erweiterungsschnittstelle',tag:'X',view:[1.35,0.15],text:'Seitlich unter einer Abdeckung. Hier werden Erweiterungsmodule angereiht, z. B. weitere digitale Ein- und Ausgänge, Analogmodule oder Kommunikationsmodule.'},
+ {id:'rail',name:'Hutschiene TS 35',tag:'X',view:[2.4,-0.25],text:'Genormte Tragschiene (DIN EN 60715) im Verteiler. Die Steuerung wird oben eingehängt und unten mit dem Rastschieber verriegelt. Baubreite hier 4 Teilungseinheiten (72 mm).'},
+ {id:'opto',name:'Eingangsstufe',tag:'E',inner:true,view:[0.3,0.55],text:'Jedes Eingangssignal wird über Spannungsteiler, Filter und bei vielen Geräten einen Optokoppler auf den Pegel der CPU gebracht. Im Modell leuchtet die Stufe, sobald der Eingang im Simulator 1-Signal führt.'},
+ {id:'cpu',name:'CPU mit Speicher',tag:'V',inner:true,view:[0.3,0.2],text:'Das Herz der Verarbeitung. Die CPU arbeitet das Programm zyklisch ab: Eingänge lesen (PAE), Verknüpfungen berechnen, Ausgänge schreiben (PAA). Das Programm liegt im nichtflüchtigen Speicher und bleibt ohne Spannung erhalten.'},
+ {id:'relays',name:'Ausgangsrelais',tag:'A',inner:true,view:[0.3,-0.45],text:'Die CPU steuert über einen Treiber die Relaisspulen an. Der Kontakt schließt dann den Laststromkreis zwischen den beiden Q-Klemmen. Das Relais von Q1 zieht im Modell an, sobald der Simulator Q1 setzt.'},
+ {id:'psu',name:'Netzteil',tag:'X',inner:true,view:[0.6,0.15],text:'Erzeugt aus der Versorgungsspannung die stabilen Kleinspannungen für CPU, Speicher und Display, z. B. 3,3 V und 5 V.'}
+];
+const CMAP=Object.fromEntries(COMP.map(c=>[c.id,c]));
+
+/* ---------------- Simulator ---------------- */
+const TYPE={sw:'Schalter',no:'Taster, Schließer',nc:'Taster, Öffner'};
+const PRESETS=[
+ {id:'and',name:'UND',title:'Zweihandbedienung (vereinfacht)',story:'Eine Presse (Motor M1 an Q1) läuft nur, solange beide Taster S1 UND S2 gedrückt sind. So befinden sich beide Hände außerhalb des Gefahrenbereichs. Echte Zweihandschaltungen überwachen zusätzlich die Gleichzeitigkeit.',
+  inputs:[{id:'I1',dev:'S1',type:'no',y:110},{id:'I2',dev:'S2',type:'no',y:150}],gates:[{id:'g1',type:'AND',x:240,y:100,in:['I1','I2']}],out:'g1',load:'M1',lt:'m',formula:'Q1 = I1 ∧ I2',h:240},
+ {id:'or',name:'ODER',title:'Hofbeleuchtung',story:'Die Lampe H1 leuchtet, wenn der Bewegungsmelder B1 meldet ODER der Schalter S1 eingeschaltet ist.',
+  inputs:[{id:'I1',dev:'B1',type:'sw',y:110},{id:'I2',dev:'S1',type:'sw',y:150}],gates:[{id:'g1',type:'OR',x:240,y:100,in:['I1','I2']}],out:'g1',load:'H1',lt:'l',formula:'Q1 = I1 ∨ I2',h:240},
+ {id:'not',name:'NICHT',title:'Kühlschranklicht',story:'Der Türkontakt B1 ist betätigt, solange die Tür geschlossen ist. Die Innenbeleuchtung H1 leuchtet, wenn B1 NICHT betätigt ist, also die Tür offen steht.',
+  inputs:[{id:'I1',dev:'B1',type:'sw',y:130}],gates:[{id:'g1',type:'NOT',x:240,y:100,in:['I1']}],out:'g1',load:'H1',lt:'l',formula:'Q1 = ¬I1',h:240},
+ {id:'xor',name:'XOR',title:'Wechselschaltung',story:'Die Lampe H1 lässt sich von zwei Stellen umschalten. Sie leuchtet, wenn genau einer der beiden Schalter S1 und S2 betätigt ist.',
+  inputs:[{id:'I1',dev:'S1',type:'sw',y:110},{id:'I2',dev:'S2',type:'sw',y:150}],gates:[{id:'g1',type:'XOR',x:240,y:100,in:['I1','I2']}],out:'g1',load:'H1',lt:'l',formula:'Q1 = I1 ⊕ I2',h:240},
+ {id:'mix',name:'Kombination',title:'Garagentor',story:'Der Tormotor M1 läuft, wenn der Schlüsselschalter S1 UND der Taster S2 betätigt sind ODER die Funkfernbedienung B1 ein Signal sendet.',
+  inputs:[{id:'I1',dev:'S1',type:'sw',y:60},{id:'I2',dev:'S2',type:'no',y:100},{id:'I3',dev:'B1',type:'no',y:180}],gates:[{id:'g1',type:'AND',x:170,y:50,in:['I1','I2']},{id:'g2',type:'OR',x:330,y:60,in:['g1','I3']}],out:'g2',load:'M1',lt:'m',formula:'Q1 = (I1 ∧ I2) ∨ I3',h:230},
+ {id:'hold',name:'Selbsthaltung',title:'Motor mit Selbsthaltung',story:'S1 (Schließer) startet den Motor M1, S0 (Öffner) stoppt ihn. Q1 wird auf das ODER-Glied zurückgeführt und hält sich so selbst, auch wenn S1 losgelassen wird.',
+  inputs:[{id:'I1',dev:'S1',type:'no',y:110},{id:'I2',dev:'S0',type:'nc',y:200}],gates:[{id:'g1',type:'OR',x:170,y:100,in:['I1','Q1']},{id:'g2',type:'AND',x:330,y:110,in:['g1','I2']}],out:'g2',load:'M1',lt:'m',formula:'Q1 = (I1 ∨ Q1) ∧ I2',fb:true,fbY:34,h:240}
+];
+// Pins: 60 hoch, Eingänge bei y+20/y+40 bzw. y+30
+const GW=72,GH=60,INX=76,QX=484;
+const SYM={AND:'&',OR:'≥1',NOT:'1',XOR:'=1'};
+const S={p:PRESETS[0],inp:{},q:0,v:{}};
+
+const gfn=(t,a)=>t==='AND'?+a.every(Boolean):t==='OR'?+a.some(Boolean):t==='NOT'?+!a[0]:a.reduce((s,x)=>s+x,0)%2;
+function evalOnce(p,inp,q){const v=Object.assign({},inp,{Q1:q});p.gates.forEach(g=>{v[g.id]=gfn(g.type,g.in.map(s=>v[s]))});return v}
+function compute(){let q=S.q;for(let k=0;k<4;k++){const nq=evalOnce(S.p,S.inp,q)[S.p.out];if(nq===q)break;q=nq}S.v=evalOnce(S.p,S.inp,q);S.q=S.v[S.p.out];S.v.Q1=S.q}
+const gById=id=>S.p.gates.find(g=>g.id===id);
+function gIn(g,i){const n=g.in.length;return{x:g.x,y:g.y+GH*(i+1)/(n+1)}}
+function gOut(g){return{x:g.x+GW+(g.type==='NOT'?10:0),y:g.y+GH/2}}
+function srcPt(id){const i=S.p.inputs.find(x=>x.id===id);if(i)return{x:INX,y:i.y};return gOut(gById(id))}
+
+function renderSVG(){
+ const p=S.p,v=S.v;let s='';
+ p.gates.forEach(g=>g.in.forEach((src,i)=>{
+  const d=gIn(g,i),on=v[src];let path;
+  if(src==='Q1'){const o=gOut(gById(p.out));path=`M${o.x+24},${o.y} V${p.fbY} H${d.x-40} V${d.y} H${d.x}`}
+  else{const a=srcPt(src);path=a.y===d.y?`M${a.x},${a.y} H${d.x}`:`M${a.x},${a.y} H${d.x-24} V${d.y} H${d.x}`}
+  s+=`<path class="wire${on?' on':''}" d="${path}"/>`;
+ }));
+ const o=gOut(gById(p.out));
+ s+=`<path class="wire${S.q?' on':''}" d="M${o.x},${o.y} H${QX}"/>`;
+ if(p.fb)s+=`<circle class="dot${S.q?' on':''}" cx="${o.x+24}" cy="${o.y}" r="4"/>`;
+ p.inputs.forEach(i=>{const on=v[i.id];
+  s+=`<rect class="pin${on?' on':''}" x="20" y="${i.y-15}" width="56" height="30" rx="4"/><text class="pintxt" x="48" y="${i.y+1}">${i.id}</text>`;
+  s+=`<text class="small" x="48" y="${i.y+29}" text-anchor="middle">${i.dev}</text>`;
+  s+=`<text class="val${on?' on':''}" x="${INX+6}" y="${i.y-6}">${on}</text>`;
+ });
+ p.gates.forEach(g=>{
+  s+=`<rect class="gate" x="${g.x}" y="${g.y}" width="${GW}" height="${GH}"/><text class="gsym" x="${g.x+GW/2}" y="${g.y+26}">${SYM[g.type]}</text>`;
+  if(g.type==='NOT')s+=`<circle class="gneg" cx="${g.x+GW+5}" cy="${g.y+GH/2}" r="5"/>`;
+  const go=gOut(g),on=v[g.id];
+  s+=`<text class="val${on?' on':''}" x="${go.x+6}" y="${go.y-6}">${on}</text>`;
+ });
+ const cx=QX+16,cy=o.y,r=16,on=S.q?' on':'';
+ s+=`<circle class="load${on}" cx="${cx}" cy="${cy}" r="${r}"/>`;
+ if(p.lt==='l'){const k=r*0.707;s+=`<path class="loadx${on}" d="M${cx-k},${cy-k} L${cx+k},${cy+k} M${cx+k},${cy-k} L${cx-k},${cy+k}"/>`}
+ else s+=`<text class="loadm" x="${cx}" y="${cy}">M</text>`;
+ s+=`<text class="pintxt" x="${cx}" y="${cy-28}" style="font-size:13px">Q1</text><text class="small" x="${cx}" y="${cy+32}" text-anchor="middle">${p.load}</text>`;
+ const svg=$('#fup');svg.setAttribute('viewBox',`0 0 560 ${p.h}`);svg.innerHTML=s;
+}
+
+function renderTable(){
+ const p=S.p,ids=p.inputs.map(i=>i.id),cols=ids.slice();if(p.fb)cols.push('Q1alt');
+ let h='<table><thead><tr>'+cols.map(c=>`<th>${c==='Q1alt'?'Q1 vorher':c}</th>`).join('')+'<th class="q">Q1</th></tr></thead><tbody>';
+ const n=cols.length;
+ for(let r=0;r<(1<<n);r++){
+  const vals=cols.map((c,k)=>(r>>(n-1-k))&1);const inp={};ids.forEach((id,k)=>inp[id]=vals[k]);
+  const qa=p.fb?vals[n-1]:0;const qn=evalOnce(p,inp,qa)[p.out];
+  const cur=ids.every(id=>S.inp[id]===inp[id])&&(!p.fb||qa===S.q);
+  h+=`<tr${cur?' class="cur"':''}>`+vals.map(x=>`<td${x?' class="one"':''}>${x}</td>`).join('')+`<td class="q${qn?' one':''}">${qn}</td></tr>`;
+ }
+ $('#tbl').innerHTML=h+'</tbody></table>';
+ $('#tnote').textContent=p.fb?'Funktionstabelle mit Rückführung: Der neue Wert von Q1 hängt auch vom vorherigen Zustand ab. Hervorgehoben ist der aktuelle Zustand.':'Funktionstabelle: Hervorgehoben ist die Zeile, die gerade an den Eingängen anliegt.';
+}
+
+function renderPresets(){
+ const w=$('#presets');w.innerHTML='';
+ PRESETS.forEach(p=>{const b=document.createElement('button');b.className='preset';b.id='pre-'+p.id;b.textContent=p.name;b.setAttribute('aria-pressed',p===S.p);b.onclick=()=>setPreset(p);w.appendChild(b)});
+}
+function setPreset(p){
+ S.p=p;S.q=0;S.inp={};p.inputs.forEach(i=>S.inp[i.id]=i.type==='nc'?1:0);
+ document.querySelectorAll('.preset').forEach(b=>b.setAttribute('aria-pressed',b.id==='pre-'+p.id));
+ $('#story').innerHTML=`<span class="eyebrow">${p.name}</span><h3>${p.title}</h3><p>${p.story}</p>`;
+ renderInputs();update();
+}
+function renderInputs(){
+ const w=$('#inputs');w.innerHTML='';
+ S.p.inputs.forEach(i=>{
+  const d=document.createElement('div');d.className='inp';
+  const b=document.createElement('button');b.className='ctl';b.id='ctl-'+i.id;
+  b.setAttribute('aria-label',`${i.id} ${i.dev} ${TYPE[i.type]}`);
+  d.innerHTML=`<span class="id">${i.id}</span><span class="lbl"><b>${i.dev}</b><br>${TYPE[i.type]}</span>`;
+  d.appendChild(b);w.appendChild(d);
+  if(i.type==='sw'){b.onclick=()=>{S.inp[i.id]^=1;update()}}
+  else{
+   const act=i.type==='no'?1:0,rest=1-act;
+   const press=()=>{if(S.inp[i.id]!==act){S.inp[i.id]=act;update()}};
+   const rel=()=>{if(S.inp[i.id]!==rest){S.inp[i.id]=rest;update()}};
+   b.addEventListener('pointerdown',e=>{e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(_){}press()});
+   ['pointerup','pointercancel','lostpointercapture'].forEach(t=>b.addEventListener(t,rel));
+   b.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();press()}});
+   b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();rel()}});
+   b.addEventListener('contextmenu',e=>e.preventDefault());
+  }
+ });
+}
+function renderInputState(){
+ S.p.inputs.forEach(i=>{const b=document.getElementById('ctl-'+i.id);if(!b)return;const on=S.inp[i.id];b.classList.toggle('on',!!on);
+  if(i.type==='sw'){b.textContent=on?'EIN · 1':'AUS · 0';b.setAttribute('aria-pressed',!!on)}
+  else{const pressed=(i.type==='no')?on===1:on===0;b.textContent=(pressed?'gedrückt':'drücken')+' · '+on;b.setAttribute('aria-pressed',pressed)}
+ });
+}
+function renderEVA(){
+ $('#evaIn').innerHTML=S.p.inputs.map(i=>`<span class="bit${S.inp[i.id]?' on':''}">${i.id} = ${S.inp[i.id]}</span>`).join('');
+ $('#evaF').textContent=S.p.formula;
+ $('#evaOut').innerHTML=`<span class="bit${S.q?' on':''}">Q1 = ${S.q}</span>`;
+}
+function update(){compute();renderInputState();renderSVG();renderTable();renderEVA();if(window.__ks3d)window.__ks3d.sync()}
+
+/* ---------------- Info-Panel ---------------- */
+let active=null;
+function renderChips(){
+ [['chipsOut',false],['chipsIn',true]].forEach(([id,inner])=>{const w=document.getElementById(id);w.innerHTML='';
+  COMP.filter(c=>!!c.inner===inner).forEach(c=>{const b=document.createElement('button');b.className='chip';b.id='chip-'+c.id;b.textContent=c.name;b.setAttribute('aria-pressed','false');b.onclick=()=>select(c.id,true);w.appendChild(b)});
+ });
+}
+function showInfo(id){
+ const el=$('#info');
+ if(!id){el.innerHTML=`<span class="tag X">Bauteile</span><h3>Gerät erkunden</h3><p>Tippe ein Bauteil im Modell oder in der Liste an. Mit „Innenleben“ wird das Gehäuse durchsichtig und CPU, Eingangsstufe, Netzteil und Relais werden sichtbar.</p>`;return}
+ const c=CMAP[id];el.innerHTML=`<span class="tag ${c.tag}">${TAGS[c.tag]}</span><h3>${c.name}</h3><p>${c.text}</p>`;
+}
+function select(id,fromList){
+ active=id;showInfo(id);
+ document.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',b.id==='chip-'+id));
+ if(window.__ks3d)window.__ks3d.focus(id,fromList);
+}
+
+renderPresets();renderChips();showInfo(null);setPreset(PRESETS[0]);
+
+/* ---------------- 3D ---------------- */
+if(!window.THREE){$('#hint').textContent='3D-Ansicht konnte nicht geladen werden. Der Simulator funktioniert trotzdem.';return}
+const stage=$('#stage');
+let renderer;
+try{renderer=new THREE.WebGLRenderer({antialias:true})}catch(e){$('#hint').textContent='WebGL ist in diesem Browser nicht verfügbar. Der Simulator funktioniert trotzdem.';return}
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+renderer.outputEncoding=THREE.sRGBEncoding;
+const canvas=renderer.domElement;canvas.setAttribute('aria-label','3D-Modell der Kleinsteuerung');stage.prepend(canvas);
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(32,1,0.1,200);
+scene.add(new THREE.HemisphereLight(0xffffff,0x7d8581,0.8));
+const d1=new THREE.DirectionalLight(0xffffff,0.8);d1.position.set(8,12,16);scene.add(d1);
+const d2=new THREE.DirectionalLight(0xffffff,0.3);d2.position.set(-12,-5,6);scene.add(d2);
+const d3=new THREE.DirectionalLight(0xffffff,0.25);d3.position.set(0,4,-12);scene.add(d3);
+
+const dev=new THREE.Group();scene.add(dev);
+const inner=new THREE.Group();inner.visible=false;dev.add(inner);
+const HS={},housing=[];
+function mk(geo,mat,hs,parent){const m=new THREE.Mesh(geo,mat.clone());m.userData.hs=hs||null;if(hs)(HS[hs]=HS[hs]||[]).push(m);(parent||dev).add(m);return m}
+const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.6,metalness:0},o||{}));
+const box=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+
+// Gehäuse (Einheiten: cm) – 72 × 90 × 55 mm
+const mBody=M(0xcfd3ce),mFront=M(0xe2e5df);
+const body=mk(box(7.2,9,3),mBody);body.position.set(0,0,1.5);body.userData.housing=true;housing.push(body);
+const front=mk(box(7.2,4.6,2.5),mFront);front.position.set(0,0,4.25);front.userData.housing=true;housing.push(front);
+
+// Frontbeschriftung
+const FW=1024,FH=Math.round(1024*4.6/7.2);
+const fc=document.createElement('canvas');fc.width=FW;fc.height=FH;
+const faceTex=new THREE.CanvasTexture(fc);faceTex.encoding=THREE.sRGBEncoding;faceTex.anisotropy=4;
+const TOP=['L+','M','I1','I2','I3','I4','I5','I6','I7','I8'];
+const tx=i=>-3.24+i*0.72, bx=j=>-2.8+j*0.8;
+function drawFace(){
+ const g=fc.getContext('2d'),X=x=>(x+3.6)/7.2*FW,Y=y=>(2.3-y)/4.6*FH,F='"IBM Plex Sans Condensed","Arial Narrow",sans-serif';
+ g.fillStyle='#e2e5df';g.fillRect(0,0,FW,FH);
+ g.fillStyle='#262c30';g.textAlign='center';g.textBaseline='middle';g.font='600 30px '+F;
+ TOP.forEach((l,i)=>g.fillText(l,X(tx(i)),Y(2.04)));
+ ['Q1','Q2','Q3','Q4'].forEach((l,k)=>g.fillText(l,X(-2.4+k*1.6),Y(-2.06)));
+ g.strokeStyle='#8b9398';g.lineWidth=2;
+ for(let k=0;k<4;k++){g.beginPath();g.moveTo(X(-2.75+k*1.6),Y(-2.24));g.lineTo(X(-2.05+k*1.6),Y(-2.24));g.stroke()}
+ g.font='500 22px '+F;g.fillText('ESC',X(1.9),Y(-0.88));g.fillText('OK',X(2.95),Y(-0.88));
+ g.fillText('LAN',X(-2.4),Y(-0.98));g.fillText('micro SD',X(-0.8),Y(-1.25));
+ g.textAlign='left';g.fillText('RUN/STOP',X(1.18),Y(-1.5));
+ g.fillStyle='#5a646a';g.font='500 21px '+F;g.fillText('12/24 V DC · 8 DI · 4 DO Relais',X(-3.0),Y(-0.5));
+ faceTex.needsUpdate=true;
+}
+drawFace();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawFace);
+const facePlane=new THREE.Mesh(new THREE.PlaneGeometry(7.2,4.6),new THREE.MeshStandardMaterial({map:faceTex,roughness:0.7}));
+facePlane.position.set(0,0,5.505);facePlane.userData.housing=true;dev.add(facePlane);housing.push(facePlane);
+
+// Klemmen
+const mTerm=M(0x3a4044,{roughness:0.7}),mScrew=M(0xb8bec2,{metalness:0.85,roughness:0.35}),mHole=M(0x111416);
+function terminal(x,top,hs){
+ const sy=top?1:-1;
+ mk(box(0.62,1.5,0.5),mTerm,hs).position.set(x,sy*3.4,3.25);
+ const sc=mk(new THREE.CylinderGeometry(0.2,0.2,0.1,20),mScrew,hs);sc.rotation.x=Math.PI/2;sc.position.set(x,sy*3.3,3.53);
+ const sl=mk(box(0.3,0.05,0.04),mHole,hs);sl.position.set(x,sy*3.3,3.59);sl.rotation.z=(x*1.7)%1.2;
+ mk(box(0.36,0.06,0.28),mHole,hs).position.set(x,sy*4.16,3.3);
+}
+TOP.forEach((l,i)=>terminal(tx(i),true,i<2?'power':'inputs'));
+for(let j=0;j<8;j++)terminal(bx(j),false,'outputs');
+
+// Display
+mk(box(4.4,2.05,0.05),M(0x1d2226,{roughness:0.4}),'display').position.set(-0.9,0.8,5.53);
+const lc=document.createElement('canvas');lc.width=512;lc.height=240;
+const lcdTex=new THREE.CanvasTexture(lc);lcdTex.encoding=THREE.sRGBEncoding;
+const lcd=mk(new THREE.PlaneGeometry(4.0,1.75),new THREE.MeshBasicMaterial({map:lcdTex}),'display');lcd.position.set(-0.9,0.8,5.56);
+function drawLCD(){
+ const g=lc.getContext('2d');g.fillStyle='#d5e3cd';g.fillRect(0,0,512,240);
+ g.fillStyle='#1c2a1e';g.strokeStyle='#1c2a1e';g.lineWidth=3;g.textBaseline='middle';g.textAlign='center';
+ g.font='600 30px "IBM Plex Mono",monospace';g.textAlign='left';g.fillText('I:',16,42);g.fillText('Q:',16,154);
+ g.textAlign='center';g.font='600 24px "IBM Plex Mono",monospace';
+ for(let k=0;k<8;k++){const x=92+k*52,on=S.inp['I'+(k+1)]||0;g.fillText(String(k+1),x,40);on?g.fillRect(x-13,74,26,26):g.strokeRect(x-12,75,24,24)}
+ for(let k=0;k<4;k++){const x=92+k*52,on=k===0?S.q:0;g.fillText(String(k+1),x,152);on?g.fillRect(x-13,186,26,26):g.strokeRect(x-12,187,24,24)}
+ g.font='600 22px "IBM Plex Mono",monospace';g.fillText('RUN',446,152);
+ lcdTex.needsUpdate=true;
+}
+
+// Tasten
+const mKey=M(0x2c3236,{roughness:0.5});
+[[2.4,1.5,0.5,0.42],[2.4,0.4,0.5,0.42],[1.85,0.95,0.42,0.5],[2.95,0.95,0.42,0.5],[1.9,-0.4,0.62,0.4],[2.95,-0.4,0.62,0.4]].forEach(([x,y,w,h])=>mk(box(w,h,0.16),mKey,'keys').position.set(x,y,5.58));
+// RJ45, SD, LED
+mk(box(0.95,0.75,0.06),M(0x15191b),'eth').position.set(-2.4,-1.52,5.52);
+mk(box(0.6,0.32,0.07),M(0x6f7a80,{metalness:0.6,roughness:0.4}),'eth').position.set(-2.4,-1.5,5.53);
+mk(box(1.25,0.13,0.06),M(0x15191b),'sd').position.set(-0.8,-1.52,5.52);
+const led=mk(new THREE.SphereGeometry(0.1,16,12),M(0x22c55e,{emissive:0x22c55e,emissiveIntensity:0.8}),'led');led.position.set(1.0,-1.5,5.52);
+// Erweiterung rechts
+mk(box(0.05,3.2,2.0),M(0x4a5156),'expansion').position.set(3.62,0,1.5);
+for(let k=0;k<5;k++)mk(box(0.06,0.12,1.2),M(0xc7a64a,{metalness:0.8,roughness:0.3}),'expansion').position.set(3.64,-1+k*0.5,1.5);
+// Hutschiene + Rastschieber
+const mRail=M(0xc5cbcf,{metalness:0.75,roughness:0.35});
+mk(box(13,2.7,0.1),mRail,'rail').position.set(0,0,-0.75);
+[-1,1].forEach(s=>{mk(box(13,0.1,0.75),mRail,'rail').position.set(0,s*1.35,-0.375);mk(box(13,0.45,0.1),mRail,'rail').position.set(0,s*1.57,-0.05)});
+mk(box(1.3,0.5,0.6),M(0x9aa1a5),'rail').position.set(0,-4.7,0.5);
+
+// Innenleben
+const pcb=mk(box(6.7,8.3,0.14),M(0x1f6b45,{roughness:0.5}),null,inner);pcb.position.set(0,0,1.0);
+mk(box(1.5,1.5,0.22),M(0x16191b,{roughness:0.4}),'cpu',inner).position.set(-0.7,0.6,1.18);
+mk(box(1.1,0.55,0.2),M(0x22272a),'cpu',inner).position.set(1.0,0.6,1.17);
+const optos=[];for(let k=0;k<8;k++){const m=mk(box(0.4,0.55,0.3),M(0xf0f0ea),'opto',inner);m.position.set(tx(k+2),2.55,1.22);m.userData.sig='I'+(k+1);optos.push(m)}
+const relays=[];for(let k=0;k<4;k++){const m=mk(box(1.25,1.05,1.3),M(0x2b4f8a,{roughness:0.5}),'relays',inner);m.position.set(-2.4+k*1.6,-2.9,1.72);m.userData.sig='Q'+(k+1);relays.push(m)}
+const cap=mk(new THREE.CylinderGeometry(0.42,0.42,1.2,24),M(0x2f3a8c),'psu',inner);cap.rotation.x=Math.PI/2;cap.position.set(2.5,1.0,1.67);
+const cap2=mk(new THREE.CylinderGeometry(0.3,0.3,0.9,20),M(0x2f3a8c),'psu',inner);cap2.rotation.x=Math.PI/2;cap2.position.set(2.5,-0.3,1.52);
+const coil=mk(new THREE.TorusGeometry(0.32,0.14,10,24),M(0x5a4a2a),'psu',inner);coil.position.set(-2.6,0.2,1.25);
+
+// Kamera
+const target=new THREE.Vector3(0,0,2.4);
+const HOME=[0.55,0.22];let th=HOME[0],ph=HOME[1],tTh=th,tPh=ph,zoom=1,tZoom=1,touched=false;
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W=1,H=1;
+function resize(){W=stage.clientWidth;H=stage.clientHeight;renderer.setSize(W,H,false);cam.aspect=W/H;cam.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(stage);resize();
+function bgColor(){const c=getComputedStyle(document.documentElement).getPropertyValue('--stage').trim()||'#d6dcd5';try{scene.background=new THREE.Color(c)}catch(e){}}
+bgColor();
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',bgColor);
+new MutationObserver(bgColor).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+// Röntgen
+let xray=false;
+function setXray(on){xray=on;inner.visible=on;$('#xray').setAttribute('aria-pressed',on);
+ housing.forEach(m=>{m.material.transparent=on;m.material.opacity=on?0.14:1;m.material.depthWrite=!on;m.material.needsUpdate=true})}
+$('#xray').onclick=()=>{setXray(!xray);touched=true};
+
+// Steuerung
+const ptrs=new Map();let down=null,moved=false,pinch=0;
+const clampPh=v=>Math.max(-1.3,Math.min(1.3,v)),clampZ=v=>Math.max(0.5,Math.min(1.8,v));
+const pdist=()=>{const a=[...ptrs.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1};
+canvas.addEventListener('pointerdown',e=>{try{canvas.setPointerCapture(e.pointerId)}catch(_){}ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});touched=true;
+ if(ptrs.size===1){down={x:e.clientX,y:e.clientY};moved=false}else if(ptrs.size===2){pinch=pdist();moved=true}});
+canvas.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;const pr=ptrs.get(e.pointerId);const dx=e.clientX-pr.x,dy=e.clientY-pr.y;ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(ptrs.size===1){tTh-=dx*0.009;tPh=clampPh(tPh+dy*0.007);if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>6)moved=true}
+ else if(ptrs.size===2){const d=pdist();tZoom=clampZ(tZoom*pinch/d);pinch=d}});
+function up(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);if(e.type==='pointerup'&&!moved&&ptrs.size===0)pickAt(e.clientX,e.clientY)}
+canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
+canvas.addEventListener('wheel',e=>{e.preventDefault();touched=true;tZoom=clampZ(tZoom*(1+e.deltaY*0.0012))},{passive:false});
+$('#zin').onclick=()=>{tZoom=clampZ(tZoom*0.82);touched=true};
+$('#zout').onclick=()=>{tZoom=clampZ(tZoom*1.2);touched=true};
+$('#reset').onclick=()=>{tTh=HOME[0];tPh=HOME[1];tZoom=1;touched=true};
+
+const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
+function visibleChain(o){while(o){if(!o.visible)return false;o=o.parent}return true}
+function pickAt(cx,cy){
+ const r=canvas.getBoundingClientRect();ndc.set((cx-r.left)/r.width*2-1,-((cy-r.top)/r.height)*2+1);
+ ray.setFromCamera(ndc,cam);
+ const hits=ray.intersectObjects(dev.children,true).filter(h=>visibleChain(h.object)&&!(xray&&h.object.userData.housing));
+ const hs=hits.length?hits[0].object.userData.hs:null;
+ if(hs)select(hs,false);
+}
+
+window.__ks3d={
+ sync(){drawLCD()},
+ focus(id,fromList){const c=CMAP[id];touched=true;if(c.inner&&!xray)setXray(true);
+  if(fromList&&c.view){let t=c.view[0];while(t-tTh>Math.PI)t-=2*Math.PI;while(tTh-t>Math.PI)t+=2*Math.PI;tTh=t;tPh=c.view[1]}}
+};
+drawLCD();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawLCD);
+
+const ACC=new THREE.Color(0x14a3ad),SIG=new THREE.Color(0xf07a1a),BLK=new THREE.Color(0x000000);
+const allHs=[].concat(...Object.values(HS));
+let t0=performance.now();
+function frame(now){
+ const t=now-t0;
+ if(!touched&&!reduce){tTh=HOME[0]+0.45*Math.sin(t*0.00035)}
+ const k=reduce?1:0.12;th+=(tTh-th)*k;ph+=(tPh-ph)*k;zoom+=(tZoom-zoom)*k;
+ const base=19.5/Math.min(1,Math.max(0.55,cam.aspect));const R=base*zoom;
+ cam.position.set(target.x+R*Math.cos(ph)*Math.sin(th),target.y+R*Math.sin(ph),target.z+R*Math.cos(ph)*Math.cos(th));cam.lookAt(target);
+ const pulse=reduce?0.45:0.35+0.2*Math.sin(t*0.006);
+ allHs.forEach(m=>{const mat=m.material;if(!mat.emissive||m===led)return;
+  const sig=m.userData.sig;const sOn=sig&&(sig[0]==='I'?S.inp[sig]:(sig==='Q1'?S.q:0));
+  if(m.userData.hs===active){mat.emissive.copy(ACC);mat.emissiveIntensity=pulse}
+  else if(sOn){mat.emissive.copy(SIG);mat.emissiveIntensity=0.85}
+  else{mat.emissive.copy(BLK);mat.emissiveIntensity=0}
+ });
+ relays.forEach((m,i)=>{const on=i===0&&S.q;m.scale.z=on?0.92:1});
+ renderer.render(scene,cam);requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span></footer>
+<script src="hfs-app.js"></script>
+</body></html>

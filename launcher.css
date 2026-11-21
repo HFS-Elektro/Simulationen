@@ -1,0 +1,124 @@
+/* HFS-Simulationen – Startseiten */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:16px}
+body{margin:0;background:var(--hfs-bg);color:var(--hfs-navy);font:400 16px/1.5 var(--hfs-font)}
+a{color:var(--hfs-blue-dk)}
+.ico{width:20px;height:20px;flex:none}
+.wrap,.top-in,.tabs,.foot-in{width:min(1180px,100%);margin:0 auto;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+
+/* Kopf */
+.top{background:var(--hfs-navy);color:#fff;padding-top:max(14px,env(safe-area-inset-top))}
+.top{border-bottom:4px solid var(--hfs-blue)}
+.top-in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:18px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.logo{display:grid;place-items:center;flex:none;width:52px;height:52px;border-radius:12px;background:var(--hfs-blue);font:800 17px/1 var(--hfs-font);letter-spacing:.06em}
+.brand h1{margin:0;font:700 clamp(24px,3.8vw,34px)/1.1 var(--hfs-disp);letter-spacing:.005em}
+.brand p{margin:2px 0 0;color:#B7C7D2;font-size:15px}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs a{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:12px 12px 0 0;color:#C9D6DE;text-decoration:none;
+  font-weight:600;white-space:nowrap;min-height:48px}
+.tabs a:hover{color:#fff;background:rgba(255,255,255,.07)}
+.tabs a[aria-current="page"]{background:var(--hfs-bg);color:var(--hfs-navy)}
+.tabs .n{font-size:12px;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,.14)}
+.tabs a[aria-current="page"] .n{background:var(--hfs-blue);color:#fff}
+
+/* Knöpfe */
+.btn{appearance:none;-webkit-appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;
+  border-radius:10px;border:1px solid var(--hfs-line);background:#fff;color:var(--hfs-navy);font:600 15px/1 var(--hfs-font);text-decoration:none;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.btn:hover{border-color:var(--hfs-blue);color:var(--hfs-blue-dk)}
+.btn:focus-visible,.tile a:focus-visible,.tabs a:focus-visible,.search input:focus-visible{outline:3px solid var(--hfs-blue);outline-offset:2px}
+.btn-pri{background:var(--hfs-blue);border-color:var(--hfs-blue);color:#fff}
+.btn-pri:hover{background:var(--hfs-blue-dk);color:#fff}
+.btn-light{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff}
+.btn-light:hover{background:rgba(255,255,255,.18);color:#fff;border-color:#fff}
+
+/* Suche und Sprungmarken */
+.bar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding:20px 0 6px}
+.search{flex:1 1 280px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--hfs-line);border-radius:12px;padding:0 12px;min-height:48px;color:var(--hfs-muted)}
+.search input{flex:1;border:0;outline:0;background:none;font:400 16px/1.2 var(--hfs-font);color:var(--hfs-navy);min-width:0;padding:12px 0}
+.jump{display:flex;flex-wrap:wrap;gap:6px}
+.jump a{padding:7px 12px;border-radius:99px;background:#fff;border:1px solid var(--hfs-line);color:var(--hfs-navy);text-decoration:none;font-size:14px;font-weight:600}
+.jump a:hover{border-color:var(--hfs-blue);color:var(--hfs-blue-dk)}
+
+/* Installieren */
+.install{margin:14px 0 4px;background:#fff;border:1px solid var(--hfs-line);border-radius:14px}
+.install summary{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;font-weight:700;list-style:none;min-height:52px}
+.install summary::-webkit-details-marker{display:none}
+.install summary::after{content:"▾";margin-left:auto;color:var(--hfs-muted);transition:transform .2s}
+.install[open] summary::after{transform:rotate(180deg)}
+.install summary .ico{color:var(--hfs-blue)}
+.install-in{padding:0 16px 16px;display:grid;gap:12px}
+.install-in p{margin:0}
+.install-lead{color:var(--hfs-muted)}
+.howto{border:1px solid var(--hfs-line);border-radius:12px;padding:12px 14px;background:var(--hfs-bg)}
+.howto.on{border-color:var(--hfs-blue);background:var(--hfs-blue-lt)}
+.howto h3{margin:0 0 6px;font-size:16px}
+.howto.on h3::after{content:"  ← dein Gerät";color:var(--hfs-blue-dk);font-size:13px;font-weight:600}
+.howto ol{margin:0;padding-left:20px}
+.howto p{margin-top:8px;font-size:14px}
+.howto .btn{margin-top:10px}
+.warn{border-left:4px solid #D9822B;background:#FFF5EA;padding:8px 10px;border-radius:0 8px 8px 0}
+.note{font-size:14px;color:var(--hfs-muted)}
+
+/* Gruppen und Kacheln */
+.gruppe{padding-top:22px}
+.gruppe h2{display:flex;align-items:center;gap:10px;margin:0 0 12px;font:700 22px/1.2 var(--hfs-disp)}
+.gruppe h2 .ico{width:28px;height:28px;padding:5px;border-radius:8px;background:var(--hfs-navy);color:#fff}
+.gruppe h2 .n{font-size:13px;font-weight:600;color:var(--hfs-muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.tile{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid var(--hfs-line);border-radius:14px;overflow:hidden;
+  transition:box-shadow .15s,transform .15s,border-color .15s}
+.tile:hover{border-color:#A9C3D3;box-shadow:0 8px 22px rgba(19,32,42,.09);transform:translateY(-2px)}
+.tile-main{display:grid;grid-template-columns:auto 1fr;align-content:start;gap:4px 12px;padding:16px 36px 12px 16px;color:inherit;text-decoration:none;flex:1}
+.tile-ico{grid-row:span 3;display:grid;place-items:center;width:44px;height:44px;border-radius:11px;background:var(--hfs-blue-lt);color:var(--hfs-blue-dk)}
+.tile-ico .ico{width:24px;height:24px}
+.tile h3{margin:0;font:700 19px/1.2 var(--hfs-disp)}
+.tile p{margin:0;color:var(--hfs-muted);font-size:14.5px;line-height:1.45}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tags span{font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--hfs-bg);color:#3B4E5B}
+.tags span.t3d{background:#EDE6F6;color:#5B3A8C}
+.tags span.tlf{background:#E6F4EA;color:#24703B}
+.tile-act{display:flex;align-items:center;gap:6px;padding:0 12px 12px 16px}
+.tile-act .open{flex:1}
+.tile-act .btn{min-height:40px;padding:8px 12px;font-size:14px}
+.tile-act .ib{width:40px;padding:0}
+.off{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;
+  background:var(--hfs-ok-lt);color:var(--hfs-ok);font-size:12px;font-weight:800}
+.leer{padding:30px 0;text-align:center;color:var(--hfs-muted)}
+[data-gruppe="drehstrom"] .tile-ico{background:#FDEFE3;color:#B4621B}
+[data-gruppe="schutz"] .tile-ico{background:#FBE7E5;color:#B02E25}
+[data-gruppe="installation"] .tile-ico{background:#FFF6D6;color:#8A6A00}
+[data-gruppe="steuerung"] .tile-ico{background:#EDE6F6;color:#5B3A8C}
+[data-gruppe="adventure"] .tile-ico{background:#E6F4EA;color:#24703B}
+[data-gruppe="ueben"] .tile-ico{background:#FDEFE3;color:#B4621B}
+
+/* Fuß */
+.foot{margin-top:40px;background:var(--hfs-navy);color:#C9D6DE;font-size:14px;padding:22px 0 max(22px,env(safe-area-inset-bottom))}
+.foot p{margin:0 0 10px}
+.foot b{color:#fff}
+.foot a{color:#fff}
+.foot .cc a{display:inline-flex;align-items:center;gap:6px;font-weight:700;margin-right:6px;text-decoration:none;border:1px solid rgba(255,255,255,.3);padding:3px 9px;border-radius:99px}
+.foot .stand{color:#8FA3B0;font-size:13px}
+.foot .partner{margin-left:12px;color:#fff;font-weight:600}
+
+/* Geräte */
+#install-btn{justify-self:start}
+.tabs .kurz{display:none}
+@media (max-width:620px){
+  .tabs .lang{display:none} .tabs .kurz{display:inline}
+  .tabs a{flex:1;justify-content:center}
+  .top-in{position:relative;padding-right:56px}
+  #teilen{position:absolute;right:max(16px,env(safe-area-inset-right));top:0;width:44px;padding:0;font-size:0;gap:0}
+  .brand p{font-size:14px}
+  .logo{width:44px;height:44px;font-size:15px}
+  .tabs a{padding:10px 14px}
+  .grid{grid-template-columns:1fr}
+  .jump{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;width:100%}
+  .jump a{white-space:nowrap}
+}
+html.hfs-ipad .grid,html.hfs-tablet .grid{gap:16px}
+html.hfs-touch .tile:hover{transform:none}
+html.hfs-standalone .top{padding-top:max(10px,env(safe-area-inset-top))}
+html.offline-datei .web-only{display:none!important}
+@media print{.top .btn,.bar,.install,.tile-act{display:none}.tile{break-inside:avoid}}
