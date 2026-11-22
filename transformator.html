@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="transformator|sim|540875504371">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Transformator">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Transformator</title>
+<link rel="stylesheet" href="fonts/barlow.css">
+<link rel="stylesheet" href="fonts/ibmplexmono.css">
+<link rel="stylesheet" href="fonts/barlowsemicondensed.css">
+<style>
+:root { --bg:#EDF2F5; --surface:#FFFFFF; --surface2:#F5F8FA; --ink:#13202A; --muted:#586B78; --line:#D2DDE4; --grid:#E3EAEF; --accent:#0089C4; --accent-ink:#FFFFFF; --warn:#C8372D; --ok:#2E8B4A; --q:#D9822B; --u:#1B63A8; --i:#C8372D; --p:#2E8B4A; --steel:#8A969F; --copper:#C77D3A; --flux:#7A4DB0;
+  --f-head:"Barlow Semi Condensed","Arial Narrow","Segoe UI",sans-serif; --f-body:"Barlow","Segoe UI",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace; color-scheme:light }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0D151B; --surface:#142028; --surface2:#1A2832; --ink:#E2EBF1; --muted:#93A6B3; --line:#2A3B47; --grid:#1F2E38; --accent:#29B6F0; --accent-ink:#062030; --warn:#FF6F62; --ok:#5BD488; --q:#F2A659; --u:#5CB4FF; --i:#FF6F62; --p:#5BD488; --steel:#6E7B85; --copper:#D98C46; --flux:#B78CF0; color-scheme:dark } }
+:root[data-theme="dark"] { --bg:#0D151B; --surface:#142028; --surface2:#1A2832; --ink:#E2EBF1; --muted:#93A6B3; --line:#2A3B47; --grid:#1F2E38; --accent:#29B6F0; --accent-ink:#062030; --warn:#FF6F62; --ok:#5BD488; --q:#F2A659; --u:#5CB4FF; --i:#FF6F62; --p:#5BD488; --steel:#6E7B85; --copper:#D98C46; --flux:#B78CF0; color-scheme:dark }
+* { box-sizing:border-box } body { margin:0; background:var(--bg); color:var(--ink); font:400 16px/1.5 var(--f-body); padding:18px max(16px,env(safe-area-inset-right)) 32px max(16px,env(safe-area-inset-left)) }
+.wrap { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:16px } h1,h2 { font-family:var(--f-head); margin:0; line-height:1.15 } h1 { font-size:clamp(1.7rem,4.5vw,2.4rem) } h2 { font-size:1.15rem; font-weight:600 } p { margin:0 }
+.top { display:flex; flex-direction:column; gap:6px; border-bottom:2px solid var(--accent); padding-bottom:12px } .tags { font:600 .74rem/1 var(--f-head); text-transform:uppercase; letter-spacing:.09em; color:var(--muted) } .tags b { color:var(--accent) } .lead { color:var(--muted); max-width:80ch }
+.lab { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr); gap:16px; align-items:start } @media (max-width:900px) { .lab { grid-template-columns:minmax(0,1fr) } } @media (min-width:901px) { .lab > .col:last-child { position:sticky; top:12px } }
+.col { display:flex; flex-direction:column; gap:16px; min-width:0 } .panel { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:12px; min-width:0 }
+.panel > header { display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap } .panel > header small { color:var(--muted); font-size:.8rem }
+.stage { background:var(--surface2); border-radius:8px; padding:6px } svg.gfx { display:block; width:100%; height:auto } svg.gfx text { font:500 12px var(--f-body); fill:var(--ink) } svg .t-m { fill:var(--muted); font-size:11px } svg .t-b { font:700 13px var(--f-head) } svg .t-mono { font-family:var(--f-mono) }
+svg .flux { fill:none; stroke:var(--flux); stroke-width:3; stroke-dasharray:10 10; animation:fx 1s linear infinite } @keyframes fx { to { stroke-dashoffset:-40 } } @media (prefers-reduced-motion: reduce) { svg .flux { animation:none } }
+.seg { display:flex; flex-wrap:wrap; gap:6px } .ctl { display:flex; flex-direction:column; gap:4px } .ctl label { display:flex; justify-content:space-between; gap:8px; font-size:.88rem; color:var(--muted) } .ctl .lbl { display:block; font-size:.88rem; color:var(--muted) } .ctl output { font:500 .9rem var(--f-mono); color:var(--ink) }
+input[type=range] { width:100%; accent-color:var(--accent); height:28px }
+button { font:600 .9rem var(--f-head); letter-spacing:.02em; border-radius:8px; border:1px solid var(--line); background:var(--surface2); color:var(--ink); padding:7px 12px; cursor:pointer; min-height:38px } button:hover { border-color:var(--accent) } button:focus-visible { outline:2px solid var(--accent); outline-offset:2px } button[aria-pressed="true"] { background:var(--accent); color:var(--accent-ink); border-color:var(--accent) }
+button.warnb { border-color:var(--warn); color:var(--warn) }
+.vals { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; margin:0 } .vals div { background:var(--surface2); border-radius:8px; padding:8px 10px; border-left:3px solid var(--accent) } .vals dt { font-size:.76rem; color:var(--muted) } .vals dd { margin:0; font:500 1.02rem var(--f-mono); white-space:nowrap }
+.verdict { font-size:.95rem; padding:10px 12px; border-radius:8px; border:2px solid var(--accent); background:color-mix(in srgb,var(--accent) 7%,var(--surface)) } .verdict.no { border-color:var(--warn); background:color-mix(in srgb,var(--warn) 8%,var(--surface)) } .verdict.ok { border-color:var(--ok); background:color-mix(in srgb,var(--ok) 8%,var(--surface)) }
+.formula { font:500 .9rem var(--f-mono); background:var(--surface2); border-radius:8px; padding:8px 10px; line-height:1.7; overflow-wrap:anywhere } .note { font-size:.86rem; color:var(--muted) }
+.tasks ol { margin:0; padding-left:1.3em; display:flex; flex-direction:column; gap:6px; max-width:85ch } .tasks details { border-top:1px solid var(--line); padding-top:8px } .tasks summary { cursor:pointer; color:var(--accent); font-weight:600 } .tasks details p { margin-top:6px; color:var(--muted) }
+footer.foot { font-size:.8rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px 16px; border-top:1px solid var(--line); padding-top:10px } [hidden] { display:none!important }
+</style>
+<link rel="stylesheet" href="hfs-app.css">
+</head>
+<body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Transformator</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="tags"><span><b>Simulation</b> · Einphasen-Transformator 250 VA · Übersetzung, Belastung, Verluste</span></div>
+    <h1>Transformator</h1>
+    <p class="lead">Stell Windungszahl, Netzspannung und Last ein. Beobachte die Übersetzung, den Spannungsfall unter Last, die Verluste und den Wirkungsgrad. Mit dem Kurzschlussversuch bestimmst du die relative Kurzschlussspannung u<sub>k</sub>. Wird der Trafo überlastet, greifen Temperaturschalter und Primärsicherung.</p>
+  </header>
+  <div class="lab">
+    <div class="col">
+      <section class="panel">
+        <header><h2>Aufbau und Messwerte</h2><small id="stTxt"></small></header>
+        <div class="stage"><svg id="tr" class="gfx" viewBox="0 0 720 300" role="img" aria-label="Transformator mit Primär- und Sekundärwicklung, Netz und Last"></svg></div>
+        <div class="verdict" id="verdict"></div>
+        <p class="formula" id="formula"></p>
+      </section>
+      <section class="panel">
+        <header><h2>Belastungskennlinie U<sub>2</sub>(I<sub>2</sub>)</h2><small>bei U<sub>1</sub> = 230 V</small></header>
+        <div class="stage"><svg id="c1" class="gfx" viewBox="0 0 640 220" role="img" aria-label="Sekundärspannung über Sekundärstrom"></svg></div>
+      </section>
+      <section class="panel">
+        <header><h2>Wirkungsgrad über der Auslastung</h2><small>Maximum dort, wo Kupferverluste = Eisenverluste</small></header>
+        <div class="stage"><svg id="c2" class="gfx" viewBox="0 0 640 220" role="img" aria-label="Wirkungsgrad über Auslastung"></svg></div>
+      </section>
+    </div>
+    <div class="col">
+      <section class="panel">
+        <header><h2>Betrieb</h2></header>
+        <div class="seg" id="mode"><button type="button" data-v="last" aria-pressed="true">Lastbetrieb</button><button type="button" data-v="leer">Leerlauf</button><button type="button" data-v="kv">Kurzschlussversuch</button></div>
+        <div class="ctl"><label for="u1"><span>Netzspannung U<sub>1</sub></span> <output for="u1"></output></label><input type="range" id="u1" min="0" max="260" step="1" value="230"></div>
+        <div class="ctl"><label for="n2"><span>Windungen sekundär N<sub>2</sub> (N<sub>1</sub> = 460)</span> <output for="n2"></output></label><input type="range" id="n2" min="20" max="240" step="2" value="48"></div>
+        <div class="ctl" id="lastBox"><label for="rl"><span>Lastwiderstand</span> <output for="rl"></output></label><input type="range" id="rl" min="0" max="100" step="1" value="60"></div>
+        <div class="ctl" id="artBox"><span class="lbl">Art der Last</span><div class="seg" id="art"><button type="button" data-v="r" aria-pressed="true">ohmsch (cos φ = 1)</button><button type="button" data-v="l">induktiv (cos φ = 0,8)</button></div></div>
+        <div class="seg"><button type="button" class="warnb" id="kurz">Sekundär kurzschließen!</button><button type="button" id="fix" hidden>Sicherung ersetzen / abkühlen lassen</button></div>
+        <p class="note">Primär: Feinsicherung T 1,25 A · Wicklung: Temperaturschalter 120 °C · u<sub>k</sub> = 8 %, P<sub>0</sub> = 5 W, P<sub>k</sub> = 12 W</p>
+      </section>
+      <section class="panel">
+        <header><h2>Werte</h2></header>
+        <dl class="vals"><div><dt>U<sub>1</sub> / I<sub>1</sub></dt><dd id="v1"></dd></div><div><dt>U<sub>2</sub> / I<sub>2</sub></dt><dd id="v2"></dd></div><div><dt>Übersetzung ü</dt><dd id="vu"></dd></div><div><dt>Auslastung</dt><dd id="va"></dd></div><div><dt>P<sub>Fe</sub> / P<sub>Cu</sub></dt><dd id="vl"></dd></div><div><dt>Wirkungsgrad η</dt><dd id="ve"></dd></div><div><dt>Wicklungstemperatur</dt><dd id="vt"></dd></div><div><dt>relativer Spannungsfall</dt><dd id="vd"></dd></div></dl>
+      </section>
+    </div>
+  </div>
+  <section class="panel tasks">
+    <h2>Arbeitsaufträge</h2>
+    <ol>
+      <li>Stelle N<sub>2</sub> = 48 und Leerlauf ein. Berechne U<sub>20</sub> mit der Übersetzung und prüfe. Welche Windungszahl brauchst du für 12 V?</li>
+      <li>Belaste den Trafo mit Nennlast (Auslastung 100 %). Warum ist U<sub>2</sub> kleiner als im Leerlauf? Vergleiche ohmsche und induktive Last.</li>
+      <li>Führe den Kurzschlussversuch durch: Erhöhe U<sub>1</sub> von 0, bis I<sub>2</sub> = I<sub>2N</sub>. Lies U<sub>1k</sub> ab und berechne u<sub>k</sub>.</li>
+      <li>Berechne mit u<sub>k</sub> den Dauerkurzschlussstrom bei voller Netzspannung. Was passiert beim Kurzschluss-Knopf?</li>
+      <li>Bei welcher Auslastung ist der Wirkungsgrad am größten? Begründe mit P<sub>Fe</sub> und P<sub>Cu</sub>.</li>
+    </ol>
+    <details><summary>Lösungen anzeigen</summary>
+      <p>1. U<sub>20</sub> = U<sub>1</sub> · N<sub>2</sub> / N<sub>1</sub> = 230 V · 48 / 460 = 24 V. Für 12 V: N<sub>2</sub> = 460 · 12 V / 230 V = 24 Windungen.
+      2. Der Laststrom verursacht an den Wicklungswiderständen und Streureaktanzen (zusammengefasst Z<sub>k</sub>) einen inneren Spannungsfall. Bei induktiver Last addieren sich der Spannungsfall an der Streureaktanz und die Lastspannung ungünstiger (Zeigerbild), U<sub>2</sub> sinkt stärker als bei ohmscher Last.
+      3. U<sub>1k</sub> ≈ 18,4 V. u<sub>k</sub> = U<sub>1k</sub> / U<sub>1N</sub> · 100 % = 18,4 V / 230 V · 100 % ≈ 8 %.
+      4. I<sub>kd</sub> = I<sub>N</sub> / u<sub>k</sub> = I<sub>N</sub> / 0,08 = 12,5 · I<sub>N</sub>, sekundär etwa 130 A, primär etwa 13,6 A. Die träge Primärsicherung T 1,25 A schmilzt beim 11-Fachen ihres Nennstroms in Sekundenbruchteilen. Ohne Sicherung würde die Wicklung in Sekunden überhitzen (Kupferverluste steigen mit I²: etwa 156-fach).
+      5. Bei etwa 65 % Auslastung: Dort sind die lastabhängigen Kupferverluste P<sub>Cu</sub> = P<sub>k</sub> · (I/I<sub>N</sub>)² = 12 W · 0,65² ≈ 5 W gleich den konstanten Eisenverlusten P<sub>0</sub> = 5 W.</p>
+    </details>
+  </section>
+  <footer class="foot"><span>Hans-Freudenberg-Schule Weinheim</span><span>Pablo Disson</span><span>Vereinfachtes Ersatzschaltbild (Z<sub>k</sub> auf die Sekundärseite bezogen, Sättigung qualitativ).</span></footer>
+</div>
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+function nf(v, d = 1) { if (!isFinite(v)) return '–'; return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false }); }
+function T(x, y, t, cls = '', a = 'middle', ex = '') { return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${a}" ${ex}>${t}</text>`; }
+const SN = 250, U1N = 230, N1 = 460, UK = 0.08, P0 = 5, PK = 12, I1N = SN / U1N;
+const s = { mode: 'last', U1: 230, N2: 48, rl: 60, art: 'r', short: false, fuse: false, therm: false, theta: 25, melt: 0 };
+const RL = (v) => 0.05 * Math.pow(10, v / 100 * 3.3);   // 0,05 … 100 Ω logarithmisch
+function calc() {
+  const U2N = U1N * s.N2 / N1, I2N = SN / U2N, Zk = UK * U2N * U2N / SN, Rk = PK / (I2N * I2N), Xk = Math.sqrt(Math.max(0, Zk * Zk - Rk * Rk));
+  const on = !s.fuse && !s.therm, U1 = on ? s.U1 : 0, U20 = U1 * s.N2 / N1;
+  let zr = Infinity, zx = 0, cos = 1;
+  if (s.mode === 'kv' || s.short) { zr = 0.002; zx = 0; }
+  else if (s.mode === 'last') { const R = RL(s.rl); cos = s.art === 'r' ? 1 : 0.8; zr = R * cos; zx = R * Math.sqrt(1 - cos * cos); }
+  let I2 = 0, U2 = U20;
+  if (isFinite(zr)) { const tr = zr + Rk, tx = zx + Xk; I2 = U20 / Math.hypot(tr, tx); U2 = I2 * Math.hypot(zr, zx); }
+  const sat = Math.max(0, U1 / U1N - 1.05);
+  const I0 = U1 > 0 ? 0.03 * I1N * (U1 / U1N) * (1 + 60 * sat * sat) : 0;
+  const I1 = Math.hypot(I2 * s.N2 / N1 + I0 * 0.3, I0 * 0.95);
+  const PCu = I2 * I2 * Rk, PFe = P0 * (U1 / U1N) ** 2 * (1 + 8 * sat), P2 = U2 * I2 * (s.mode === 'last' && !s.short ? cos : 0);
+  const eta = P2 > 0 ? P2 / (P2 + PCu + PFe) : 0;
+  return { U2N, I2N, Zk, Rk, Xk, U1, U20, I2, U2, I1, I0, PCu, PFe, P2, eta, a: I2 / I2N, on, cos, sat };
+}
+let R = calc(), last = 0;
+function loop(ts) {
+  const dt = last ? Math.max(0, Math.min(0.05, (ts - last) / 1000)) : 0; last = ts;
+  R = calc();
+  // Erwärmung der Wicklung: Nennverluste 17 W → 80 °C
+  const Tss = 25 + 55 * (R.PCu + R.PFe) / (PK + P0);
+  s.theta += (Tss - s.theta) * (1 - Math.exp(-dt / 6));
+  if (!s.therm && s.theta > 120) s.therm = true;
+  if (s.therm && s.theta < 70) s.therm = false;
+  // Primärsicherung T 1,25 A
+  const k = R.I1 / 1.25; if (!s.fuse && k > 2.02) { s.melt += dt / (5 / Math.pow(k - 2, 2.2)); if (s.melt >= 1) s.fuse = true; } else s.melt = Math.max(0, s.melt - dt / 10);
+  ui(); requestAnimationFrame(loop);
+}
+function ui() {
+  const r = R;
+  $('#v1').textContent = nf(r.U1, 0) + ' V / ' + nf(r.I1, 2) + ' A'; $('#v2').textContent = nf(r.U2, 1) + ' V / ' + nf(r.I2, r.I2 < 10 ? 2 : 0) + ' A';
+  $('#vu').textContent = 'ü = ' + nf(N1 / s.N2, 2); $('#va').textContent = nf(r.a * 100, 0) + ' %'; $('#vl').textContent = nf(r.PFe, 1) + ' / ' + nf(r.PCu, 1) + ' W';
+  $('#ve').textContent = r.eta ? nf(r.eta * 100, 1) + ' %' : '–'; $('#vt').textContent = nf(s.theta, 0) + ' °C'; $('#vt').style.color = s.theta > 105 ? 'var(--warn)' : '';
+  $('#vd').textContent = r.U20 > 0 && s.mode !== 'kv' ? nf((r.U20 - r.U2) / r.U20 * 100, 1) + ' %' : '–';
+  $('#fix').hidden = !(s.fuse || s.therm); $('#stTxt').textContent = s.fuse ? 'Primärsicherung ausgelöst' : s.therm ? 'Temperaturschalter offen' : 'in Betrieb';
+  const v = $('#verdict');
+  if (s.fuse) { v.className = 'verdict no'; v.innerHTML = '<b>Primärsicherung durchgeschmolzen.</b> Der Kurzschlussstrom auf der Sekundärseite erscheint übersetzt auf der Primärseite: I<sub>1</sub> ≈ I<sub>2</sub> · N<sub>2</sub>/N<sub>1</sub>. Erst Kurzschluss beseitigen, dann Sicherung ersetzen.'; }
+  else if (s.therm) { v.className = 'verdict no'; v.innerHTML = `<b>Temperaturschalter hat abgeschaltet (über 120 °C).</b> Der Trafo war länger überlastet: Die Kupferverluste wachsen mit I². Er schaltet erst wieder ein, wenn die Wicklung unter 70 °C abgekühlt ist (${nf(s.theta, 0)} °C).`; }
+  else if (s.mode === 'kv') { v.className = 'verdict'; v.innerHTML = `<b>Kurzschlussversuch:</b> Sekundär kurzgeschlossen. Erhöhe U<sub>1</sub> vorsichtig, bis I<sub>2</sub> = I<sub>2N</sub> = ${nf(r.I2N, 2)} A. ` + (Math.abs(r.a - 1) < 0.03 ? `<b>Erreicht bei U<sub>1k</sub> = ${nf(r.U1, 0)} V → u<sub>k</sub> = ${nf(r.U1 / U1N * 100, 1)} %.</b>` : r.a > 1.05 ? '<b>Zu hoch!</b> Spannung reduzieren.' : `Jetzt: ${nf(r.a * 100, 0)} % von I<sub>2N</sub>.`); }
+  else if (r.sat > 0.02) { v.className = 'verdict no'; v.innerHTML = '<b>Übererregung:</b> Die Netzspannung liegt deutlich über 230 V. Der Eisenkern geht in die Sättigung, der Leerlaufstrom und die Eisenverluste steigen stark an, der Trafo brummt lauter und wird warm.'; }
+  else if (r.a > 1.05) { v.className = 'verdict no'; v.innerHTML = `<b>Überlast: ${nf(r.a * 100, 0)} % des Nennstroms.</b> Die Kupferverluste betragen ${nf(r.PCu, 1)} W (Nennwert 12 W). Die Wicklung erwärmt sich – beobachte die Temperatur.`; }
+  else { v.className = 'verdict ok'; v.innerHTML = s.mode === 'leer' ? `<b>Leerlauf:</b> U<sub>20</sub> = U<sub>1</sub> · N<sub>2</sub>/N<sub>1</sub> = ${nf(r.U20, 1)} V. Es fließt nur der kleine Magnetisierungsstrom (${nf(r.I0 * 1000, 0)} mA), die Verluste sind nur Eisenverluste.` : `<b>Normaler Betrieb</b> bei ${nf(r.a * 100, 0)} % Auslastung, Wirkungsgrad ${nf(r.eta * 100, 1)} %.`; }
+  $('#formula').innerHTML = `U<sub>1</sub> / U<sub>20</sub> = N<sub>1</sub> / N<sub>2</sub> = 460 / ${s.N2} = ${nf(N1 / s.N2, 2)} · U<sub>2N</sub> = ${nf(r.U2N, 1)} V · I<sub>2N</sub> = S<sub>N</sub>/U<sub>2N</sub> = ${nf(r.I2N, 2)} A · Z<sub>k</sub> = u<sub>k</sub> · U<sub>2N</sub>²/S<sub>N</sub> = ${nf(r.Zk, 3)} Ω`;
+  draw(); chart1(); chart2();
+}
+function draw() {
+  const r = R; let g = '';
+  // Kern
+  g += `<path d="M230 40 H490 V260 H230 Z M280 90 V210 H440 V90 Z" fill="var(--steel)" fill-rule="evenodd" opacity=".85"/>`;
+  for (let y = 46; y < 256; y += 8) g += `<path d="M232 ${y} H488" stroke="var(--surface)" stroke-width=".6" opacity=".35"/>`;
+  if (r.U1 > 1) g += `<path d="M255 65 H465 V235 H255 Z" class="flux" style="animation-duration:${(1 / Math.max(0.2, r.U1 / 230)).toFixed(2)}s;opacity:${Math.min(1, 0.3 + r.U1 / 300)}"/>` + T(360, 62, 'magnetischer Fluss Φ', 't-m', 'middle', 'style="fill:var(--flux)"');
+  // Wicklungen
+  const coil = (x, n, hot) => { let c = ''; const k = Math.min(18, Math.max(4, Math.round(n / 26))); for (let i = 0; i < k; i++) { const y = 100 + i * (100 / k); c += `<rect x="${x - 34}" y="${y}" width="68" height="${100 / k - 1.5}" rx="3" fill="var(--copper)" stroke="rgba(0,0,0,.25)"/>`; } if (hot > 0) c += `<rect x="${x - 34}" y="100" width="68" height="100" rx="4" fill="var(--warn)" opacity="${hot.toFixed(2)}"/>`; return c; };
+  const hot = Math.max(0, Math.min(0.6, (s.theta - 60) / 100));
+  g += coil(255, N1, hot) + coil(465, s.N2 * 3, hot);
+  g += T(255, 222, 'N₁ = 460', 't-mono') + T(465, 222, 'N₂ = ' + s.N2, 't-mono');
+  // Primärkreis
+  g += `<path d="M40 110 H160 M40 190 H221 V170 M160 110 H221 V130" stroke="var(--ink)" stroke-width="2.5" fill="none"/><circle cx="40" cy="150" r="26" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><path d="M28 150 q6 -12 12 0 t12 0" fill="none" stroke="var(--ink)" stroke-width="2"/>`;
+  g += `<rect x="150" y="101" width="26" height="18" rx="3" fill="${s.fuse ? 'var(--warn)' : 'var(--surface)'}" stroke="var(--ink)" stroke-width="1.5"/>` + T(163, 96, 'T 1,25 A', 't-m') + (s.fuse ? `<path d="M152 103 l22 14" stroke="#fff" stroke-width="2"/>` : '');
+  g += T(40, 200, sub('U', '1') + ' = ' + nf(r.U1, 0) + ' V', 't-mono') + T(110, 140, sub('I', '1') + ' = ' + nf(r.I1, 2) + ' A', 't-mono', 'middle', 'style="fill:var(--i)"');
+  // Sekundärkreis
+  g += `<path d="M499 130 V110 H640 V130 M499 170 V190 H640 V170" stroke="var(--ink)" stroke-width="2.5" fill="none"/>`;
+  if (s.therm) g += `<circle cx="560" cy="110" r="9" fill="var(--warn)"/>` + T(560, 96, 'Temperaturschalter offen', 't-m', 'middle', 'style="fill:var(--warn)"');
+  if (s.mode === 'kv' || s.short) g += `<path d="M640 130 V170" stroke="var(--warn)" stroke-width="4"/>` + T(650, 154, 'Kurzschluss', 't-b', 'start', 'style="fill:var(--warn)"');
+  else if (s.mode === 'last') g += `<rect x="626" y="128" width="28" height="44" rx="3" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>` + (s.art === 'l' ? `<path d="M632 150 q4 -8 8 0 t8 0" fill="none" stroke="var(--ink)" stroke-width="1.5"/>` : '') + T(662, 154, nf(RL(s.rl), RL(s.rl) < 1 ? 2 : 1) + ' Ω', 't-mono', 'start');
+  else g += T(650, 154, 'offen', 't-m', 'start');
+  g += T(570, 230, sub('U', '2') + ' = ' + nf(r.U2, 1) + ' V', 't-mono', 'middle', 'style="fill:var(--u)"') + T(570, 250, sub('I', '2') + ' = ' + nf(r.I2, r.I2 < 10 ? 2 : 0) + ' A', 't-mono', 'middle', 'style="fill:var(--i)"');
+  g += T(360, 290, 'Wicklung ' + nf(s.theta, 0) + ' °C', 't-mono', 'middle', `style="fill:${s.theta > 105 ? 'var(--warn)' : 'var(--muted)'}"`);
+  $('#tr').innerHTML = g;
+}
+function sub(a, b) { return `${a}<tspan dy="3" font-size="75%">${b}</tspan><tspan dy="-3"></tspan>`; }
+function axes(W, H, P, X, Y, xs, ys, xl, yl, fx = (v) => nf(v, 0), fy = (v) => nf(v, 0)) {
+  let g = ''; xs.forEach((v) => (g += `<line x1="${X(v)}" y1="${P.t}" x2="${X(v)}" y2="${H - P.b}" stroke="var(--grid)"/>` + T(X(v), H - P.b + 15, fx(v), 't-m')));
+  ys.forEach((v) => (g += `<line x1="${P.l}" y1="${Y(v)}" x2="${W - P.r}" y2="${Y(v)}" stroke="var(--grid)"/>` + T(P.l - 6, Y(v) + 4, fy(v), 't-m', 'end')));
+  return g + T(W - P.r, H - 3, xl, 't-m', 'end') + T(P.l + 4, P.t + 10, yl, 't-m', 'start');
+}
+function chart1() {
+  const r = R, W = 640, H = 220, P = { l: 44, r: 12, t: 12, b: 30 }, U20 = U1N * s.N2 / N1, xm = 1.5, X = (a) => P.l + a / xm * (W - P.l - P.r), Y = (u) => H - P.b - u / (U20 * 1.1) * (H - P.t - P.b);
+  let g = axes(W, H, P, X, Y, [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5], [0, U20 * 0.25, U20 * 0.5, U20 * 0.75, U20], 'I₂ / I₂ₙ', 'U₂ in V', (v) => nf(v * 100, 0) + ' %', (v) => nf(v, 1));
+  const curve = (cos, col, dash) => { let d = ''; for (let a = 0; a <= xm + 1e-9; a += 0.02) { const I = a * r.I2N, du = I * (r.Rk * cos + r.Xk * Math.sqrt(1 - cos * cos)); d += (a ? 'L' : 'M') + X(a) + ' ' + Y(U20 - du); } return `<path d="${d}" fill="none" stroke="var(${col})" stroke-width="2.4" ${dash ? 'stroke-dasharray="6 4"' : ''}/>`; };
+  g += curve(1, '--u') + curve(0.8, '--q', true) + T(X(1.45), Y(U20) + 14, 'ohmsch', 't-m', 'end', 'style="fill:var(--u)"') + T(X(1.45), Y(U20 * 0.88) + 14, 'induktiv cos φ = 0,8', 't-m', 'end', 'style="fill:var(--q)"');
+  g += `<line x1="${X(1)}" y1="${P.t}" x2="${X(1)}" y2="${H - P.b}" stroke="var(--ok)" stroke-dasharray="4 3"/>`;
+  if (s.mode === 'last' && r.on && r.a <= xm) g += `<circle cx="${X(r.a)}" cy="${Y(r.U2 * U1N / Math.max(1, s.U1))}" r="6" fill="var(--i)" stroke="var(--surface)" stroke-width="2"/>`;
+  $('#c1').innerHTML = g;
+}
+function chart2() {
+  const r = R, W = 640, H = 220, P = { l: 44, r: 12, t: 12, b: 30 }, X = (a) => P.l + a / 1.5 * (W - P.l - P.r), Y = (e) => H - P.b - (e - 0.5) / 0.5 * (H - P.t - P.b);
+  let g = axes(W, H, P, X, Y, [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5], [0.5, 0.6, 0.7, 0.8, 0.9, 1], 'Auslastung', 'η', (v) => nf(v * 100, 0) + ' %', (v) => nf(v * 100, 0) + ' %');
+  let d = ''; for (let a = 0.02; a <= 1.5; a += 0.02) { const p2 = a * SN, e = p2 / (p2 + P0 + PK * a * a); d += (a > 0.03 ? 'L' : 'M') + X(a) + ' ' + Y(Math.max(0.5, e)); }
+  g += `<path d="${d}" fill="none" stroke="var(--p)" stroke-width="2.6"/>`;
+  const am = Math.sqrt(P0 / PK); g += `<line x1="${X(am)}" y1="${P.t}" x2="${X(am)}" y2="${H - P.b}" stroke="var(--q)" stroke-dasharray="4 3"/>` + T(X(am) + 4, P.t + 22, 'η max: P_Cu = P_Fe'.replace('P_Cu', 'P꜀ᵤ').replace('P_Fe', 'Pꜰₑ'), 't-m', 'start');
+  if (r.eta > 0.5 && r.a <= 1.5) g += `<circle cx="${X(r.a)}" cy="${Y(r.eta)}" r="6" fill="var(--i)" stroke="var(--surface)" stroke-width="2"/>`;
+  $('#c2').innerHTML = g;
+}
+function seg(id, cb) { const box = document.getElementById(id); box.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; box.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); }); }
+function range(id, fmt, cb) { const el = document.getElementById(id), o = document.querySelector(`output[for="${id}"]`); const u = () => { o.textContent = fmt(+el.value); cb(+el.value); }; el.addEventListener('input', u); u(); }
+seg('mode', (v) => { s.mode = v; s.short = false; $('#lastBox').hidden = v !== 'last'; $('#artBox').hidden = v !== 'last'; if (v === 'kv') { s.U1 = 0; $('#u1').value = 0; $('#u1').dispatchEvent(new Event('input')); } });
+seg('art', (v) => (s.art = v));
+range('u1', (v) => v + ' V', (v) => (s.U1 = v)); range('n2', (v) => v + ' → U₂₀ = ' + nf(230 * v / 460, 1) + ' V', (v) => (s.N2 = v)); range('rl', (v) => nf(RL(v), RL(v) < 1 ? 2 : 1) + ' Ω', (v) => (s.rl = v));
+$('#kurz').addEventListener('click', () => { s.short = !s.short; $('#kurz').textContent = s.short ? 'Kurzschluss entfernen' : 'Sekundär kurzschließen!'; });
+$('#fix').addEventListener('click', () => { if (s.short) { $('#verdict').innerHTML = '<b>Erst den Kurzschluss entfernen!</b>'; return; } s.fuse = false; s.melt = 0; if (s.therm) s.theta = 65; s.therm = false; });
+requestAnimationFrame(loop);
+</script>
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span><a href="hinweise.html">Hinweise und Haftung · Nutzung auf eigene Gefahr</a></footer>
+<script src="hfs-app.js"></script>
+</body>
+</html>

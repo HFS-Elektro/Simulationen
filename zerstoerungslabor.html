@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="zerstoerungslabor|sim|f83ce5a1eae5">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Zerstörungs-Labor">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zerstörungs-Labor</title>
+<link rel="stylesheet" href="fonts/barlow.css">
+<link rel="stylesheet" href="fonts/ibmplexmono.css">
+<link rel="stylesheet" href="fonts/barlowsemicondensed.css">
+<style>
+:root {
+  --bg: #EDF2F5; --surface: #FFFFFF; --surface2: #F5F8FA; --ink: #13202A; --muted: #586B78;
+  --line: #D2DDE4; --accent: #0089C4; --accent-ink: #FFFFFF; --warn: #C8372D; --ok: #2E8B4A; --q: #D9822B;
+  --f-head: "Barlow Semi Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+  --f-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3;
+  --line: #2A3B47; --accent: #29B6F0; --accent-ink: #062030; --warn: #FF6F62; --ok: #5BD488; --q: #F2A659; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3;
+  --line: #2A3B47; --accent: #29B6F0; --accent-ink: #062030; --warn: #FF6F62; --ok: #5BD488; --q: #F2A659; color-scheme: dark }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--f-body);
+  padding: 18px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left)) }
+.wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px }
+h1, h2, h3 { font-family: var(--f-head); margin: 0; line-height: 1.15; text-wrap: balance }
+h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 700 }
+h2 { font-size: 1.15rem; font-weight: 600 }
+p { margin: 0 }
+.top { display: flex; flex-direction: column; gap: 6px; border-bottom: 2px solid var(--accent); padding-bottom: 12px }
+.tags { font: 600 .74rem/1 var(--f-head); text-transform: uppercase; letter-spacing: .09em; color: var(--muted) }
+.tags b { color: var(--accent) }
+.lead { color: var(--muted); max-width: 75ch }
+.warnbox { display: flex; gap: 12px; align-items: flex-start; background: color-mix(in srgb, var(--warn) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent);
+  border-radius: 10px; padding: 10px 14px; font-size: .92rem }
+.warnbox b { color: var(--warn) }
+.warnbox .sym { font: 700 1.4rem/1 var(--f-head); color: var(--warn) }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.panel > header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+.panel > header small { color: var(--muted); font-size: .8rem }
+.picker { display: flex; flex-direction: column; gap: 8px }
+.pgroup { display: flex; flex-wrap: wrap; gap: 6px; align-items: center }
+.pgroup > span { font: 600 .72rem var(--f-head); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); min-width: 118px }
+button { font: 600 .9rem var(--f-head); letter-spacing: .02em; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface2); color: var(--ink); padding: 7px 12px; cursor: pointer; min-height: 38px }
+button:hover { border-color: var(--accent) }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+button.big { font-size: 1.02rem; padding: 10px 16px; min-height: 46px }
+button.power { background: var(--ok); color: #fff; border-color: var(--ok) }
+button.power.on { background: var(--warn); border-color: var(--warn) }
+button.danger { border-color: var(--warn); color: var(--warn) }
+button.danger:hover { background: var(--warn); color: #fff }
+button:disabled { opacity: .45; cursor: not-allowed }
+.lab { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(290px, 1fr); gap: 16px; align-items: start }
+@media (max-width: 900px) { .lab { grid-template-columns: minmax(0, 1fr) } }
+.stagebox { position: relative; border-radius: 10px; overflow: hidden; background: #111A21; border: 1px solid var(--line) }
+#stage { display: block; width: 100%; aspect-ratio: 640 / 440; touch-action: manipulation }
+.stagebar { position: absolute; left: 8px; top: 8px; right: 8px; display: flex; justify-content: space-between; gap: 6px; pointer-events: none }
+.stagebar > * { pointer-events: auto }
+.stagebar button { min-height: 34px; padding: 5px 10px; background: rgba(15,24,31,.75); color: #E8F0F5; border-color: rgba(255,255,255,.25); backdrop-filter: blur(4px) }
+.stagebar button[aria-pressed="true"] { background: #0089C4; border-color: #0089C4 }
+.seg { display: flex; flex-wrap: wrap; gap: 6px }
+.ctl { display: flex; flex-direction: column; gap: 4px }
+.ctl label { display: flex; justify-content: space-between; gap: 8px; font-size: .88rem; color: var(--muted) }
+.ctl .lbl { display: block; font-size: .88rem; color: var(--muted) }
+.ctl output { font: 500 .9rem var(--f-mono); color: var(--ink) }
+input[type=range] { width: 100%; accent-color: var(--accent); height: 28px }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.meters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0 }
+.meters div { background: var(--surface2); border-radius: 8px; padding: 7px 10px; min-width: 0 }
+.meters dt { font-size: .76rem; color: var(--muted) }
+.meters dd { margin: 0; font: 500 1.05rem var(--f-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.therm { display: flex; flex-direction: column; gap: 4px }
+.therm .lbl { display: flex; justify-content: space-between; font-size: .85rem; color: var(--muted) }
+.therm .lbl b { font: 500 .9rem var(--f-mono); color: var(--ink) }
+.tbar { position: relative; height: 14px; border-radius: 7px; background: var(--surface2); border: 1px solid var(--line); overflow: hidden }
+.tbar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 7px; background: linear-gradient(90deg, #2E8B4A, #E0B03A 55%, #D9822B 75%, #C8372D); transition: width .15s }
+.tbar b { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); opacity: .7 }
+.status { font: 600 1rem var(--f-head); padding: 8px 12px; border-radius: 8px; border: 1px solid currentColor; letter-spacing: .02em }
+.status.ok { color: var(--ok) } .status.warn { color: var(--q) } .status.bad { color: var(--warn) }
+.status.dead { color: #fff; background: var(--warn); border-color: var(--warn) }
+.status.trip { color: #fff; background: var(--accent); border-color: var(--accent) }
+.hint { font-size: .93rem; color: var(--ink); background: var(--surface2); border-radius: 8px; padding: 10px 12px }
+.hint b { color: var(--accent) }
+.diag { border: 2px solid var(--warn); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; background: color-mix(in srgb, var(--warn) 6%, var(--surface)) }
+.diag.trip { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, var(--surface)) }
+.diag h3 { font-size: 1.1rem; color: var(--warn) } .diag.trip h3 { color: var(--accent) }
+.diag p { font-size: .93rem }
+.small { font-size: .82rem; color: var(--muted) }
+.tasks ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; max-width: 85ch }
+.tasks details { border-top: 1px solid var(--line); padding-top: 8px }
+.tasks summary { cursor: pointer; color: var(--accent); font-weight: 600 }
+.tasks details p { margin-top: 6px; color: var(--muted) }
+footer.foot { font-size: .8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 16px; border-top: 1px solid var(--line); padding-top: 10px }
+[hidden] { display: none !important }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0) }
+</style>
+<link rel="stylesheet" href="hfs-app.css">
+</head>
+<body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Zerstörungs-Labor</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="tags"><span><b>Simulation</b> · Bauteile an der Grenze · Sicherungen und Schutzeinrichtungen</span></div>
+    <h1>Zerstörungs-Labor</h1>
+    <p class="lead">Wähle ein Bauteil, stell die Werte ein und schalte ein. Bleibst du in den Grenzen, passiert nichts. Überschreitest du sie, wird das Bauteil heiß, raucht, platzt oder brennt durch. Schutzeinrichtungen lösen aus. Rechts siehst du live Spannung, Strom, Leistung und Temperatur, danach erklärt eine Diagnose, was passiert ist.</p>
+  </header>
+
+  <div class="warnbox" role="note"><span class="sym" aria-hidden="true">⚠</span>
+    <p><b>Nur in der Simulation – nicht nachmachen!</b> In echt fliegen Splitter, heißer Elektrolyt spritzt, Lichtbögen blenden und verbrennen die Haut. Bauteile werden nie absichtlich überlastet. Arbeiten an elektrischen Anlagen sind Elektrofachkräften vorbehalten.</p></div>
+
+  <section class="panel">
+    <header><h2>Bauteil wählen</h2><small>jedes Mal ein neues, unbeschädigtes Exemplar</small></header>
+    <div class="picker" id="picker"></div>
+  </section>
+
+  <div class="lab">
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <div class="stagebox">
+        <canvas id="stage" role="img" aria-label="Prüfstand mit dem gewählten Bauteil"></canvas>
+        <div class="stagebar">
+          <div class="seg" id="speed" role="group" aria-label="Zeitraffer">
+            <button type="button" data-v="1" aria-pressed="true">1×</button><button type="button" data-v="10">10×</button><button type="button" data-v="60">60×</button>
+          </div>
+          <button type="button" id="snd" aria-pressed="true" title="Ton an/aus">🔊 Ton an</button>
+        </div>
+      </div>
+      <div class="diag" id="diag" hidden aria-live="polite"></div>
+      <section class="panel"><header><h2>Was passiert gerade?</h2></header><p class="hint" id="hint"></p></section>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <section class="panel">
+        <header><h2 id="cname">Bauteil</h2><small id="cdata"></small></header>
+        <div id="ctls" style="display:flex;flex-direction:column;gap:12px"></div>
+        <div class="row">
+          <button type="button" class="big power" id="power">Einschalten</button>
+          <span id="extra" class="row"></span>
+          <button type="button" class="big" id="fresh">Neues Bauteil</button>
+        </div>
+      </section>
+      <section class="panel">
+        <header><h2>Messwerte</h2><small id="clock">t = 0 s</small></header>
+        <dl class="meters">
+          <div><dt>Spannung U</dt><dd id="mU">0 V</dd></div>
+          <div><dt>Strom I</dt><dd id="mI">0 A</dd></div>
+          <div><dt>Leistung P</dt><dd id="mP">0 W</dd></div>
+          <div><dt id="mXl">Grenzwert</dt><dd id="mX">–</dd></div>
+        </dl>
+        <div class="therm"><div class="lbl"><span id="tLbl">Temperatur</span><b id="tVal">25 °C</b></div><div class="tbar"><i id="tFill"></i><b id="tMark"></b></div><span class="small" id="tNote"></span></div>
+        <div class="status ok" id="status" aria-live="polite">bereit</div>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel tasks">
+    <h2>Arbeitsaufträge</h2>
+    <ol>
+      <li>Wähle den Widerstand mit 100 Ω und 0,25 W. Berechne, ab welcher Spannung die Nennleistung überschritten wird. Prüfe deine Rechnung im Labor und beschreibe, was bei 7 V und bei 12 V passiert.</li>
+      <li>Eine rote LED (U<sub>F</sub> ≈ 2 V, I<sub>F</sub> = 20 mA) soll an 5 V betrieben werden. Berechne den Vorwiderstand und wähle einen Normwert. Was passiert mit 0 Ω?</li>
+      <li>Schließe den Elko verpolt an 5 V an (Zeitraffer 10×). Warum passiert erst lange nichts, und warum platzt er trotzdem? Wozu dient die eingeprägte Kerbe im Deckel?</li>
+      <li>Belaste eine Feinsicherung 1 A mit dem 3-fachen Nennstrom, einmal als F (flink) und einmal als T (träge). Vergleiche die Zeiten und nenne Geräte, für die man träge Sicherungen braucht.</li>
+      <li>Transistor: U<sub>b</sub> = 12 V, R<sub>C</sub> = 47 Ω. Vergleiche I<sub>B</sub> = 0,5 mA und I<sub>B</sub> = 2 mA. Berechne jeweils I<sub>C</sub>, U<sub>CE</sub> und die Verlustleistung P = U<sub>CE</sub> · I<sub>C</sub>. Warum stirbt der Transistor im „halb durchgesteuerten“ Zustand?</li>
+      <li>LS-Schalter B16: Stelle 2 · I<sub>n</sub> und dann 6 · I<sub>n</sub> ein. Welcher Auslöser arbeitet jeweils, und warum ist der eine langsam und der andere schnell?</li>
+    </ol>
+    <details><summary>Lösungen anzeigen</summary>
+      <p>1. P = U² / R → U = √(P · R) = √(0,25 W · 100 Ω) = 5 V. Bei 7 V sind es 0,49 W, also fast das Doppelte: Der Widerstand wird sehr heiß, verfärbt sich, riecht und raucht, hält aber noch eine Weile. Bei 12 V sind es 1,44 W (fast das 6-Fache): Er glüht, fängt an zu brennen und brennt durch. Danach ist der Stromkreis unterbrochen.
+      2. R = (U – U<sub>F</sub>) / I<sub>F</sub> = (5 V – 2 V) / 0,02 A = 150 Ω. Gewählt wird der Normwert 150 Ω oder sicherheitshalber der nächstgrößere (z. B. 220 Ω, dann ca. 14 mA). Mit 0 Ω begrenzt nur der kleine Bahnwiderstand der LED den Strom: Es fließen mehrere Hundert Milliampere, die LED blitzt hell auf und ist sofort zerstört.
+      3. Verpolt baut der Strom die isolierende Oxidschicht der Anode langsam ab. Der Leckstrom wächst immer weiter, der Elko erwärmt sich, der Elektrolyt verdampft und es entsteht Gas. Der Druck steigt, bis der Deckel aufreißt. Die Kerbe ist eine Sollbruchstelle (Sicherheitsventil): Der Elko soll dort kontrolliert aufreißen und nicht wie ein Geschoss explodieren.
+      4. Bei 3 A schmilzt die flinke Sicherung nach ungefähr 0,6 s, die träge erst nach etwa 5 s. Träge Sicherungen braucht man für Geräte mit hohem Einschaltstrom: Motoren, Transformatoren, Schaltnetzteile mit großen Ladekondensatoren und Glühlampen. Eine flinke Sicherung würde schon beim Einschalten auslösen.
+      5. I<sub>B</sub> = 0,5 mA: I<sub>C</sub> = 250 · 0,5 mA = 125 mA, U<sub>CE</sub> = 12 V – 125 mA · 47 Ω ≈ 6,1 V, P ≈ 0,77 W. Das ist mehr als P<sub>tot</sub> = 0,5 W, der Transistor überhitzt. I<sub>B</sub> = 2 mA: Der Transistor ist voll durchgesteuert (Sättigung), I<sub>C</sub> ≈ (12 V – 0,15 V) / 47 Ω ≈ 252 mA, U<sub>CE</sub> ≈ 0,15 V, P ≈ 0,04 W. Er bleibt kalt, aber der Strom liegt über I<sub>C,max</sub> = 100 mA und schadet auf Dauer. Im halb durchgesteuerten Zustand liegen gleichzeitig eine große Spannung und ein großer Strom am Transistor, deshalb ist die Verlustleistung dort am größten. Als Schalter wird er deshalb nur ganz aus oder ganz ein betrieben.
+      6. Bei 2 · I<sub>n</sub> arbeitet der thermische Auslöser (Bimetall): Er muss sich erst erwärmen und verbiegen, das dauert Sekunden bis Minuten. Kurze Überlasten wie Anlaufströme sollen damit nicht auslösen. Bei 6 · I<sub>n</sub> (über 5 · I<sub>n</sub> bei B) arbeitet der elektromagnetische Auslöser (Spule mit Schlaganker): Er reagiert auf das starke Magnetfeld sofort, in wenigen Millisekunden. Der Lichtbogen wird in der Löschkammer gelöscht.</p>
+    </details>
+  </section>
+
+  <footer class="foot"><span>Hans-Freudenberg-Schule Weinheim</span><span>Pablo Disson</span><span>Vereinfachte Modelle – Kennwerte sind typische Richtwerte. Immer das Datenblatt verwenden.</span></footer>
+</div>
+
+<script>
+'use strict';
+/* =================== Hilfen =================== */
+const $ = (s) => document.querySelector(s);
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const rnd = (a, b) => a + Math.random() * (b - a);
+const TAU = Math.PI * 2;
+const REDUCED = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+function nf(v, d = 1) { if (!isFinite(v)) return '–'; return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false }); }
+function fmtU(v) { return Math.abs(v) < 1 && v !== 0 ? nf(v * 1000, 0) + ' mV' : nf(v, Math.abs(v) >= 100 ? 0 : 1) + ' V'; }
+function fmtI(v) { const a = Math.abs(v); if (a === 0) return '0 A'; if (a < 1e-3) return nf(v * 1e6, 1) + ' µA'; if (a < 1) return nf(v * 1000, a < 0.01 ? 2 : 1) + ' mA'; return nf(v, a >= 100 ? 0 : 2) + ' A'; }
+function fmtP(v) { const a = Math.abs(v); if (a === 0) return '0 W'; if (a < 1) return nf(v * 1000, a < 0.01 ? 2 : 0) + ' mW'; if (a >= 1000) return nf(v / 1000, 1) + ' kW'; return nf(v, a >= 100 ? 0 : 2) + ' W'; }
+const subs = (t) => t.replace(/_([^\s/=()]+)/g, '<sub>$1</sub>');
+function fmtR(r) { return r >= 1000 ? nf(r / 1000, r % 1000 ? 1 : 0) + ' kΩ' : nf(r, 0) + ' Ω'; }
+function fmtT(s) { return s < 10 ? nf(s, 2) + ' s' : s < 120 ? nf(s, 1) + ' s' : nf(s / 60, 1) + ' min'; }
+function heat(st, P, Rth, tau, dt) { const Tss = 25 + P * Rth; st.T += (Tss - st.T) * (1 - Math.exp(-dt / tau)); }
+
+/* =================== Ton (im Browser erzeugt, keine Dateien) =================== */
+const SND = {
+  on: true, ac: null, master: null, noise: null, hissG: null, hissLvl: 0,
+  init() {
+    if (this.ac) { if (this.ac.state === 'suspended') this.ac.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    try {
+      const ac = this.ac = new AC(); this.master = ac.createGain(); this.master.gain.value = 0.55; this.master.connect(ac.destination);
+      const len = ac.sampleRate * 2, b = ac.createBuffer(1, len, ac.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      this.noise = b;
+      const src = ac.createBufferSource(); src.buffer = b; src.loop = true;
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 3800; bp.Q.value = 0.7;
+      this.hissG = ac.createGain(); this.hissG.gain.value = 0; src.connect(bp); bp.connect(this.hissG); this.hissG.connect(this.master); src.start();
+    } catch (e) { this.ac = null; }
+  },
+  ok() { return this.on && this.ac && this.ac.state === 'running'; },
+  nz(dur, type, f0, f1, g, delay = 0) {
+    if (!this.ok()) return; const ac = this.ac, t = ac.currentTime + delay;
+    const s = ac.createBufferSource(); s.buffer = this.noise;
+    const f = ac.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(Math.max(30, f1), t + dur);
+    const G = ac.createGain(); G.gain.setValueAtTime(0.0001, t); G.gain.exponentialRampToValueAtTime(g, t + 0.004); G.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(G); G.connect(this.master); s.start(t, Math.random()); s.stop(t + dur + 0.05);
+  },
+  tone(type, f0, f1, dur, g, delay = 0) {
+    if (!this.ok()) return; const ac = this.ac, t = ac.currentTime + delay;
+    const o = ac.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+    const G = ac.createGain(); G.gain.setValueAtTime(0.0001, t); G.gain.exponentialRampToValueAtTime(g, t + 0.005); G.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(G); G.connect(this.master); o.start(t); o.stop(t + dur + 0.05);
+  },
+  bang(k = 1) { this.nz(0.35 + 0.8 * k, 'lowpass', 4000, 120, 0.9 * Math.min(1, k + 0.2)); this.tone('sine', 110, 28, 0.45 + 0.3 * k, 0.8 * k); this.nz(0.08, 'highpass', 3000, 2000, 0.5 * k); },
+  pop(k = 1) { this.nz(0.12, 'highpass', 1800, 700, 0.55 * k); this.tone('sine', 320, 70, 0.1, 0.45 * k); },
+  crack() { for (let i = 0; i < 5; i++) this.nz(0.03 + Math.random() * 0.03, 'highpass', 2500 + Math.random() * 2500, 1500, 0.35 + Math.random() * 0.3, i * 0.025 + Math.random() * 0.02); },
+  click() { this.tone('square', 1900, 700, 0.035, 0.22); this.nz(0.03, 'highpass', 3500, 3000, 0.3); this.tone('square', 1400, 500, 0.03, 0.15, 0.05); },
+  arc(d = 0.25, k = 1) { this.tone('sawtooth', 100, 95, d, 0.22 * k); this.tone('sawtooth', 150, 140, d, 0.12 * k); this.nz(d, 'bandpass', 2600, 1200, 0.6 * k); },
+  tink() { this.tone('sine', 3200, 3000, 0.25, 0.18); this.tone('sine', 4700, 4500, 0.2, 0.1, 0.02); },
+  shatter() { for (let i = 0; i < 9; i++) this.tone('sine', rnd(2500, 6500), rnd(2000, 5000), rnd(0.08, 0.25), rnd(0.05, 0.15), i * rnd(0.01, 0.05)); this.nz(0.4, 'highpass', 5000, 2500, 0.4); },
+  hiss(level) { if (!this.hissG) return; const v = this.on ? clamp(level) * 0.32 : 0; if (Math.abs(v - this.hissLvl) > 0.005) { this.hissG.gain.setTargetAtTime(v, this.ac.currentTime, 0.08); this.hissLvl = v; } },
+  crackle(level, dt) { if (level > 0 && Math.random() < level * dt * 14) this.nz(0.012 + Math.random() * 0.02, 'highpass', 1800 + Math.random() * 4000, 1500, 0.08 + 0.3 * Math.random() * level); }
+};
+['pointerdown', 'keydown'].forEach((e) => document.addEventListener(e, () => SND.init(), { passive: true }));
+
+/* =================== Effekte (Partikel, Blitz, Wackeln) =================== */
+const FX = { parts: [], flash: 0, flashCol: '255,255,255', shake: 0 };
+const FLOOR = 404;
+function emit(type, x, y, n = 1, o = {}) {
+  if (REDUCED && (type === 'spark' || type === 'debris')) n = Math.ceil(n / 3);
+  for (let i = 0; i < n; i++) {
+    if (FX.parts.length > 900) FX.parts.shift();
+    const a = o.dir != null ? o.dir + rnd(-(o.spread ?? 0.6), o.spread ?? 0.6) : rnd(0, TAU), sp = rnd(o.vmin ?? 20, o.vmax ?? 120);
+    const p = { type, x: x + rnd(-(o.r || 0), o.r || 0), y: y + rnd(-(o.r || 0), o.r || 0), vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, age: 0,
+      life: rnd(o.lmin ?? 0.5, o.lmax ?? 1.2), size: rnd(o.smin ?? 2, o.smax ?? 5), rot: rnd(0, TAU), vr: rnd(-8, 8), col: o.col, g: o.g ?? 0 };
+    FX.parts.push(p);
+  }
+}
+const smoke = (x, y, n, o = {}) => emit('smoke', x, y, n, Object.assign({ dir: -Math.PI / 2, spread: 0.5, vmin: 12, vmax: 40, lmin: 1.8, lmax: 3.6, smin: 6, smax: 14, r: 4, col: '150,150,150' }, o));
+const sparks = (x, y, n, o = {}) => emit('spark', x, y, n, Object.assign({ vmin: 80, vmax: 380, lmin: 0.2, lmax: 0.7, smin: 1, smax: 2.2, g: 520 }, o));
+const fire = (x, y, n, o = {}) => emit('fire', x, y, n, Object.assign({ dir: -Math.PI / 2, spread: 0.35, vmin: 30, vmax: 80, lmin: 0.35, lmax: 0.7, smin: 6, smax: 12, r: 6 }, o));
+const embers = (x, y, n, o = {}) => emit('ember', x, y, n, Object.assign({ dir: -Math.PI / 2, spread: 1, vmin: 10, vmax: 40, lmin: 0.8, lmax: 2, smin: 1, smax: 2, r: 8, g: -10 }, o));
+function boom(x, y, k = 1, o = {}) {
+  FX.flash = Math.max(FX.flash, 0.55 * k + 0.2); FX.flashCol = o.flashCol || '255,240,200'; FX.shake = Math.max(FX.shake, 16 * k);
+  emit('ring', x, y, 1, { vmin: 0, vmax: 0, lmin: 0.45, lmax: 0.45, smin: 10, smax: 10 });
+  sparks(x, y, Math.round(40 * k)); smoke(x, y, Math.round(26 * k), { spread: 1.4, vmin: 20, vmax: 90 * k, smin: 8, smax: 20, col: o.smokeCol || '120,120,120' });
+  if (o.debris !== false) emit('debris', x, y, Math.round(16 * k), { vmin: 80, vmax: 320 * k, g: 700, lmin: 2, lmax: 4, smin: 2, smax: 5, col: o.debrisCol || '40,40,40' });
+  SND.bang(k);
+}
+function stepFX(dt) {
+  FX.flash = Math.max(0, FX.flash - dt * 2.6); FX.shake = Math.max(0, FX.shake - dt * 40);
+  for (const p of FX.parts) {
+    p.age += dt; p.vy += p.g * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+    if (p.type === 'smoke') { p.vx *= 0.985; p.vy *= 0.985; p.vx += rnd(-6, 6) * dt; }
+    if (p.type === 'fire') { p.vx *= 0.96; }
+    if ((p.type === 'debris' || p.type === 'drop' || p.type === 'shard' || p.type === 'cap' || p.type === 'disc') && p.y > FLOOR) {
+      p.y = FLOOR; p.vy *= -0.35; p.vx *= 0.6; p.vr *= 0.5; if (p.type === 'drop') { p.type = 'puddle'; p.vx = 0; p.vy = 0; p.g = 0; p.life = 6; p.age = 0; }
+    }
+  }
+  FX.parts = FX.parts.filter((p) => p.age < p.life);
+}
+function drawFX(c) {
+  for (const p of FX.parts) {
+    const k = p.age / p.life;
+    c.save(); c.translate(p.x, p.y);
+    switch (p.type) {
+      case 'smoke': { const s = p.size * (1 + 3.5 * k); c.globalAlpha = 0.45 * (1 - k) * Math.min(1, p.age * 4); c.fillStyle = `rgb(${p.col})`; c.beginPath(); c.arc(0, 0, s, 0, TAU); c.fill(); break; }
+      case 'spark': { c.globalCompositeOperation = 'lighter'; c.strokeStyle = `rgba(255,${200 - 120 * k | 0},${80 - 70 * k | 0},${1 - k})`; c.lineWidth = p.size; c.lineCap = 'round';
+        c.beginPath(); c.moveTo(0, 0); c.lineTo(-p.vx * 0.025, -p.vy * 0.025); c.stroke(); break; }
+      case 'fire': { c.globalCompositeOperation = 'lighter'; const s = p.size * (1 - 0.6 * k); const g = c.createRadialGradient(0, 0, 0, 0, 0, s);
+        g.addColorStop(0, `rgba(255,${230 - 120 * k | 0},120,${0.9 * (1 - k)})`); g.addColorStop(0.5, `rgba(255,${120 - 80 * k | 0},20,${0.6 * (1 - k)})`); g.addColorStop(1, 'rgba(200,30,0,0)');
+        c.fillStyle = g; c.beginPath(); c.arc(0, 0, s, 0, TAU); c.fill(); break; }
+      case 'ember': { c.globalCompositeOperation = 'lighter'; c.fillStyle = `rgba(255,${150 + 80 * Math.random() | 0},60,${1 - k})`; c.beginPath(); c.arc(0, 0, p.size, 0, TAU); c.fill(); break; }
+      case 'debris': { c.rotate(p.rot); c.globalAlpha = 1 - Math.max(0, k - 0.7) / 0.3; c.fillStyle = `rgb(${p.col})`; c.fillRect(-p.size, -p.size * 0.6, p.size * 2, p.size * 1.2); break; }
+      case 'shard': { c.rotate(p.rot); c.globalAlpha = (1 - Math.max(0, k - 0.7) / 0.3) * 0.85; c.fillStyle = 'rgba(210,235,250,.55)'; c.strokeStyle = 'rgba(255,255,255,.9)'; c.lineWidth = 0.8;
+        c.beginPath(); c.moveTo(-p.size, 0); c.lineTo(p.size * 0.4, -p.size * 1.3); c.lineTo(p.size, p.size * 0.6); c.closePath(); c.fill(); c.stroke(); break; }
+      case 'drop': { c.globalAlpha = 1 - k * 0.3; c.fillStyle = p.col ? `rgb(${p.col})` : 'rgb(170,130,40)'; c.beginPath(); c.arc(0, 0, p.size * 0.7, 0, TAU); c.fill(); break; }
+      case 'puddle': { c.globalAlpha = 0.6 * (1 - k); c.fillStyle = p.col ? `rgb(${p.col})` : 'rgb(150,110,30)'; c.beginPath(); c.ellipse(0, 0, p.size * 2.4, p.size * 0.6, 0, 0, TAU); c.fill(); break; }
+      case 'ring': { c.globalAlpha = 0.8 * (1 - k); c.strokeStyle = 'rgba(255,240,210,1)'; c.lineWidth = 4 * (1 - k) + 1; c.beginPath(); c.arc(0, 0, 10 + 160 * k, 0, TAU); c.stroke(); break; }
+      case 'cap': { c.rotate(p.rot); c.globalAlpha = 1 - Math.max(0, k - 0.8) / 0.2; const g = c.createLinearGradient(-22, 0, 22, 0); g.addColorStop(0, '#9aa3ab'); g.addColorStop(0.5, '#eef2f5'); g.addColorStop(1, '#8b949c');
+        c.fillStyle = g; c.beginPath(); c.ellipse(0, 0, 24, 7, 0, 0, TAU); c.fill(); c.strokeStyle = '#555'; c.lineWidth = 1; c.stroke(); break; }
+      case 'disc': { c.rotate(p.rot); c.globalAlpha = 1 - Math.max(0, k - 0.8) / 0.2; c.fillStyle = p.col || '#888'; c.beginPath(); c.arc(0, 0, 7, 0, TAU); c.fill(); c.strokeStyle = '#222'; c.lineWidth = 1.2; c.stroke(); break; }
+      case 'chunk': { c.rotate(p.rot); c.globalAlpha = 1 - Math.max(0, k - 0.8) / 0.2; c.fillStyle = p.col || '#1b1b1b'; c.beginPath(); c.moveTo(-10, -4); c.lineTo(9, -7); c.lineTo(11, 5); c.lineTo(-8, 7); c.closePath(); c.fill(); break; }
+    }
+    c.restore();
+  }
+}
+
+/* =================== Zeichenhilfen =================== */
+let cv, ctx, DPR = 1, SC = 1, OX = 0, OY = 0;
+const VW = 640, VH = 440, CX = 420, CY = 200;
+function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function txt(c, t, x, y, o = {}) {
+  c.save(); const s = o.s || 13, fam = o.mono ? 'IBM Plex Mono, monospace' : 'Barlow, Segoe UI, sans-serif', F = (z) => `${o.w || 600} ${z}px ${fam}`;
+  c.fillStyle = o.c || '#DDE7EE'; c.textBaseline = o.b || 'middle';
+  const parts = String(t).split(/_([^\s=()/]+)/);   // gerade Indizes: normal, ungerade: tiefgestellt
+  if (parts.length === 1) { c.font = F(s); c.textAlign = o.a || 'center'; c.fillText(t, x, y); c.restore(); return; }
+  const wd = parts.map((p, i) => { c.font = F(i % 2 ? s * 0.72 : s); return c.measureText(p).width; }), W = wd.reduce((a, b) => a + b, 0);
+  let xx = o.a === 'right' ? x - W : o.a === 'left' ? x : x - W / 2; c.textAlign = 'left';
+  parts.forEach((p, i) => { c.font = F(i % 2 ? s * 0.72 : s); c.fillText(p, xx, y + (i % 2 ? s * 0.28 : 0)); xx += wd[i]; });
+  c.restore();
+}
+function glow(c, x, y, r, col, a) { if (a <= 0.01) return; c.save(); c.globalCompositeOperation = 'lighter'; const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(${col},${a})`); g.addColorStop(1, `rgba(${col},0)`); c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill(); c.restore(); }
+/* Glühfarbe nach Temperatur (°C) */
+function hotCol(T) { const k = clamp((T - 450) / 900); return `${255},${Math.round(40 + 200 * k)},${Math.round(10 + 150 * clamp((T - 1000) / 600))}`; }
+function hotA(T) { return clamp((T - 420) / 350) * 0.9; }
+function mixHex(a, b, k) { const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); const A = p(a), B = p(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * clamp(k))).join(',')})`; }
+function lead(c, pts, col = '#B8C0C6', w = 3) { c.save(); c.strokeStyle = col; c.lineWidth = w; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath(); pts.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); c.stroke(); c.restore(); }
+function resistorBox(c, x, y, label, hot = 0) { c.save(); rr(c, x - 26, y - 9, 52, 18, 5); c.fillStyle = mixHex('#D8C18E', '#3A2A1A', hot); c.fill(); c.strokeStyle = '#6b5a3a'; c.lineWidth = 1; c.stroke(); c.restore(); txt(c, label, x, y - 18, { s: 12, mono: true, c: '#BFD3E0' }); }
+
+/* =================== Bauteile =================== */
+const E_R = [10, 22, 47, 100, 150, 220, 330, 470, 1000, 2200, 4700, 10000];
+const C = {};
+
+/* ---------- Elko ---------- */
+C.elko = {
+  name: 'Elko 100 µF / 16 V', group: 'Kondensatoren', btn: 'Elko', data: 'Aluminium-Elektrolytkondensator · U<sub>N</sub> = 16 V · 105 °C · gepolt', src: 'dc', Tlim: 105, Tmax: 140,
+  params: [
+    { id: 'U', type: 'range', label: 'Spannung U', min: 0, max: 40, step: 0.5, val: 12, fmt: (v) => nf(v, 1) + ' V' },
+    { id: 'pol', type: 'seg', label: 'Polung', opts: [['r', 'richtig (+ an +)'], ['v', 'verpolt']], val: 'r' }],
+  init(st) { st.stress = 0; st.vent = 0; st.capOff = false; st.after = 0; },
+  step(st, dt, rdt) {
+    const U = st.on ? st.p.U : 0; let I = 0;
+    if (st.on && !st.dead) {
+      if (st.p.pol === 'r') { I = 2e-5 * U / 16 + (U > 16 ? 0.002 * Math.exp((U - 16) / 2.5) : 0); if (U > 16) st.stress += dt * 0.04 * (U - 16) / 4; }
+      else { if (U > 1.2) st.stress += dt * 0.12 * (U - 1.2) / 3; I = U > 0.4 ? 0.0005 * Math.exp((U - 0.4) / 2) : 0; }
+      I = Math.min(3, I * (1 + st.stress * 2.5));
+    }
+    st.U = U; st.I = I; st.P = U * I; heat(st, st.P, 35, 8, dt);
+    const top = CY - 70;
+    if (!st.dead) {
+      st.hiss = clamp((st.T - 98) / 28);
+      if (st.T > 98 && Math.random() < rdt * 20 * st.hiss) smoke(CX, top - 6, 1, { col: '220,220,220', smin: 3, smax: 6, vmax: 30 });
+      SND.crackle(clamp((st.T - 90) / 40) * 0.6, rdt);
+      if (st.T > 128) {
+        const violent = st.P > 14 || st.p.U > 30; st.dead = true; st.capOff = violent; st.vent = 1; st.after = 7;
+        boom(CX, top, violent ? 1.1 : 0.65, { debrisCol: '210,200,170' });
+        emit('drop', CX, top, violent ? 40 : 22, { dir: -Math.PI / 2, spread: 1.2, vmin: 120, vmax: violent ? 420 : 260, g: 650, lmin: 1.5, lmax: 3, smin: 2, smax: 4, col: '176,132,42' });
+        if (violent) emit('cap', CX, top - 6, 1, { dir: -Math.PI / 2, spread: 0.3, vmin: 420, vmax: 520, g: 600, lmin: 3, lmax: 3.5 });
+        st.diag = { t: violent ? 'Elko explodiert – Deckel weggeschossen' : 'Elko geplatzt – Sicherheitsventil offen',
+          x: (st.p.pol === 'v' ? 'Der Elko war <b>verpolt</b>. Dabei wird die hauchdünne Oxidschicht (das Dielektrikum) an der Anode abgebaut. Der Leckstrom wurde immer größer, ' : 'Die Spannung lag <b>über der Nennspannung von 16 V</b>. Die Oxidschicht hält das nicht aus, der Leckstrom stieg stark an, ') +
+            'der Elko wurde heiß, der Elektrolyt verdampfte und bildete Gas. Der Innendruck stieg, bis die Sollbruchstelle (Kerbe im Deckel) aufriss.' + (violent ? ' Bei so viel Leistung reicht das Ventil nicht: Der ganze Deckel fliegt weg.' : '') +
+            '<br><b>Richtig:</b> Polung beachten (Streifen mit „−“ = Minus), Nennspannung mit Reserve wählen (z. B. 25 V für 12 V).' };
+      }
+    } else {
+      st.after = Math.max(0, st.after - rdt); st.hiss = st.after > 0 ? st.after / 7 * 0.8 : 0;
+      if (st.after > 0 && Math.random() < rdt * 18 * st.after / 7) smoke(CX, top - 4, 1, { col: '200,200,200' });
+    }
+  },
+  leads() { return [[CX + 18, CY + 150], [CX - 18, CY + 150]]; },
+  wiresSwap(st) { return st.p.pol === 'v'; },
+  draw(c, st) {
+    const b = clamp((st.T - 80) / 45) * (st.dead ? 1 : 1), bw = 46, top = CY - 70, bot = CY + 80;
+    lead(c, [[CX - 18, bot], [CX - 18, CY + 150]]); lead(c, [[CX + 18, bot], [CX + 18, CY + 150]]);
+    // Becher mit Wölbung
+    const bulge = (st.dead ? 1 : b) * 7;
+    c.save(); c.beginPath(); c.moveTo(CX - bw, top + 8); c.quadraticCurveTo(CX - bw - bulge, CY, CX - bw, bot); c.lineTo(CX + bw, bot); c.quadraticCurveTo(CX + bw + bulge, CY, CX + bw, top + 8); c.closePath();
+    const g = c.createLinearGradient(CX - bw, 0, CX + bw, 0); g.addColorStop(0, '#0f2c66'); g.addColorStop(0.35, '#2a59b8'); g.addColorStop(0.6, '#1d4796'); g.addColorStop(1, '#0c2152');
+    c.fillStyle = g; c.fill();
+    c.clip(); c.fillStyle = 'rgba(200,215,240,.85)'; c.fillRect(CX - bw - 10, top, 22, bot - top);   // Minus-Streifen
+    for (let y = top + 30; y < bot - 10; y += 30) txt(c, '−', CX - bw + 1, y, { s: 18, c: '#0c2152', w: 700 });
+    c.restore();
+    c.save(); c.translate(CX + 10, CY + 6); c.rotate(-Math.PI / 2); txt(c, '100 µF   16 V   105 °C', 0, 0, { s: 13, c: '#E6EEFF' }); c.restore();
+    if (st.T > 60) { c.save(); c.globalAlpha = clamp((st.T - 60) / 80) * 0.45; c.fillStyle = '#ff5a2a'; c.fillRect(CX - bw, top + 8, bw * 2, bot - top - 8); c.restore(); }
+    // Deckel (Alu) mit Kerbe
+    const dome = st.dead ? 0 : b * 10;
+    if (!st.capOff) {
+      c.save(); c.beginPath(); c.ellipse(CX, top + 8, bw, 12, 0, 0, TAU); const gc = c.createLinearGradient(CX - bw, 0, CX + bw, 0); gc.addColorStop(0, '#8d969e'); gc.addColorStop(0.5, '#eef2f5'); gc.addColorStop(1, '#7d868e');
+      c.fillStyle = gc; c.fill();
+      if (dome > 0.5) { c.beginPath(); c.ellipse(CX, top + 8 - dome / 2, bw * 0.8, 8 + dome / 2, 0, Math.PI, TAU); c.fillStyle = 'rgba(230,235,240,.9)'; c.fill(); }
+      c.strokeStyle = '#555'; c.lineWidth = 1.5;
+      if (st.vent) { // aufgerissene Kerbe: vier Lappen
+        c.fillStyle = '#2a1c08'; c.beginPath(); c.ellipse(CX, top + 8, 18, 6, 0, 0, TAU); c.fill();
+        c.fillStyle = '#c9d0d6'; for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2 + Math.PI / 4; c.beginPath(); c.moveTo(CX + Math.cos(a) * 6, top + 8 + Math.sin(a) * 2); c.lineTo(CX + Math.cos(a) * 20, top - 6 + Math.sin(a) * 4); c.lineTo(CX + Math.cos(a + 0.5) * 16, top + 2); c.closePath(); c.fill(); c.stroke(); }
+      } else { c.beginPath(); c.moveTo(CX - 18, top + 8 - dome * 0.4); c.lineTo(CX + 18, top + 8 - dome * 0.4); c.moveTo(CX - 5, top - dome * 0.4); c.lineTo(CX + 5, top + 16 - dome * 0.4); c.moveTo(CX + 5, top - dome * 0.4); c.lineTo(CX - 5, top + 16 - dome * 0.4); c.stroke(); }
+      c.restore();
+    } else { c.save(); c.fillStyle = '#1a1206'; c.beginPath(); c.ellipse(CX, top + 8, bw - 3, 10, 0, 0, TAU); c.fill(); c.strokeStyle = '#a0a8ae'; c.lineWidth = 2; c.stroke();
+      c.strokeStyle = '#d8d2c0'; c.lineWidth = 3; for (let i = 0; i < 5; i++) { c.beginPath(); c.moveTo(CX - 30 + i * 15, top + 8); c.lineTo(CX - 34 + i * 16 + rnd(-1, 1), top - 14 - (i % 2) * 6); c.stroke(); } c.restore(); }
+    c.save(); c.beginPath(); c.ellipse(CX, bot, bw, 10, 0, 0, Math.PI); c.fillStyle = '#0c2152'; c.fill(); c.restore();
+    txt(c, '+', CX + 30, CY + 128, { s: 18, c: '#ff8a7a', w: 700 }); txt(c, '−', CX - 30, CY + 128, { s: 20, c: '#9ec5ff', w: 700 });
+  },
+  hint(st) {
+    if (st.dead) return 'Der Elko ist zerstört. Ein geplatzter Elko muss immer ersetzt werden. Austretender Elektrolyt ist ätzend: Platine reinigen.';
+    if (!st.on) return 'Ein Elko ist <b>gepolt</b>: Das lange Bein und die Seite ohne Streifen sind Plus. Stelle Spannung und Polung ein und schalte ein.';
+    if (st.p.pol === 'v') return st.T > 90 ? '<b>Achtung:</b> Der Elko wölbt sich, es zischt. Gleich reißt die Sollbruchstelle auf!' : 'Verpolt: Die Oxidschicht wird langsam abgebaut. Der Leckstrom (Strom I) steigt Sekunde für Sekunde. Nutze den <b>Zeitraffer</b>.';
+    if (st.p.U > 16) return 'Die Spannung liegt über der <b>Nennspannung 16 V</b>. Der Leckstrom steigt stark an, der Elko erwärmt sich.';
+    return 'Alles in Ordnung: Es fließt nur ein winziger Leckstrom. Der Elko bleibt kalt.';
+  },
+  status(st) { return st.dead ? ['dead', 'Zerstört: geplatzt'] : st.T > 95 ? ['bad', 'Kritisch: Druck steigt'] : (st.p.pol === 'v' && st.on) || st.p.U > 16 ? ['warn', 'Außerhalb der Grenzwerte'] : ['ok', st.on ? 'Betrieb normal' : 'bereit']; },
+  lim(st) { return ['Nennspannung', '16 V']; }
+};
+
+/* ---------- Folienkondensator am Netz ---------- */
+C.folie = {
+  name: 'Folienkondensator 1 µF', group: 'Kondensatoren', btn: 'Folienkondensator', data: 'MKP-Folienkondensator · 1 µF · Wechselspannung 50 Hz · selbstheilend', src: 'ac', Tlim: 85, Tmax: 140,
+  params: [
+    { id: 'Ur', type: 'seg', label: 'Nennspannung (Gleichspannung)', opts: [[63, '63 V'], [250, '250 V'], [630, '630 V']], val: 250 },
+    { id: 'U', type: 'range', label: 'Wechselspannung U (Effektivwert)', min: 0, max: 400, step: 5, val: 50, fmt: (v) => nf(v, 0) + ' V~' }],
+  init(st) { st.stress = 0; st.burn = 0; st.heal = []; },
+  step(st, dt, rdt) {
+    const U = st.on && !st.dead ? st.p.U : 0, I = U * TAU * 50 * 1e-6, upk = U * Math.SQRT2, k = upk / st.p.Ur;
+    st.U = st.on ? st.p.U : 0; st.I = I; st.P = I * I * 0.05; heat(st, st.P + (k > 1 ? (k - 1) * 3 : 0), 25, 10, dt);
+    st.k = k;
+    if (st.on && !st.dead) {
+      if (k > 1.0) { // Teilentladungen und Selbstheilung
+        if (Math.random() < rdt * 6 * (k - 0.95)) { const x = CX + rnd(-55, 55), y = CY + rnd(-25, 25); st.heal.push([x, y]); emit('spark', x, y, 6, { vmin: 30, vmax: 120, lmin: 0.1, lmax: 0.3, g: 0 }); glowFlash(x, y); SND.pop(0.25); }
+        SND.crackle(clamp(k - 1) * 0.8, rdt);
+      }
+      if (k > 1.25) st.stress += dt * (k - 1.25) * 1.2;
+      if (st.stress >= 1) {
+        st.dead = true; st.burn = 2.5; boom(CX, CY, 0.8, { flashCol: '200,220,255', debrisCol: '230,200,60' }); SND.arc(0.35, 1);
+        st.diag = { t: 'Durchschlag – Kondensator verbrannt', x: `Der Scheitelwert der Wechselspannung beträgt û = U · √2 = ${nf(st.p.U, 0)} V · 1,41 ≈ ${nf(upk, 0)} V. Das ist deutlich mehr als die Nennspannung von ${st.p.Ur} V. Zuerst gab es kleine Durchschläge, die die Folie noch „selbst geheilt“ hat (der Metallbelag verdampft um die Fehlstelle). Dann hat ein großer Lichtbogen die Folie durchgebrannt: <b>Kurzschluss</b>, die Vorsicherung löst aus.<br><b>Richtig:</b> Bei Wechselspannung immer den <b>Scheitelwert</b> mit der Nennspannung vergleichen oder gleich einen Kondensator für Netzspannung nehmen (Klasse X2, 275 V~ / 305 V~).` };
+      }
+    }
+    if (st.burn > 0) { st.burn -= rdt; fire(CX + rnd(-30, 30), CY - 30, Math.random() < 0.7 ? 1 : 0); if (Math.random() < rdt * 20) smoke(CX, CY - 30, 1, { col: '90,90,90' }); }
+    else if (st.dead && Math.random() < rdt * 4) smoke(CX, CY - 30, 1, { col: '110,110,110' });
+  },
+  leads() { return [[CX - 30, CY + 150], [CX + 30, CY + 150]]; },
+  draw(c, st) {
+    lead(c, [[CX - 30, CY + 45], [CX - 30, CY + 150]]); lead(c, [[CX + 30, CY + 45], [CX + 30, CY + 150]]);
+    c.save(); rr(c, CX - 75, CY - 45, 150, 90, 8); const g = c.createLinearGradient(0, CY - 45, 0, CY + 45); g.addColorStop(0, '#f0d45a'); g.addColorStop(1, '#c9a830'); c.fillStyle = g; c.fill(); c.strokeStyle = '#8a7420'; c.lineWidth = 1.5; c.stroke();
+    txt(c, 'MKP 1 µF', CX, CY - 14, { s: 16, c: '#3a3000', w: 700 }); txt(c, st.p.Ur + ' V–', CX, CY + 10, { s: 14, c: '#3a3000' });
+    for (const [x, y] of st.heal) { c.fillStyle = 'rgba(60,40,0,.35)'; c.beginPath(); c.arc(x, y, 2.5, 0, TAU); c.fill(); }
+    if (st.dead) { c.fillStyle = 'rgba(15,10,5,.85)'; c.beginPath(); c.ellipse(CX + 8, CY - 6, 48, 30, 0.2, 0, TAU); c.fill(); c.strokeStyle = '#111'; c.lineWidth = 2.5; c.beginPath(); c.moveTo(CX - 60, CY - 30); c.lineTo(CX - 10, CY); c.lineTo(CX + 20, CY - 20); c.lineTo(CX + 64, CY + 30); c.stroke(); }
+    c.restore();
+    if (st.on && !st.dead && st.k > 1) glow(c, CX, CY, 90, '120,160,255', clamp(st.k - 1) * 0.35);
+  },
+  hint(st) {
+    const upk = st.p.U * Math.SQRT2;
+    if (st.dead) return 'Der Kondensator ist durchgeschlagen und verbrannt.';
+    return `Scheitelwert û = ${nf(st.p.U, 0)} V · √2 ≈ <b>${nf(upk, 0)} V</b>, Nennspannung ${st.p.Ur} V. ` + (upk > st.p.Ur ? '<b>Zu hoch!</b> Es knistert: Teilentladungen und kleine Durchschläge, die die Folie selbst heilt – noch.' : 'Das passt. Der Strom ist ein reiner Blindstrom: I = U · 2π · f · C.');
+  },
+  status(st) { return st.dead ? ['dead', 'Zerstört: Durchschlag'] : st.on && st.k > 1 ? ['bad', 'Teilentladungen!'] : ['ok', st.on ? 'Betrieb normal' : 'bereit']; },
+  lim(st) { return ['Scheitelwert / U_N', nf(st.p.U * Math.SQRT2, 0) + ' / ' + st.p.Ur + ' V']; }
+};
+let flashes = [];
+function glowFlash(x, y) { flashes.push({ x, y, t: 0.12 }); }
+
+/* ---------- Widerstand ---------- */
+const BANDCOL = ['#111', '#6b3a1e', '#d32', '#f80', '#ee2', '#2a2', '#24c', '#a3c', '#888', '#fff'];
+C.wid = {
+  name: 'Kohleschicht-Widerstand', group: 'Widerstand und LED', btn: 'Widerstand', data: 'Belastbarkeit P<sub>N</sub> je nach Bauform · Grenztemperatur ca. 155 °C', src: 'dc', Tlim: 155, Tmax: 700,
+  params: [
+    { id: 'U', type: 'range', label: 'Spannung U', min: 0, max: 60, step: 0.5, val: 5, fmt: (v) => nf(v, 1) + ' V' },
+    { id: 'R', type: 'list', label: 'Widerstand R', vals: E_R, val: 100, fmt: fmtR },
+    { id: 'Pn', type: 'seg', label: 'Nennleistung (Bauform)', opts: [[0.25, '0,25 W'], [0.5, '0,5 W'], [1, '1 W'], [2, '2 W']], val: 0.25 }],
+  init(st) { st.char = 0; st.ember = 0; },
+  step(st, dt, rdt) {
+    let U = st.on ? st.p.U : 0, I = st.dead ? 0 : U / st.p.R; st.lim = false;
+    if (I > 3) { I = 3; U = 3 * st.p.R; st.lim = true; }
+    st.U = U; st.I = I; st.P = U * I;
+    heat(st, st.P, 130 / st.p.Pn, 4 + 4 * st.p.Pn, dt);
+    st.char = Math.max(st.char, clamp((st.T - 210) / 260));
+    const L = this.len(st), x0 = CX - L / 2;
+    if (st.T > 240 && Math.random() < rdt * 30 * clamp((st.T - 240) / 250)) smoke(CX + rnd(-L / 3, L / 3), CY - 14, 1, { col: st.T > 450 ? '90,90,90' : '170,170,170' });
+    if (st.T > 520 && !st.dead) { fire(CX + rnd(-L / 3, L / 3), CY - 12, Math.random() < 0.8 ? 1 : 0); embers(CX, CY, Math.random() < rdt * 6 ? 1 : 0); }
+    SND.crackle(clamp((st.T - 350) / 300), rdt); st.hiss = clamp((st.T - 300) / 500) * 0.4;
+    if (!st.dead && st.T > 660) {
+      st.dead = true; st.ember = 3; sparks(CX, CY, 50); emit('debris', CX, CY, 12, { vmin: 60, vmax: 200, g: 700, lmin: 2, lmax: 3, col: '60,40,20' }); FX.flash = 0.5; FX.flashCol = '255,180,80'; FX.shake = 6; SND.crack(); SND.pop(0.8);
+      st.diag = { t: 'Widerstand durchgebrannt', x: `Am Widerstand wurden P = U² / R = (${nf(st.p.U, 1)} V)² / ${fmtR(st.p.R)} = <b>${fmtP(st.p.U * st.p.U / st.p.R)}</b> in Wärme umgesetzt – zugelassen sind nur <b>${nf(st.p.Pn, 2)} W</b>. Der Lack verkohlte, die Kohleschicht glühte und brannte schließlich an der dünnsten Stelle durch. Jetzt ist der Stromkreis <b>unterbrochen</b>.<br><b>Richtig:</b> P = U² / R vorher ausrechnen und eine Bauform mit mindestens doppelter Reserve wählen.` };
+    }
+    if (st.ember > 0) { st.ember -= rdt; embers(CX, CY, Math.random() < rdt * 15 ? 1 : 0); if (Math.random() < rdt * 10) smoke(CX, CY - 10, 1, { col: '100,100,100' }); }
+  },
+  len(st) { return { 0.25: 120, 0.5: 140, 1: 170, 2: 200 }[st.p.Pn]; },
+  leads(st) { const L = this.len(st); return [[CX - L / 2 - 40, CY + 150], [CX + L / 2 + 40, CY + 150]]; },
+  draw(c, st) {
+    const L = this.len(st), h = { 0.25: 36, 0.5: 42, 1: 50, 2: 58 }[st.p.Pn], x0 = CX - L / 2;
+    lead(c, [[x0 - 40, CY + 150], [x0 - 40, CY], [x0, CY]]); lead(c, [[x0 + L + 40, CY + 150], [x0 + L + 40, CY], [x0 + L, CY]]);
+    const split = st.dead ? 8 : 0;
+    for (const side of [-1, 1]) {
+      c.save(); c.beginPath();
+      if (side < 0) c.rect(x0 - 10, CY - h, L / 2 + 10 - split / 2, h * 2); else c.rect(CX + split / 2, CY - h, L / 2 + 10, h * 2);
+      c.clip(); c.translate(side * split / 2, 0);
+      rr(c, x0, CY - h / 2, L, h, h / 2.2);
+      const base = mixHex('#E2CB98', '#2a1a0e', st.char), g = c.createLinearGradient(0, CY - h / 2, 0, CY + h / 2);
+      g.addColorStop(0, 'rgba(255,255,255,.35)'); g.addColorStop(0.4, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(0,0,0,.25)');
+      c.fillStyle = base; c.fill(); c.fillStyle = g; c.fill();
+      // Farbringe
+      const R = st.p.R, e = Math.floor(Math.log10(R)) - 1, d1 = Math.floor(R / Math.pow(10, e + 1)), d2 = Math.round(R / Math.pow(10, e)) % 10;
+      const bands = [BANDCOL[d1], BANDCOL[d2], BANDCOL[e], '#c8a040'], bx = [0.22, 0.34, 0.46, 0.76];
+      c.globalAlpha = 1 - st.char * 0.85;
+      bands.forEach((col, i) => { c.fillStyle = col; c.fillRect(x0 + L * bx[i], CY - h / 2 + 1, L * 0.07, h - 2); });
+      c.globalAlpha = 1;
+      if (st.T > 420) { c.fillStyle = `rgba(${hotCol(st.T)},${hotA(st.T)})`; rr(c, x0, CY - h / 2, L, h, h / 2.2); c.fill(); }
+      c.restore();
+    }
+    if (st.dead) { c.save(); c.strokeStyle = 'rgba(255,140,40,.8)'; c.lineWidth = 2; c.beginPath(); c.moveTo(CX - 3, CY - h / 2); c.lineTo(CX + 2, CY); c.lineTo(CX - 2, CY + h / 2); c.stroke(); c.restore(); }
+    if (st.T > 420) glow(c, CX, CY, L * 0.9, hotCol(st.T), hotA(st.T) * 0.5);
+    txt(c, fmtR(st.p.R) + '  ·  ' + nf(st.p.Pn, 2) + ' W', CX, CY + h / 2 + 22, { s: 14, mono: true, c: '#BFD3E0' });
+  },
+  hint(st) {
+    if (st.dead) return 'Der Widerstand ist durchgebrannt, der Stromkreis ist offen.';
+    const P = st.p.U * st.p.U / st.p.R, k = P / st.p.Pn;
+    if (st.lim) return 'Das Netzgerät begrenzt den Strom auf 3 A. Trotzdem wird hier sehr viel Leistung umgesetzt.';
+    return `P = U² / R = <b>${fmtP(P)}</b>, das ist das <b>${nf(k, 1)}-Fache</b> der Nennleistung. ` + (k <= 0.5 ? 'Gut dimensioniert, er wird nur handwarm.' : k <= 1 ? 'Ohne Reserve: Er wird sehr heiß (bis 155 °C).' : k <= 3 ? 'Überlastet: Er verfärbt sich, raucht und riecht.' : 'Stark überlastet: Er glüht und brennt.');
+  },
+  status(st) { return st.dead ? ['dead', 'Zerstört: durchgebrannt'] : st.T > 400 ? ['bad', 'Glüht / brennt!'] : st.T > 155 ? ['warn', 'Zu heiß, verfärbt sich'] : ['ok', st.on ? 'Betrieb normal' : 'bereit']; },
+  lim(st) { return ['Nennleistung', nf(st.p.Pn, 2) + ' W']; }
+};
+
+/* ---------- LED ---------- */
+C.led = {
+  name: 'LED rot 5 mm', group: 'Widerstand und LED', btn: 'LED', data: 'U<sub>F</sub> ≈ 2 V · I<sub>F</sub> = 20 mA · I<sub>max</sub> ≈ 30 mA · Sperrspannung max. 5 V', src: 'dc', Tlim: 100, Tmax: 200,
+  params: [
+    { id: 'U', type: 'range', label: 'Spannung U', min: 0, max: 12, step: 0.1, val: 5, fmt: (v) => nf(v, 1) + ' V' },
+    { id: 'Rv', type: 'list', label: 'Vorwiderstand R<sub>V</sub>', vals: [0, 10, 47, 100, 150, 220, 330, 470, 1000], val: 220, fmt: fmtR },
+    { id: 'pol', type: 'seg', label: 'Polung', opts: [['r', 'Durchlassrichtung'], ['v', 'Sperrrichtung']], val: 'r' }],
+  init(st) { st.b = 0; st.crack = false; },
+  step(st, dt, rdt) {
+    const U = st.on ? st.p.U : 0, Rv = st.p.Rv; let I = 0, P = 0;
+    if (!st.dead && U > 0) {
+      if (st.p.pol === 'r') { I = Math.max(0, (U - 1.8) / (Rv + 12)); P = (1.8 + 12 * I) * I; }
+      else if (U > 5) { I = (U - 5) / (Rv + 12); P = (5 + 12 * I) * I; }
+    }
+    I = Math.min(I, 3); st.U = U; st.I = I; st.P = P; st.PR = I * I * Rv;
+    heat(st, P, 450, 0.25, dt);
+    st.b = st.dead || st.p.pol === 'v' ? 0 : I / 0.02;
+    if (!st.dead && st.T > 185) {
+      st.dead = true; st.crack = P > 2.5;
+      FX.flash = 0.9; FX.flashCol = '255,120,100'; FX.shake = 5; sparks(CX, CY - 40, 18, { vmax: 200 }); smoke(CX, CY - 50, 10, { col: '170,170,170', smin: 3, smax: 7 }); SND.pop(1);
+      if (st.crack) emit('chunk', CX, CY - 60, 2, { dir: -Math.PI / 2, spread: 1, vmin: 150, vmax: 300, g: 700, lmin: 2, lmax: 3, col: 'rgba(200,40,40,.8)' });
+      st.diag = { t: 'LED durchgebrannt', x: (st.p.pol === 'r' ? `Es flossen <b>${fmtI(I)}</b> statt 20 mA. ` + (Rv === 0 ? 'Ohne Vorwiderstand begrenzt nur der winzige Bahnwiderstand der LED den Strom. ' : 'Der Vorwiderstand war zu klein. ') : `In Sperrrichtung hält die LED nur etwa <b>5 V</b> aus. Darüber bricht der Übergang durch und es fließt ein großer Strom. `) +
+        'Der Halbleiterkristall wurde zu heiß, der hauchdünne Bonddraht ist geschmolzen. Die LED bleibt dunkel.<br><b>Richtig:</b> Immer mit Vorwiderstand: R<sub>V</sub> = (U − U<sub>F</sub>) / I<sub>F</sub>, z. B. (5 V − 2 V) / 20 mA = 150 Ω.' };
+    }
+  },
+  leads() { return [[CX + 12, CY + 150], [CX - 12, CY + 150]]; },
+  wiresSwap(st) { return st.p.pol === 'v'; },
+  wireR(st) { return st.p.Rv; },
+  draw(c, st) {
+    const y0 = CY - 40;
+    lead(c, [[CX + 12, CY + 20], [CX + 12, CY + 150]], '#c8ced3', 3); lead(c, [[CX - 12, CY + 20], [CX - 12, CY + 135]], '#c8ced3', 3);
+    const b = clamp(st.b / 1.5), over = clamp((st.b - 1.5) / 6);
+    c.save(); c.beginPath(); c.moveTo(CX - 26, CY + 20); c.lineTo(CX - 26, y0); c.arc(CX, y0, 26, Math.PI, 0); c.lineTo(CX + 26, CY + 20); c.closePath();
+    const base = st.dead ? '#4a0d0d' : `rgba(${200 + 55 * b | 0},${40 + 150 * over | 0},${40 + 150 * over | 0},${0.75 + 0.2 * b})`;
+    c.fillStyle = base; c.fill(); c.strokeStyle = 'rgba(255,200,200,.35)'; c.lineWidth = 1; c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.18)'; c.fillRect(CX - 18, y0 - 10, 6, 40);
+    rr(c, CX - 30, CY + 20, 60, 8, 2); c.fillStyle = st.dead ? '#3a0a0a' : '#b23030'; c.fill();
+    // Innenleben: Kathodenwanne und Bonddraht
+    c.fillStyle = '#c0c6cc'; c.fillRect(CX - 14, y0 + 2, 12, 34); c.fillRect(CX + 6, y0 + 6, 6, 30);
+    c.strokeStyle = st.dead ? 'rgba(0,0,0,0)' : '#e6e6e6'; c.lineWidth = 1; c.beginPath(); c.moveTo(CX - 8, y0 + 2); c.quadraticCurveTo(CX, y0 - 12, CX + 9, y0 + 6); c.stroke();
+    if (st.dead) { c.fillStyle = '#000'; c.beginPath(); c.arc(CX - 8, y0 + 3, 5, 0, TAU); c.fill(); if (st.crack) { c.strokeStyle = '#ddd'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(CX - 20, y0 - 15); c.lineTo(CX - 4, y0 - 2); c.lineTo(CX + 10, y0 - 22); c.stroke(); } }
+    c.restore();
+    if (!st.dead && st.b > 0.02) { glow(c, CX, y0, 60 + 90 * b, '255,40,30', 0.25 + 0.6 * b); glow(c, CX, y0, 20 + 40 * over, '255,230,220', over * 0.9); }
+    txt(c, 'A', CX + 26, CY + 140, { s: 12, c: '#ff9c8f' }); txt(c, 'K', CX - 26, CY + 128, { s: 12, c: '#9ec5ff' });
+  },
+  hint(st) {
+    if (st.dead) return 'Die LED ist zerstört. Sie leuchtet nicht mehr, auch bei richtiger Spannung.';
+    if (st.p.pol === 'v') return st.p.U > 5 ? '<b>Sperrrichtung über 5 V:</b> Der Übergang bricht durch!' : 'Sperrrichtung: Es fließt praktisch kein Strom, die LED bleibt dunkel. Bis 5 V ist das ungefährlich.';
+    const I = Math.max(0, (st.p.U - 1.8) / (st.p.Rv + 12));
+    return `Strom ≈ <b>${fmtI(I)}</b> (Nennwert 20 mA). ` + (I > 0.03 ? '<b>Zu viel Strom!</b> Die LED wird überlastet.' : I > 0.005 ? 'Passt. Je größer R<sub>V</sub>, desto dunkler und kühler.' : 'Sehr wenig Strom, die LED leuchtet kaum.') + (I * I * st.p.Rv > 0.25 ? ' Achtung: Der Vorwiderstand müsste hier mehr als 0,25 W vertragen.' : '');
+  },
+  status(st) { return st.dead ? ['dead', 'Zerstört: Bonddraht geschmolzen'] : st.T > 110 ? ['bad', 'Kristall überhitzt!'] : st.I > 0.03 ? ['warn', 'Überstrom'] : ['ok', st.on ? (st.b > 0.05 ? 'leuchtet' : 'dunkel') : 'bereit']; },
+  lim(st) { return ['I_F Nennwert', '20 mA']; }
+};
+
+/* ---------- Diode ---------- */
+C.diode = {
+  name: 'Gleichrichterdiode 1N4007', group: 'Halbleiter und Lampe', btn: 'Diode', data: 'I<sub>F</sub> = 1 A · U<sub>RRM</sub> = 1000 V · T<sub>j,max</sub> = 175 °C', src: 'dc', Tlim: 150, Tmax: 220,
+  params: [
+    { id: 'pol', type: 'seg', label: 'Betrieb', opts: [['r', 'Durchlass'], ['v', 'Sperr']], val: 'r' },
+    { id: 'IF', type: 'range', label: 'Durchlassstrom I<sub>F</sub> (Durchlass)', min: 0, max: 6, step: 0.1, val: 0.5, fmt: (v) => nf(v, 1) + ' A' },
+    { id: 'UR', type: 'range', label: 'Sperrspannung U<sub>R</sub> (Sperr)', min: 0, max: 1500, step: 10, val: 400, fmt: (v) => nf(v, 0) + ' V' }],
+  init(st) {},
+  step(st, dt, rdt) {
+    let U = 0, I = 0;
+    if (st.on && !st.dead) {
+      if (st.p.pol === 'r') { I = st.p.IF; U = I > 0 ? 0.7 + 0.08 * I : 0; }
+      else { U = st.p.UR; I = 5e-6 * U / 1000; if (U > 1080) { I = (U - 1080) / 8 + 0.5; } }
+    }
+    st.U = U; st.I = I; st.P = U * I; heat(st, st.P, 60, st.P > 50 ? 0.05 : 3, dt); st.T = Math.min(st.T, 900);
+    if (!st.dead && st.T > 140) { if (Math.random() < rdt * 10 * clamp((st.T - 140) / 40)) smoke(CX, CY - 18, 1, { smin: 3, smax: 6 }); SND.crackle(clamp((st.T - 150) / 30) * 0.4, rdt); }
+    if (!st.dead && st.T > 190) {
+      st.dead = true; const big = st.P > 50; boom(CX, CY, big ? 0.8 : 0.45, { debrisCol: '30,30,30' }); st.split = true;
+      st.diag = { t: big ? 'Diode im Lawinendurchbruch explodiert' : 'Diode überhitzt und geplatzt', x: (big ? `Die Sperrspannung von ${nf(st.p.UR, 0)} V lag über der zulässigen Spitzensperrspannung U<sub>RRM</sub> = 1000 V. Die Sperrschicht ist schlagartig durchgebrochen (Lawineneffekt), Spannung und Strom zugleich ergeben eine riesige Verlustleistung.` : `Bei ${nf(st.p.IF, 1)} A entstehen P ≈ U<sub>F</sub> · I<sub>F</sub> ≈ ${fmtP(st.P || (0.7 + 0.08 * st.p.IF) * st.p.IF)} Verlustleistung. Das Gehäuse kann die Wärme nicht abführen, die Sperrschicht überschritt 175 °C.`) +
+        ' Defekte Dioden sind oft <b>durchlegiert</b> (Kurzschluss) – in einem Gleichrichter fließt dann Wechselstrom in den Elko, der als Nächstes platzt.<br><b>Richtig:</b> Strom und Spannung mit Reserve wählen, bei höheren Strömen Kühlkörper oder stärkere Diode (z. B. 1N5408, 3 A).' };
+    }
+  },
+  leads() { return [[CX - 120, CY + 150], [CX + 120, CY + 150]]; },
+  wiresSwap(st) { return st.p.pol === 'v'; },
+  draw(c, st) {
+    lead(c, [[CX - 120, CY + 150], [CX - 120, CY], [CX - 45, CY]]); lead(c, [[CX + 120, CY + 150], [CX + 120, CY], [CX + 45, CY]]);
+    const s = st.split ? 6 : 0;
+    for (const side of [-1, 1]) {
+      c.save(); c.beginPath(); side < 0 ? c.rect(CX - 50, CY - 30, 50 - s / 2, 60) : c.rect(CX + s / 2, CY - 30, 50, 60); c.clip(); c.translate(side * s, side * s * 0.3);
+      rr(c, CX - 45, CY - 16, 90, 32, 10); c.fillStyle = '#1c1c1c'; c.fill(); c.fillStyle = 'rgba(255,255,255,.12)'; c.fillRect(CX - 40, CY - 12, 80, 6);
+      c.fillStyle = '#c9cfd4'; c.fillRect(CX + 22, CY - 16, 9, 32);
+      if (st.T > 120) { c.fillStyle = `rgba(255,80,20,${clamp((st.T - 120) / 120) * 0.5})`; rr(c, CX - 45, CY - 16, 90, 32, 10); c.fill(); }
+      c.restore();
+    }
+    if (st.split) { glow(c, CX, CY, 30, '255,120,40', 0.4); }
+    txt(c, '1N4007', CX - 8, CY + 32, { s: 12, mono: true, c: '#BFD3E0' }); txt(c, 'A', CX - 110, CY - 14, { s: 12, c: '#ff9c8f' }); txt(c, 'K', CX + 110, CY - 14, { s: 12, c: '#9ec5ff' });
+  },
+  hint(st) {
+    if (st.dead) return 'Die Diode ist zerstört.';
+    if (st.p.pol === 'r') return `Durchlass: U<sub>F</sub> ≈ ${nf(0.7 + 0.08 * st.p.IF, 2)} V, Verlustleistung P = U<sub>F</sub> · I<sub>F</sub> ≈ <b>${fmtP((0.7 + 0.08 * st.p.IF) * st.p.IF)}</b>. ` + (st.p.IF > 1 ? 'Über dem Nennstrom von 1 A: Die Diode wird sehr heiß.' : 'Im Rahmen.');
+    return st.p.UR > 1000 ? '<b>Über 1000 V Sperrspannung:</b> Lawinendurchbruch droht sofort!' : 'Sperrrichtung: Es fließt nur ein winziger Sperrstrom (wenige µA).';
+  },
+  status(st) { return st.dead ? ['dead', 'Zerstört'] : st.T > 150 ? ['bad', 'Sperrschicht überhitzt!'] : (st.p.pol === 'r' && st.p.IF > 1) || (st.p.pol === 'v' && st.p.UR > 1000) ? ['warn', 'Außerhalb der Grenzwerte'] : ['ok', st.on ? 'Betrieb normal' : 'bereit']; },
+  lim(st) { return st.p.pol === 'r' ? ['I_F,max', '1 A'] : ['U_RRM', '1000 V']; }
+};
+
+/* ---------- Transistor ---------- */
+C.trans = {
+  name: 'Transistor BC547', group: 'Halbleiter und Lampe', btn: 'Transistor', data: 'NPN · I<sub>C,max</sub> = 100 mA · P<sub>tot</sub> = 0,5 W · U<sub>CE0</sub> = 45 V · B ≈ 250', src: 'dc', Tlim: 150, Tmax: 220,
+  params: [
+    { id: 'Ub', type: 'range', label: 'Betriebsspannung U<sub>b</sub>', min: 0, max: 60, step: 0.5, val: 12, fmt: (v) => nf(v, 1) + ' V' },
+    { id: 'Rc', type: 'list', label: 'Lastwiderstand R<sub>C</sub>', vals: [10, 22, 47, 100, 220, 470, 1000], val: 220, fmt: fmtR },
+    { id: 'IB', type: 'range', label: 'Basisstrom I<sub>B</sub>', min: 0, max: 2, step: 0.01, val: 0, fmt: (v) => nf(v, 2) + ' mA' }],
+  init(st) { st.Uce = 0; st.Ic = 0; st.open = false; },
+  step(st, dt, rdt) {
+    const Ub = st.on ? st.p.Ub : 0, Rc = st.p.Rc, IB = st.p.IB / 1000; let Ic = 0, Uce = Ub;
+    if (!st.dead && Ub > 0) {
+      Ic = Math.min(250 * IB, Math.max(0, (Ub - 0.15) / Rc)); Uce = Ub - Ic * Rc;
+      if (Uce > 45) { const ia = (Uce - 45) / Rc * 0.9; Ic += ia; Uce = Ub - Ic * Rc; }
+    }
+    if (st.dead) { Ic = 0; Uce = Ub; }
+    st.Ic = Ic; st.Uce = Uce; st.U = Uce; st.I = Ic; st.P = Uce * Ic + 0.7 * IB; heat(st, st.P, 250, 1.2, dt);
+    if (!st.dead && st.T > 130 && Math.random() < rdt * 10 * clamp((st.T - 130) / 50)) smoke(CX, CY - 40, 1, { smin: 3, smax: 6 });
+    SND.crackle(st.dead ? 0 : clamp((st.T - 140) / 40) * 0.4, rdt);
+    if (!st.dead && (st.T > 185 || Ic > 0.32)) {
+      st.dead = true; const bond = Ic > 0.32 && st.T < 185;
+      if (bond) { FX.flash = 0.5; FX.flashCol = '255,230,200'; sparks(CX, CY - 20, 12, { vmax: 150 }); SND.pop(0.6); }
+      else { boom(CX, CY - 30, 0.6, { debrisCol: '25,25,25' }); emit('chunk', CX, CY - 45, 1, { dir: -Math.PI / 2, spread: 0.6, vmin: 250, vmax: 350, g: 700, lmin: 3, lmax: 3.5 }); st.crater = true; }
+      st.diag = { t: bond ? 'Bonddraht durchgeschmolzen' : 'Transistor überhitzt und geplatzt', x: bond ? `Der Kollektorstrom von <b>${fmtI(Ic)}</b> lag weit über I<sub>C,max</sub> = 100 mA. Der hauchdünne Bonddraht im Gehäuse ist wie eine Sicherung durchgeschmolzen – der Transistor ist jetzt offen.` :
+        `Am Transistor lagen U<sub>CE</sub> ≈ ${nf(Uce, 1)} V und I<sub>C</sub> ≈ ${fmtI(Ic)} gleichzeitig an. Das ergibt <b>P = U<sub>CE</sub> · I<sub>C</sub> ≈ ${fmtP(st.P)}</b> bei erlaubten 0,5 W.` + (st.p.Ub > 45 && st.p.IB < 0.05 ? ' Außerdem lag die Betriebsspannung über U<sub>CE0</sub> = 45 V: Der gesperrte Transistor ist durchgebrochen.' : ' Im <b>halb durchgesteuerten</b> Zustand ist die Verlustleistung am größten.') +
+        '<br><b>Richtig:</b> Als Schalter ganz ein (Sättigung, U<sub>CE</sub> ≈ 0,2 V) oder ganz aus betreiben, Grenzwerte einhalten, bei Leistung Kühlkörper verwenden.' };
+    }
+  },
+  leads() { return [[CX + 22, CY + 150], [CX - 22, CY + 150]]; },
+  draw(c, st) {
+    // C oben über R_C, E unten zum Minuspol, B links zur Basisstromquelle
+    lead(c, [[CX - 22, CY + 10], [CX - 22, CY + 150]]); lead(c, [[CX, CY + 10], [CX, CY + 60], [CX - 90, CY + 60]]); lead(c, [[CX + 22, CY + 10], [CX + 22, CY + 150]]);
+    c.save(); c.beginPath(); c.moveTo(CX - 34, CY + 10); c.lineTo(CX - 34, CY - 40); c.arc(CX, CY - 40, 34, Math.PI, 0); c.lineTo(CX + 34, CY + 10); c.closePath();
+    c.fillStyle = '#1b1b1b'; c.fill(); c.fillStyle = 'rgba(255,255,255,.1)'; c.fillRect(CX - 26, CY - 50, 8, 50);
+    if (st.T > 110) { c.fillStyle = `rgba(255,70,20,${clamp((st.T - 110) / 120) * 0.45})`; c.fill(); }
+    if (st.crater) { c.fillStyle = '#3a1a08'; c.beginPath(); c.moveTo(CX - 30, CY - 50); c.lineTo(CX - 8, CY - 30); c.lineTo(CX + 14, CY - 48); c.lineTo(CX + 26, CY - 62); c.arc(CX, CY - 40, 34, -0.6, -2.5, true); c.closePath(); c.fill(); glow(c, CX, CY - 45, 30, '255,110,30', 0.4); }
+    c.restore();
+    txt(c, 'BC547', CX, CY - 18, { s: 12, mono: true, c: '#9aa' }); txt(c, 'E', CX - 34, CY + 30, { s: 12 }); txt(c, 'B', CX - 10, CY + 30, { s: 12 }); txt(c, 'C', CX + 34, CY + 30, { s: 12 });
+    // Basisstromquelle
+    c.save(); c.strokeStyle = '#9ec5ff'; c.lineWidth = 2; c.beginPath(); c.arc(CX - 110, CY + 60, 18, 0, TAU); c.stroke(); c.beginPath(); c.moveTo(CX - 110, CY + 72); c.lineTo(CX - 110, CY + 48); c.lineTo(CX - 116, CY + 56); c.moveTo(CX - 110, CY + 48); c.lineTo(CX - 104, CY + 56); c.stroke(); c.restore();
+    txt(c, 'I_B = ' + nf(st.p.IB, 2) + ' mA', CX - 110, CY + 96, { s: 12, mono: true, c: '#9ec5ff' });
+    txt(c, 'U_CE = ' + nf(st.Uce, 1) + ' V', CX + 105, CY - 30, { s: 12, mono: true, c: '#BFD3E0', a: 'left' });
+  },
+  wireR(st) { return st.p.Rc; },
+  hint(st) {
+    if (st.dead) return 'Der Transistor ist zerstört.';
+    const IB = st.p.IB / 1000, Icmax = (st.p.Ub - 0.15) / st.p.Rc, Ic = Math.min(250 * IB, Math.max(0, Icmax)), sat = 250 * IB >= Icmax;
+    return `I<sub>C</sub> = B · I<sub>B</sub> = 250 · ${nf(st.p.IB, 2)} mA = ${fmtI(250 * IB)}` + (sat ? ` → begrenzt durch R<sub>C</sub> auf ${fmtI(Icmax)}: <b>Sättigung</b>, der Transistor ist voll durchgeschaltet und bleibt kühl.` : `. U<sub>CE</sub> = U<sub>b</sub> − I<sub>C</sub> · R<sub>C</sub>. Verlustleistung P = U<sub>CE</sub> · I<sub>C</sub> ≈ <b>${fmtP((st.p.Ub - Ic * st.p.Rc) * Ic)}</b> (max. 0,5 W).`) + (Icmax > 0.1 && Ic > 0.1 ? ' I<sub>C</sub> liegt über 100 mA!' : '');
+  },
+  status(st) { return st.dead ? ['dead', 'Zerstört'] : st.T > 150 ? ['bad', 'Sperrschicht überhitzt!'] : st.P > 0.5 || st.Ic > 0.1 ? ['warn', 'Außerhalb der Grenzwerte'] : ['ok', st.on ? (st.Ic > 0.001 ? 'leitet' : 'sperrt') : 'bereit']; },
+  lim(st) { return ['P_tot', '0,5 W']; }
+};
+
+/* ---------- Glühlampe ---------- */
+C.lampe = {
+  name: 'Glühlampe 12 V / 5 W', group: 'Halbleiter und Lampe', btn: 'Glühlampe', data: 'Wolframwendel · Nennspannung 12 V · Nennleistung 5 W · Kaltwiderstand ≈ 1/10', src: 'dc', Tlim: 2700, Tmax: 3700, tUnit: 'K', tLbl: 'Wendeltemperatur',
+  params: [{ id: 'U', type: 'range', label: 'Spannung U', min: 0, max: 40, step: 0.5, val: 12, fmt: (v) => nf(v, 1) + ' V' }],
+  init(st) { st.T = 300; st.wear = 0; st.broken = false; st.burst = false; st.inrush = 0; st.dark = 0; st.burn = 0; },
+  onPower(st, on) { if (on && !st.dead) st.inrush = 0.08; },
+  step(st, dt, rdt) {
+    const U = st.on ? st.p.U : 0, k = U / 12; let I = 0;
+    if (!st.dead && U > 0) { I = 0.417 * Math.pow(k, 0.55); if (st.inrush > 0) { I *= 1 + 8 * st.inrush / 0.08; st.inrush -= rdt; } }
+    st.U = U; st.I = I; st.P = U * I;
+    const Tf = st.dead || U === 0 ? 300 : 300 + 2400 * Math.pow(k, 0.42); st.T += (Tf - st.T) * (1 - Math.exp(-dt / 0.08));
+    if (!st.dead && k > 1.3) st.wear += dt * Math.pow(k, 13) / 3e4;
+    if (!st.dead && (st.wear >= 1 || k > 3)) {
+      st.dead = true; st.broken = true; st.burst = k > 2.3; st.dark = clamp((k - 1.2) / 1.5);
+      FX.flash = 1; FX.flashCol = '210,230,255';
+      if (st.burst) { boom(CX, CY - 50, 0.9, { debris: false }); emit('shard', CX, CY - 50, 40, { vmin: 100, vmax: 380, g: 700, lmin: 2.5, lmax: 4, smin: 4, smax: 10 }); SND.shatter(); st.burn = 1.5; }
+      else { SND.tink(); SND.pop(0.35); }
+      st.diag = { t: st.burst ? 'Glaskolben geplatzt – Wendel verbrannt' : 'Wendel durchgebrannt', x: `Bei ${nf(st.p.U, 1)} V statt 12 V wird die Wendel viel heißer (Lichtausbeute steigt, aber die Lebensdauer sinkt etwa mit (U/U<sub>N</sub>)<sup>13</sup>). Das Wolfram verdampft, die Wendel wird an einer Stelle dünn und reißt.` +
+        (st.burst ? ' Beim Abriss entstand ein <b>Lichtbogen</b> im Kolben, der Glaskolben ist geplatzt. Die glühende Wendel kommt mit Luft in Kontakt und verbrennt mit weißem Rauch (Wolframoxid).' : ' Verdampftes Wolfram schlägt sich als dunkler Belag innen am Glas nieder.') +
+        '<br><b>Richtig:</b> Lampen nur an Nennspannung betreiben. Merke: Beim Einschalten fließt wegen des kleinen Kaltwiderstands kurz ein <b>Einschaltstrom</b> bis zum 10-Fachen.' };
+    }
+    if (st.burn > 0) { st.burn -= rdt; smoke(CX, CY - 40, Math.random() < 0.7 ? 1 : 0, { col: '235,235,235', smin: 4, smax: 9, vmax: 50 }); }
+  },
+  leads() { return [[CX - 30, CY + 150], [CX + 30, CY + 150]]; },
+  draw(c, st) {
+    const by = CY - 40, k = st.on ? st.p.U / 12 : 0, B = st.dead ? 0 : clamp(Math.pow(Math.max(0, (st.T - 900) / 1800), 2.2), 0, 3);
+    lead(c, [[CX - 30, CY + 150], [CX - 30, CY + 95], [CX - 6, CY + 95]]); lead(c, [[CX + 30, CY + 150], [CX + 30, CY + 80], [CX + 18, CY + 80]]);
+    // Sockel E10
+    c.save(); for (let i = 0; i < 4; i++) { rr(c, CX - 22, CY + 28 + i * 13, 44, 11, 4); const g = c.createLinearGradient(CX - 22, 0, CX + 22, 0); g.addColorStop(0, '#8a8f94'); g.addColorStop(0.5, '#e3e7ea'); g.addColorStop(1, '#7d8287'); c.fillStyle = g; c.fill(); }
+    c.fillStyle = '#222'; c.fillRect(CX - 10, CY + 80, 20, 10); c.fillStyle = '#c8b070'; c.beginPath(); c.arc(CX, CY + 92, 6, 0, TAU); c.fill(); c.restore();
+    // Haltedrähte + Wendel
+    const wcol = st.T > 900 ? `rgb(255,${Math.min(255, 120 + (st.T - 900) / 8) | 0},${Math.min(255, (st.T - 1500) / 6) | 0})` : '#777';
+    lead(c, [[CX - 10, CY + 26], [CX - 22, by]], '#aaa', 1.5); lead(c, [[CX + 10, CY + 26], [CX + 22, by]], '#aaa', 1.5);
+    c.save(); c.strokeStyle = wcol; c.lineWidth = 2; c.beginPath();
+    if (!st.broken) { for (let i = 0; i <= 40; i++) { const x = CX - 22 + i * 1.1, y = by + Math.sin(i * 1.6) * 4; i ? c.lineTo(x, y) : c.moveTo(x, y); } }
+    else { for (let i = 0; i <= 16; i++) { const x = CX - 22 + i * 1.1, y = by + Math.sin(i * 1.6) * 4 + i * 0.8; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.moveTo(CX + 22, by); for (let i = 0; i <= 14; i++) { const x = CX + 22 - i * 1.1, y = by + Math.sin(i * 1.6) * 4 + i * 1.1; c.lineTo(x, y); } }
+    c.stroke(); c.restore();
+    // Glaskolben
+    if (!st.burst) {
+      c.save(); c.beginPath(); c.moveTo(CX - 16, CY + 28); c.bezierCurveTo(CX - 18, CY + 5, CX - 62, by + 20, CX - 62, by - 18); c.arc(CX, by - 18, 62, Math.PI, 0); c.bezierCurveTo(CX + 62, by + 20, CX + 18, CY + 5, CX + 16, CY + 28); c.closePath();
+      c.fillStyle = `rgba(${st.dark ? '40,35,30' : '200,225,240'},${0.1 + st.dark * 0.55})`; c.fill(); c.strokeStyle = 'rgba(220,240,255,.55)'; c.lineWidth = 1.5; c.stroke();
+      c.strokeStyle = 'rgba(255,255,255,.35)'; c.lineWidth = 3; c.beginPath(); c.arc(CX, by - 18, 50, Math.PI * 1.1, Math.PI * 1.35); c.stroke(); c.restore();
+    } else { c.save(); c.strokeStyle = 'rgba(220,240,255,.7)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(CX - 16, CY + 28); c.lineTo(CX - 20, CY + 12); c.lineTo(CX - 12, CY + 6); c.lineTo(CX - 24, CY - 4); c.moveTo(CX + 16, CY + 28); c.lineTo(CX + 22, CY + 10); c.lineTo(CX + 14, CY + 2); c.stroke(); c.restore(); }
+    if (B > 0.01) { glow(c, CX, by, 80 + 120 * Math.min(B, 1.5), '255,200,110', Math.min(0.95, 0.35 + 0.5 * B)); glow(c, CX, by, 30 + 30 * B, '255,250,230', Math.min(0.9, B * 0.6)); }
+  },
+  hint(st) {
+    if (st.dead) return st.burst ? 'Kolben geplatzt, Wendel verbrannt.' : 'Die Wendel ist gerissen. Die Lampe ist kaputt.';
+    const k = st.p.U / 12;
+    return `Bei ${nf(st.p.U, 1)} V: Leistung etwa ${fmtP(st.p.U * 0.417 * Math.pow(k, 0.55))}, Helligkeit etwa ${nf(Math.pow(k, 3.4) * 100, 0)} %, Lebensdauer etwa <b>${nf(100 / Math.pow(Math.max(k, 0.01), 13), k > 1.3 ? 2 : 0)} %</b> der Nennlebensdauer. ` + (k > 1.3 ? 'Die Wendel verdampft schnell!' : k < 0.8 ? 'Unterspannung: rötliches Licht, aber sehr lange Lebensdauer.' : '') + ' Achte beim Einschalten auf den kurzen <b>Einschaltstrom</b>.';
+  },
+  status(st) { return st.dead ? ['dead', st.burst ? 'Zerstört: Kolben geplatzt' : 'Zerstört: Wendel gerissen'] : st.p.U > 15 && st.on ? ['bad', 'Überspannung!'] : st.p.U > 12.6 && st.on ? ['warn', 'Leichte Überspannung'] : ['ok', st.on ? 'leuchtet' : 'bereit']; },
+  lim(st) { return ['Nennspannung', '12 V']; }
+};
+
+/* ---------- Sicherungen: gemeinsame Kennlinienmodelle ---------- */
+function meltTime(type, k) {
+  if (type === 'F') return k > 2.02 ? 0.6 / Math.pow(k - 2, 2) : Infinity;
+  if (type === 'T') return k > 2.02 ? 5 / Math.pow(k - 2, 2.2) : Infinity;
+  if (type === 'gG') return k > 1.45 ? 60 * Math.pow(k / 2, -4.8) * (k < 2 ? 1 + 2 * (2 - k) / 0.55 : 1) : Infinity;
+  return Infinity;
+}
+function fuseParams(list, def) {
+  return [{ id: 'In', type: 'seg', label: 'Nennstrom I<sub>n</sub>', opts: list.map((v) => [v, nf(v, v < 1 ? 1 : 0) + ' A']), val: def },
+    { id: 'k', type: 'range', label: 'Laststrom (Vielfaches von I<sub>n</sub>)', min: 0.5, max: 20, step: 0.05, val: 1, fmt: (v) => nf(v, 2) + ' · I<sub>n</sub>' }];
+}
+
+/* ---------- Feinsicherung 5×20 ---------- */
+C.fein = {
+  name: 'Feinsicherung 5 × 20 mm', group: 'Sicherungen und Schutzeinrichtungen', btn: 'Feinsicherung', data: 'Glasrohr · F = flink, T = träge · für Geräte und Netzteile', src: 'iq', shortI: 50, bar: true,
+  params: [{ id: 'ch', type: 'seg', label: 'Charakteristik', opts: [['F', 'F – flink'], ['T', 'T – träge']], val: 'F' }].concat(fuseParams([0.5, 1, 2], 1)),
+  init(st) { st.m = 0; st.violent = false; st.short = false; st.T = 25; },
+  step(st, dt, rdt) {
+    const In = st.p.In, k = st.short ? this.shortI / In : st.p.k, I = st.on && !st.dead ? k * In : 0;
+    st.k = k; st.I = I; st.U = st.dead && st.on ? 12 : I * 0.12 / In; st.P = st.U * I;
+    if (st.on && !st.dead) { const t = meltTime(st.p.ch, k); st.m = Math.min(1, st.m + dt / t); st.tm = t; } else st.m = Math.max(0, st.m - dt / 5);
+    st.T = 25 + 1000 * Math.max(st.m, clamp(k / 2.2) * 0.4);
+    if (!st.dead && st.m >= 1) {
+      st.dead = true; st.violent = k > 9; st.gap = 1;
+      if (st.violent) { FX.flash = 0.8; FX.flashCol = '255,240,210'; sparks(CX, CY, 25, { vmax: 160, g: 200 }); SND.pop(0.9); SND.arc(0.06, 0.8); }
+      else { sparks(CX, CY, 6, { vmax: 60, g: 300 }); SND.tink(); }
+      st.diag = { trip: true, t: 'Sicherung hat ausgelöst – Schmelzleiter durchgeschmolzen', x: `Bei ${nf(k, 1)} · I<sub>n</sub> = <b>${fmtI(k * In)}</b> hat die ${st.p.ch === 'F' ? 'flinke' : 'träge'} Sicherung nach <b>${fmtT(st.time)}</b> abgeschaltet. ` + (st.violent ? 'Bei Kurzschluss verdampft der Draht schlagartig, der Metalldampf schlägt sich als grau-silberner Belag im Glas nieder. Ein Kurzschluss lässt sich so am Belag erkennen.' : 'Bei Überlast schmilzt der Draht langsam an der heißesten Stelle in der Mitte – das Glas bleibt klar.') +
+        `<br>So soll es sein: Die Sicherung schützt Leitung und Gerät. <b>Ersatz nur mit gleichem Nennstrom und gleicher Charakteristik</b> – niemals „flicken“ oder überbrücken.` };
+    }
+  },
+  leads() { return [[CX - 150, CY + 150], [CX + 150, CY + 150]]; },
+  draw(c, st) {
+    lead(c, [[CX - 150, CY + 150], [CX - 150, CY], [CX - 120, CY]], '#B8C0C6', 4); lead(c, [[CX + 150, CY + 150], [CX + 150, CY], [CX + 120, CY]], '#B8C0C6', 4);
+    // Draht
+    const heatK = st.dead ? 0 : Math.max(st.m, clamp(st.k / 2.2) * 0.35) * (st.on ? 1 : 0), Tw = 25 + heatK * 1100;
+    const col = Tw > 450 ? `rgb(255,${Math.min(255, 60 + (Tw - 450) / 3) | 0},${Math.min(200, (Tw - 900) / 2) | 0})` : '#bfc5ca';
+    c.save(); c.strokeStyle = col; c.lineWidth = st.p.ch === 'F' ? 1.6 : 2.6; c.beginPath();
+    const gapW = st.dead ? (st.violent ? 70 : 10) : 0, sag = st.dead ? 0 : clamp(st.m - 0.5) * 8;
+    if (st.p.ch === 'F') { c.moveTo(CX - 88, CY); c.quadraticCurveTo(CX - 40, CY + sag, CX - gapW / 2, CY + sag); c.moveTo(CX + gapW / 2, CY + sag); c.quadraticCurveTo(CX + 40, CY + sag, CX + 88, CY); }
+    else { for (let x = -88; x <= 88; x += 1.5) { if (Math.abs(x) < gapW / 2) { c.moveTo(CX + x + 1.5, CY); continue; } const y = CY + Math.sin(x * 0.9) * 5 + sag; x === -88 ? c.moveTo(CX + x, y) : c.lineTo(CX + x, y); } }
+    c.stroke();
+    if (st.dead && !st.violent) { c.fillStyle = '#bfc5ca'; c.beginPath(); c.arc(CX - 6, CY + 2, 2.5, 0, TAU); c.arc(CX + 6, CY + 2, 2.5, 0, TAU); c.fill(); }
+    c.restore();
+    if (heatK > 0.35 && !st.dead) glow(c, CX, CY, 70, '255,140,60', (heatK - 0.35) * 0.8);
+    // Glasrohr
+    c.save(); rr(c, CX - 90, CY - 20, 180, 40, 18); c.fillStyle = st.violent ? 'rgba(120,125,130,.85)' : 'rgba(200,225,240,.13)'; c.fill(); c.strokeStyle = 'rgba(220,240,255,.6)'; c.lineWidth = 1.5; c.stroke();
+    if (st.violent) { c.fillStyle = 'rgba(30,30,30,.5)'; c.beginPath(); c.ellipse(CX, CY, 50, 16, 0, 0, TAU); c.fill(); }
+    c.strokeStyle = 'rgba(255,255,255,.35)'; c.lineWidth = 3; c.beginPath(); c.moveTo(CX - 70, CY - 12); c.lineTo(CX + 70, CY - 12); c.stroke(); c.restore();
+    for (const s of [-1, 1]) { c.save(); rr(c, CX + s * 104 - 17, CY - 22, 34, 44, 5); const g = c.createLinearGradient(0, CY - 22, 0, CY + 22); g.addColorStop(0, '#f1f3f5'); g.addColorStop(0.5, '#b9c0c6'); g.addColorStop(1, '#8b9299'); c.fillStyle = g; c.fill(); c.restore(); }
+    txt(c, st.p.ch + ' ' + nf(st.p.In, st.p.In < 1 ? 1 : 0) + ' A  250 V', CX - 104, CY + 40, { s: 12, mono: true, c: '#BFD3E0' });
+  },
+  hint(st) {
+    if (st.dead) return 'Die Sicherung hat ausgelöst. Ursache suchen, dann durch eine gleiche ersetzen.';
+    const t = meltTime(st.p.ch, st.short ? this.shortI / st.p.In : st.p.k);
+    return `Laststrom <b>${fmtI((st.short ? this.shortI / st.p.In : st.p.k) * st.p.In)}</b>. ` + (t === Infinity ? 'Unter etwa dem 2-Fachen des Nennstroms schmilzt die Feinsicherung praktisch nicht.' : `Erwartete Schmelzzeit nach der Kennlinie: <b>${fmtT(t)}</b>. ` + (t > 20 ? 'Nutze den Zeitraffer.' : '')) + ' Kurzschluss-Knopf: Prüfquelle liefert 50 A.';
+  },
+  status(st) { return st.dead ? ['trip', 'Ausgelöst (durchgeschmolzen)'] : st.on && st.m > 0.6 ? ['bad', 'Draht glüht!'] : st.on && st.k > 1 ? ['warn', 'Überlast'] : ['ok', st.on ? 'leitet' : 'bereit']; },
+  lim(st) { return ['Schmelzzeit (Kennlinie)', st.tm && isFinite(st.tm) ? fmtT(st.tm) : '∞']; }
+};
+
+/* ---------- NEOZED ---------- */
+const KENN = { 10: '#d33', 16: '#888', 20: '#36c', 25: '#eb3', 35: '#222' };
+C.neozed = {
+  name: 'NEOZED-Schmelzeinsatz D02 gG', group: 'Sicherungen und Schutzeinrichtungen', btn: 'NEOZED', data: 'Betriebsklasse gG · 400 V · Quarzsand-Füllung · Kennmelder in der Farbe des Nennstroms', src: 'iq', shortI: 2000, bar: true,
+  params: fuseParams([10, 16, 20, 25, 35], 16),
+  init(st) { st.m = 0; st.short = false; st.arcT = 0; st.T = 25; },
+  step(st, dt, rdt) {
+    const In = st.p.In, k = st.short ? this.shortI / In : st.p.k, I = st.on && !st.dead ? k * In : 0;
+    st.k = k; st.I = I; st.U = st.dead && st.on ? 230 : I * 0.006 * 16 / In; st.P = st.U * I;
+    if (st.on && !st.dead) { const t = meltTime('gG', k); st.m = Math.min(1, st.m + dt / t); st.tm = t; } else st.m = Math.max(0, st.m - dt / 20);
+    st.T = 25 + 900 * Math.max(st.m, clamp(k / 1.6) * 0.3);
+    if (st.arcT > 0) st.arcT -= rdt;
+    if (!st.dead && st.m >= 1) {
+      st.dead = true; st.arcT = k > 8 ? 0.25 : 0.1; st.violent = k > 8;
+      FX.flash = st.violent ? 0.35 : 0.1; FX.flashCol = '255,200,120'; SND.pop(st.violent ? 0.9 : 0.4); if (st.violent) SND.arc(0.08, 0.7);
+      emit('disc', CX + 125, CY, 1, { dir: -0.4, spread: 0.2, vmin: 180, vmax: 230, g: 600, lmin: 3, lmax: 3.5, col: KENN[In] });
+      st.diag = { trip: true, t: 'Schmelzeinsatz hat ausgelöst – Kennmelder abgefallen', x: `Bei ${nf(k, 1)} · I<sub>n</sub> = <b>${fmtI(k * In)}</b> hat der Schmelzeinsatz nach <b>${fmtT(st.time)}</b> abgeschaltet. Die Schmelzleiter haben Engstellen, dort schmelzen sie zuerst. Der entstehende Lichtbogen wird im <b>Quarzsand</b> gekühlt und gelöscht – außen sieht man nichts. ` +
+        'Der farbige <b>Kennmelder</b> fällt ab: So erkennst du von außen, welche Sicherung ausgelöst hat.<br><b>Richtig:</b> Ursache suchen und beheben, Einsatz nur mit gleichem Nennstrom ersetzen. Die Passschraube verhindert zu große Einsätze. Ein Einsatz wird nie geflickt.' };
+    }
+  },
+  leads() { return [[CX - 150, CY + 150], [CX + 150, CY + 150]]; },
+  draw(c, st) {
+    lead(c, [[CX - 150, CY + 150], [CX - 150, CY], [CX - 118, CY]], '#B8C0C6', 5); lead(c, [[CX + 150, CY + 150], [CX + 150, CY], [CX + 118, CY]], '#B8C0C6', 5);
+    // Keramikkörper (Halbschnitt)
+    c.save(); rr(c, CX - 100, CY - 42, 200, 84, 10); const g = c.createLinearGradient(0, CY - 42, 0, CY + 42); g.addColorStop(0, '#f4f1ea'); g.addColorStop(1, '#cfc8b8'); c.fillStyle = g; c.fill();
+    rr(c, CX - 90, CY - 26, 180, 52, 6); c.fillStyle = '#e9dfc4'; c.fill();
+    c.fillStyle = 'rgba(160,140,100,.45)'; for (let i = 0; i < 260; i++) { const x = CX - 88 + ((i * 97) % 176), y = CY - 24 + ((i * 53) % 48); c.fillRect(x, y, 1.5, 1.5); }
+    // Schmelzleiter mit Engstellen
+    const heatK = st.dead ? 0 : Math.max(st.m, clamp(st.k / 1.6) * 0.3) * (st.on ? 1 : 0), col = heatK > 0.4 ? `rgb(255,${130 + 120 * (1 - heatK) | 0},60)` : '#c2a060';
+    c.fillStyle = col; for (let i = 0; i < 4; i++) { const x = CX - 88 + i * 45; c.fillRect(x, CY - 5, 33, 10); if (!(st.dead && i === 2)) c.fillRect(x + 33, CY - 1.5, 12, 3); }
+    if (st.dead) { c.fillStyle = 'rgba(60,40,20,.85)'; c.beginPath(); c.ellipse(CX + 12, CY, 14, 9, 0, 0, TAU); c.fill(); }
+    if (st.arcT > 0) glow(c, CX + 12, CY, 50, '255,170,60', 0.9);
+    c.restore();
+    for (const s of [-1, 1]) { c.save(); rr(c, CX + s * 108 - 12, CY - 30, 24, 60, 4); const gc = c.createLinearGradient(0, CY - 30, 0, CY + 30); gc.addColorStop(0, '#f6e3a6'); gc.addColorStop(0.5, '#c9a45a'); gc.addColorStop(1, '#8e6d2e'); c.fillStyle = gc; c.fill(); c.restore(); }
+    if (!st.dead) { c.save(); c.fillStyle = KENN[st.p.In]; c.beginPath(); c.arc(CX + 125, CY, 7, 0, TAU); c.fill(); c.strokeStyle = '#222'; c.lineWidth = 1.2; c.stroke(); c.restore(); }
+    txt(c, 'D02  ' + st.p.In + ' A  gG  400 V', CX, CY + 60, { s: 12, mono: true, c: '#BFD3E0' }); txt(c, 'Quarzsand', CX - 50, CY - 34, { s: 11, c: '#7a6a4a' });
+  },
+  hint(st) {
+    if (st.dead) return 'Kennmelder ist abgefallen: Der Einsatz hat ausgelöst.';
+    const k = st.short ? this.shortI / st.p.In : st.p.k, t = meltTime('gG', k);
+    return `Laststrom <b>${fmtI(k * st.p.In)}</b>. ` + (t === Infinity ? 'Bis etwa 1,45 · I<sub>n</sub> schaltet ein gG-Einsatz nicht ab (vereinfachte Kennlinie).' : `Erwartete Auslösezeit: <b>${fmtT(t)}</b>.`) + ' Kurzschluss-Knopf: 2 kA.';
+  },
+  status(st) { return st.dead ? ['trip', 'Ausgelöst'] : st.on && st.m > 0.6 ? ['bad', 'Schmelzleiter kurz vor dem Abschmelzen'] : st.on && st.k > 1 ? ['warn', 'Überlast'] : ['ok', st.on ? 'leitet' : 'bereit']; },
+  lim(st) { return ['Auslösezeit (Kennlinie)', st.tm && isFinite(st.tm) ? fmtT(st.tm) : '∞']; }
+};
+
+/* ---------- LS-Schalter ---------- */
+C.ls = {
+  name: 'Leitungsschutzschalter', group: 'Sicherungen und Schutzeinrichtungen', btn: 'LS-Schalter', data: 'Thermischer Auslöser (Bimetall) + magnetischer Auslöser (Spule) · Schaltvermögen 6 kA', src: 'iq', bar: true, resettable: true,
+  params: [{ id: 'ch', type: 'seg', label: 'Charakteristik', opts: [['B', 'B (3–5 · I<sub>n</sub>)'], ['C', 'C (5–10 · I<sub>n</sub>)']], val: 'B' },
+    { id: 'In', type: 'seg', label: 'Nennstrom I<sub>n</sub>', opts: [[10, '10 A'], [16, '16 A']], val: 16 },
+    { id: 'k', type: 'range', label: 'Laststrom (Vielfaches von I<sub>n</sub>)', min: 0.5, max: 15, step: 0.05, val: 1, fmt: (v) => nf(v, 2) + ' · I<sub>n</sub>' }],
+  init(st) { st.th = 0; st.trip = false; st.lever = 1; st.arcT = 0; st.shorts = 0; st.short = 0; st.T = 25; },
+  step(st, dt, rdt) {
+    const In = st.p.In, k = st.short ? st.short / In : st.p.k, conducting = st.on && !st.trip && !st.dead, I = conducting ? k * In : 0, mag = st.p.ch === 'B' ? 4 : 7.5;
+    st.k = k; st.I = I; st.U = conducting ? I * 0.004 : st.on ? 230 : 0; st.P = st.U * I;
+    if (conducting && k > 1.13) st.th = Math.min(1, st.th + dt * (k * k - 1.2) / 120); else st.th = Math.max(0, st.th - dt / 90);
+    st.tm = k >= mag ? 0.008 : k > 1.13 ? 120 / (k * k - 1.2) : Infinity;
+    st.T = 25 + st.th * 100;
+    st.lever += ((st.trip || st.dead ? 0 : 1) - st.lever) * Math.min(1, rdt * 18);
+    if (st.arcT > 0) { st.arcT -= rdt; if (Math.random() < 0.8) sparks(CX + rnd(-30, 30), CY + 70 + rnd(0, 20), 2, { vmax: 160, g: 300 }); }
+    if (conducting && (k >= mag || st.th >= 1)) {
+      const magnetic = k >= mag; st.trip = true; SND.click();
+      if (magnetic) {
+        st.arcT = 0.25; st.shorts++; SND.arc(0.12, 1); FX.flash = 0.3; FX.flashCol = '200,220,255';
+        if (st.short > 6000) { // über dem Schaltvermögen
+          st.dead = true; boom(CX, CY + 40, 1.1, { debrisCol: '230,230,230', flashCol: '200,220,255' }); st.burnT = 4;
+          st.diag = { t: 'LS-Schalter zerstört – Schaltvermögen überschritten', x: `Der Kurzschlussstrom von <b>${nf(st.short / 1000, 0)} kA</b> lag über dem Bemessungsschaltvermögen von <b>6 kA</b>. Der Lichtbogen konnte in der Löschkammer nicht mehr gelöscht werden, der Druck hat das Gehäuse gesprengt.<br><b>Richtig:</b> Das Schaltvermögen muss mindestens so groß sein wie der größte Kurzschlussstrom am Einbauort. Nahe am Trafo braucht man 10 kA oder eine vorgeschaltete Sicherung (Back-up-Schutz).` };
+          return;
+        }
+      }
+      st.diag = { trip: true, t: magnetic ? 'Magnetischer Auslöser – Sofortauslösung' : 'Thermischer Auslöser – Überlast', x: (magnetic ? `Bei ${nf(k, 1)} · I<sub>n</sub> liegt der Strom über der Schwelle der Charakteristik ${st.p.ch} (${st.p.ch === 'B' ? '3–5' : '5–10'} · I<sub>n</sub>). Die Spule zieht den Schlaganker an, der Kontakt öffnet sich in wenigen Millisekunden. Der Lichtbogen läuft in die <b>Löschkammer</b> und wird dort in viele kleine Teilbögen zerlegt und gelöscht.` :
+        `Der Strom von ${nf(k, 2)} · I<sub>n</sub> hat das <b>Bimetall</b> nach ${fmtT(st.time)} so weit erwärmt und gebogen, dass es das Schaltschloss entklinkt hat. Kurze Überlasten (z. B. Anlaufströme) übersteht der LS, längere nicht.`) +
+        (st.shorts >= 4 ? ` <b>Hinweis:</b> Nach ${st.shorts} Kurzschlussabschaltungen sind die Kontakte deutlich abgebrannt. Nach vielen schweren Kurzschlüssen sollte ein LS getauscht werden.` : '') + '<br>Mit „Wieder einschalten“ kannst du den LS zurücksetzen – nach einer thermischen Auslösung erst, wenn das Bimetall abgekühlt ist.' };
+    }
+    if (st.burnT > 0) { st.burnT -= rdt; fire(CX + rnd(-40, 40), CY + 40, Math.random() < 0.6 ? 1 : 0); if (Math.random() < rdt * 25) smoke(CX, CY, 1, { col: '80,80,80' }); }
+  },
+  leads() { return [[CX - 120, CY + 150], [CX + 120, CY + 150]]; },
+  draw(c, st) {
+    const x0 = CX - 80, y0 = CY - 130, w = 160, h = 260;
+    lead(c, [[CX - 120, CY + 150], [CX - 120, y0 - 8], [CX - 40, y0 - 8], [CX - 40, y0 + 4]], '#B8C0C6', 4); lead(c, [[CX + 120, CY + 150], [CX + 120, y0 + h + 10], [CX + 40, y0 + h + 10], [CX + 40, y0 + h - 4]], '#B8C0C6', 4);
+    c.save(); rr(c, x0, y0, w, h, 10); c.fillStyle = st.dead ? '#3a3a3a' : '#e9edf0'; c.fill(); c.strokeStyle = '#9aa4ab'; c.lineWidth = 1.5; c.stroke();
+    if (st.dead) { c.strokeStyle = '#111'; c.lineWidth = 3; c.beginPath(); c.moveTo(x0 + 20, y0 + 60); c.lineTo(x0 + 70, y0 + 120); c.lineTo(x0 + 50, y0 + 170); c.lineTo(x0 + 110, y0 + 240); c.stroke(); c.fillStyle = 'rgba(0,0,0,.6)'; c.beginPath(); c.ellipse(CX, CY + 60, 60, 40, 0, 0, TAU); c.fill(); c.restore(); }
+    else {
+      // Sichtfenster
+      rr(c, x0 + 12, y0 + 70, w - 24, h - 82, 6); c.fillStyle = '#26323b'; c.fill();
+      // Spule (magnetisch)
+      c.strokeStyle = '#c98a3a'; c.lineWidth = 3; for (let i = 0; i < 7; i++) { c.beginPath(); c.ellipse(x0 + 42, y0 + 92 + i * 7, 16, 4, 0, 0, TAU); c.stroke(); }
+      txt(c, 'Spule', x0 + 42, y0 + 150, { s: 10, c: '#9ab' });
+      // Bimetall
+      const bend = st.th * 20; c.lineWidth = 5; c.strokeStyle = '#c0c6cc'; c.beginPath(); c.moveTo(x0 + 110, y0 + 82); c.quadraticCurveTo(x0 + 110 + bend, y0 + 115, x0 + 110 - bend * 0.3, y0 + 148); c.stroke();
+      c.lineWidth = 2; c.strokeStyle = '#c98a3a'; c.beginPath(); c.moveTo(x0 + 113, y0 + 82); c.quadraticCurveTo(x0 + 113 + bend, y0 + 115, x0 + 113 - bend * 0.3, y0 + 148); c.stroke();
+      if (st.th > 0.2) glow(c, x0 + 112, y0 + 115, 30, '255,120,40', st.th * 0.5);
+      txt(c, 'Bimetall', x0 + 114, y0 + 160, { s: 10, c: '#9ab' });
+      // Kontakte
+      const open = 1 - st.lever; c.fillStyle = st.shorts >= 4 ? '#5a3a1a' : '#d8b25a'; c.fillRect(CX - 20, CY + 52, 14, 8); c.save(); c.translate(CX + 4, CY + 56); c.rotate(-open * 0.6); c.fillRect(0, -4, 30, 8); c.restore();
+      if (st.arcT > 0) { glow(c, CX, CY + 60, 60, '180,210,255', 0.9 * st.arcT / 0.25); }
+      // Löschkammer
+      c.fillStyle = '#7d878f'; for (let i = 0; i < 7; i++) c.fillRect(CX - 32 + i * 10, CY + 74, 5, 34); txt(c, 'Löschkammer', CX, CY + 117, { s: 10, c: '#9ab' });
+      c.restore();
+      // Hebel
+      c.save(); rr(c, CX - 22, y0 + 14, 44, 46, 6); c.fillStyle = '#c9d0d5'; c.fill(); const ly = y0 + 22 + (1 - st.lever) * 22; rr(c, CX - 14, ly, 28, 16, 4); c.fillStyle = st.lever > 0.5 ? '#2a8a4a' : '#c8372d'; c.fill(); c.restore();
+      txt(c, st.lever > 0.5 ? 'I' : '0', CX + 34, y0 + 36, { s: 16, c: '#334', w: 700 });
+      txt(c, st.p.ch + st.p.In, x0 + 26, y0 + 30, { s: 16, mono: true, c: '#223', w: 700 });
+    }
+  },
+  hint(st) {
+    if (st.dead) return 'Gehäuse gesprengt: Dieser LS ist zerstört.';
+    if (st.trip) return 'Ausgelöst. Ursache beseitigen, dann wieder einschalten.';
+    const k = st.short ? st.short / st.p.In : st.p.k, mag = st.p.ch === 'B' ? 4 : 7.5;
+    return `Laststrom <b>${fmtI(k * st.p.In)}</b> = ${nf(k, 2)} · I<sub>n</sub>. ` + (k >= mag ? 'Über der Magnetschwelle: <b>Sofortauslösung</b>.' : k > 1.13 ? `Überlast: Das Bimetall erwärmt sich, Auslösung nach etwa <b>${fmtT(120 / (k * k - 1.2))}</b>.` : 'Unter 1,13 · I<sub>n</sub> löst der LS nie aus.') + ' Teste auch die Kurzschluss-Knöpfe.';
+  },
+  status(st) { return st.dead ? ['dead', 'Zerstört: Gehäuse gesprengt'] : st.trip ? ['trip', 'Ausgelöst'] : st.on && st.th > 0.6 ? ['bad', 'Bimetall kurz vor Auslösung'] : st.on && st.k > 1.13 ? ['warn', 'Überlast'] : ['ok', st.on ? 'eingeschaltet' : 'bereit']; },
+  lim(st) { return ['Auslösezeit (Kennlinie)', st.tm && isFinite(st.tm) ? fmtT(st.tm) : '∞']; }
+};
+
+/* ---------- RCD ---------- */
+C.rcd = {
+  name: 'Fehlerstrom-Schutzschalter (RCD)', group: 'Sicherungen und Schutzeinrichtungen', btn: 'RCD (FI)', data: 'Summenstromwandler vergleicht hin- und zurückfließenden Strom · Typ A', src: 'net', resettable: true,
+  params: [{ id: 'In', type: 'seg', label: 'Bemessungsfehlerstrom I<sub>Δn</sub>', opts: [[30, '30 mA'], [300, '300 mA']], val: 30 },
+    { id: 'IL', type: 'range', label: 'Laststrom (fließt hin und zurück)', min: 0, max: 40, step: 1, val: 8, fmt: (v) => nf(v, 0) + ' A' },
+    { id: 'If', type: 'range', label: 'Fehlerstrom I<sub>Δ</sub> (über PE oder Person)', min: 0, max: 500, step: 1, val: 0, fmt: (v) => nf(v, 0) + ' mA' }],
+  init(st) { st.trip = false; st.lever = 1; st.delay = 0; st.test = 0; st.T = 25; },
+  step(st, dt, rdt) {
+    const IfA = (st.test > 0 ? 1.6 * st.p.In : st.p.If), live = st.on && !st.trip;
+    st.I = live ? st.p.IL : 0; st.U = st.on ? 230 : 0; st.P = 0; st.If = live ? IfA : 0;
+    if (st.test > 0) st.test -= rdt;
+    st.lever += ((st.trip ? 0 : 1) - st.lever) * Math.min(1, rdt * 18);
+    if (live && IfA >= 0.75 * st.p.In) { st.delay += dt; if (st.delay >= (IfA >= 5 * st.p.In ? 0.012 : 0.025)) {
+      st.trip = true; SND.click(); st.tripT = st.delay;
+      st.diag = { trip: true, t: st.test > 0 ? 'Prüftaste: RCD hat ausgelöst' : 'RCD hat ausgelöst', x: (st.test > 0 ? 'Die Prüftaste erzeugt über einen Widerstand einen künstlichen Fehlerstrom. Der RCD hat korrekt ausgelöst – so soll es sein. Die Prüftaste soll regelmäßig (z. B. halbjährlich) gedrückt werden. ' : `Es flossen <b>${nf(IfA, 0)} mA</b> nicht über N zurück, sondern über PE oder einen Menschen zur Erde. Der Summenstromwandler hat den Unterschied erkannt und nach <b>${nf(st.delay * 1000, 0)} ms</b> abgeschaltet. `) +
+        `Der Laststrom (${nf(st.p.IL, 0)} A) spielt dabei keine Rolle – nur die <b>Differenz</b> zählt. Ein RCD löst zwischen 50 % und 100 % von I<sub>Δn</sub> aus.<br><b>Wichtig:</b> Ein RCD schützt nicht vor Überlast und nicht, wenn man zwischen L und N greift. Dafür braucht es zusätzlich LS-Schalter.` };
+    } } else st.delay = 0;
+  },
+  leads() { return [[CX - 120, CY + 150], [CX + 120, CY + 150]]; },
+  draw(c, st) {
+    const x0 = CX - 85, y0 = CY - 130, w = 170, h = 250;
+    lead(c, [[CX - 120, CY + 150], [CX - 120, y0 - 8], [CX - 30, y0 - 8], [CX - 30, y0 + 4]], '#B8C0C6', 4); lead(c, [[CX + 120, CY + 150], [CX + 120, y0 + h + 10], [CX + 30, y0 + h + 10], [CX + 30, y0 + h - 4]], '#B8C0C6', 4);
+    c.save(); rr(c, x0, y0, w, h, 10); c.fillStyle = '#e9edf0'; c.fill(); c.strokeStyle = '#9aa4ab'; c.lineWidth = 1.5; c.stroke();
+    rr(c, x0 + 12, y0 + 72, w - 24, h - 84, 6); c.fillStyle = '#26323b'; c.fill();
+    // Summenstromwandler
+    const cx = CX, cy = CY + 30; c.lineWidth = 12; c.strokeStyle = '#6d7880'; c.beginPath(); c.arc(cx, cy, 40, 0, TAU); c.stroke(); c.lineWidth = 2; c.strokeStyle = '#c98a3a'; for (let i = 0; i < 18; i++) { const a = i / 18 * TAU; c.beginPath(); c.moveTo(cx + Math.cos(a) * 34, cy + Math.sin(a) * 34); c.lineTo(cx + Math.cos(a) * 46, cy + Math.sin(a) * 46); c.stroke(); }
+    lead(c, [[cx - 12, y0 + 72], [cx - 12, y0 + h - 12]], '#8B5A2B', 4); lead(c, [[cx + 12, y0 + 72], [cx + 12, y0 + h - 12]], '#1E88E5', 4);
+    const t = performance.now() / 1000;
+    if (st.I > 0) { c.fillStyle = '#ffd54a'; for (let i = 0; i < 5; i++) { const p = ((t * 0.8 + i / 5) % 1); c.beginPath(); c.arc(cx - 12, y0 + 72 + p * (h - 84), 2.5, 0, TAU); c.arc(cx + 12, y0 + h - 12 - p * (h - 84), 2.5, 0, TAU); c.fill(); } }
+    if (st.If > 0) { glow(c, cx, cy, 55, '255,80,60', clamp(st.If / st.p.In) * 0.6); }
+    txt(c, 'L', cx - 24, y0 + 84, { s: 11, c: '#e3a06a' }); txt(c, 'N', cx + 24, y0 + 84, { s: 11, c: '#8fc1ff' });
+    txt(c, 'Summenstromwandler', cx, cy + 62, { s: 10, c: '#9ab' });
+    c.restore();
+    c.save(); rr(c, CX - 22, y0 + 14, 44, 46, 6); c.fillStyle = '#c9d0d5'; c.fill(); const ly = y0 + 22 + (1 - st.lever) * 22; rr(c, CX - 14, ly, 28, 16, 4); c.fillStyle = st.lever > 0.5 ? '#2a8a4a' : '#c8372d'; c.fill();
+    c.beginPath(); c.arc(x0 + w - 26, y0 + 36, 11, 0, TAU); c.fillStyle = st.test > 0 ? '#c9a830' : '#e3c84a'; c.fill(); c.restore(); txt(c, 'T', x0 + w - 26, y0 + 36, { s: 12, c: '#333', w: 700 });
+    txt(c, 'I_Δn ' + st.p.In + ' mA', x0 + 38, y0 + 30, { s: 12, mono: true, c: '#223', w: 700 });
+    // Fehlerstrompfad
+    if (st.p.If > 0 && st.on) { c.save(); c.setLineDash([6, 5]); c.strokeStyle = st.If > 0 ? '#ff6f62' : '#666'; c.lineWidth = 2; c.beginPath(); c.moveTo(CX + 120, CY + 150); c.lineTo(CX + 190, CY + 150); c.lineTo(CX + 190, FLOOR - 4); c.stroke(); c.restore();
+      c.save(); c.strokeStyle = '#9ab'; c.lineWidth = 2; for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(CX + 178 + i * 4, FLOOR - 2 + i * 5); c.lineTo(CX + 202 - i * 4, FLOOR - 2 + i * 5); c.stroke(); } c.restore();
+      txt(c, 'I_Δ → Erde', CX + 190, CY + 136, { s: 11, c: '#ff9c8f' }); }
+  },
+  hint(st) {
+    if (st.trip) return 'Ausgelöst. Fehler beseitigen, dann wieder einschalten.';
+    return `Hin: ${nf(st.p.IL, 0)} A über L, zurück: ${nf(st.p.IL, 0)} A ${st.p.If ? '− ' + nf(st.p.If, 0) + ' mA' : ''} über N. Differenz = Fehlerstrom <b>${nf(st.p.If, 0)} mA</b>. ` + (st.p.If >= 0.75 * st.p.In ? 'Das reicht zum Auslösen.' : st.p.If > 0 ? 'Noch unter der Auslöseschwelle.' : 'Kein Fehlerstrom: Der Wandler „sieht“ nichts, egal wie groß der Laststrom ist.') + ' Probiere auch die Prüftaste.';
+  },
+  status(st) { return st.trip ? ['trip', 'Ausgelöst'] : st.on && st.p.If > 0 ? ['warn', 'Fehlerstrom fließt'] : ['ok', st.on ? 'eingeschaltet' : 'bereit']; },
+  lim(st) { return ['Fehlerstrom I_Δ', nf(st.If || 0, 0) + ' mA']; }
+};
+
+/* =================== Prüfstand / Ablauf =================== */
+let cur = 'wid', st = null, speed = 1;
+function newState(id, keep) {
+  const comp = C[id], s = { p: {}, T: 25, on: false, dead: false, time: 0, U: 0, I: 0, P: 0, hiss: 0, diag: null };
+  comp.params.forEach((p) => (s.p[p.id] = keep && st && st.p[p.id] !== undefined ? st.p[p.id] : p.val));
+  comp.init && comp.init(s); return s;
+}
+function select(id, keep = false) {
+  st = newState(id, keep && id === cur); cur = id; FX.parts = []; flashes = [];
+  document.querySelectorAll('#picker button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.id === id ? 'true' : 'false'));
+  const comp = C[id]; $('#cname').textContent = comp.name; $('#cdata').innerHTML = comp.data;
+  const box = $('#ctls'); box.innerHTML = '';
+  comp.params.forEach((p) => {
+    const d = document.createElement('div'); d.className = 'ctl';
+    if (p.type === 'seg') {
+      d.innerHTML = `<span class="lbl">${p.label}</span><div class="seg" role="group"></div>`; const sg = d.querySelector('.seg');
+      p.opts.forEach(([v, l]) => { const b = document.createElement('button'); b.type = 'button'; b.innerHTML = l; b.setAttribute('aria-pressed', String(st.p[p.id] === v));
+        b.addEventListener('click', () => { st.p[p.id] = v; sg.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }); sg.appendChild(b); });
+    } else {
+      const isList = p.type === 'list', idx = isList ? p.vals.indexOf(st.p[p.id]) : 0;
+      d.innerHTML = `<label for="c_${p.id}"><span>${p.label}</span> <output id="o_${p.id}"></output></label><input type="range" id="c_${p.id}">`;
+      const inp = d.querySelector('input'), out = d.querySelector('output');
+      if (isList) { inp.min = 0; inp.max = p.vals.length - 1; inp.step = 1; inp.value = idx; } else { inp.min = p.min; inp.max = p.max; inp.step = p.step; inp.value = st.p[p.id]; }
+      const upd = () => { const v = isList ? p.vals[+inp.value] : +inp.value; st.p[p.id] = v; out.innerHTML = p.fmt(v); if (C[cur].src === 'iq' && p.id === 'k') st.short = 0; };
+      inp.addEventListener('input', upd); upd();
+    }
+    box.appendChild(d);
+  });
+  // Zusatzknöpfe
+  const ex = $('#extra'); ex.innerHTML = '';
+  const add = (t, fn, cls = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'big ' + cls; b.innerHTML = t; b.addEventListener('click', fn); ex.appendChild(b); return b; };
+  if (id === 'fein' || id === 'neozed') add('Kurzschluss!', () => { st.short = true; power(true); }, 'danger');
+  if (id === 'ls') { add('Kurzschluss 1 kA', () => { st.short = 1000; if (!st.trip) power(true); }, 'danger'); add('Kurzschluss 10 kA', () => { st.short = 10000; if (!st.trip) power(true); }, 'danger'); }
+  if (id === 'rcd') add('Prüftaste T', () => { if (!st.on) power(true); st.test = 0.2; });
+  if (comp.resettable) add('Wieder einschalten', () => {
+    if (st.dead) return;
+    if (st.th > 0.7) { $('#hint').innerHTML = '<b>Geht noch nicht:</b> Das Bimetall ist noch warm und lässt das Schaltschloss nicht einrasten. Kurz warten.'; return; }
+    st.trip = false; st.short = 0; st.test = 0; st.diag = null; st.time = 0; SND.click(); power(true);
+  });
+  updPower(); $('#diag').hidden = true; lastDiag = null;
+}
+function power(on) { if (st.dead && on) return; st.on = on; if (on) st.time = 0; C[cur].onPower && C[cur].onPower(st, on); updPower(); }
+function updPower() { const b = $('#power'); b.textContent = st.on ? 'Ausschalten' : 'Einschalten'; b.classList.toggle('on', st.on); b.disabled = st.dead; }
+
+/* Bauteilauswahl aufbauen */
+(() => {
+  const groups = {}; Object.entries(C).forEach(([id, c]) => (groups[c.group] = groups[c.group] || []).push([id, c]));
+  const pk = $('#picker');
+  Object.entries(groups).forEach(([g, list]) => {
+    const d = document.createElement('div'); d.className = 'pgroup'; d.innerHTML = `<span>${g}</span>`;
+    list.forEach(([id, c]) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.id = id; b.textContent = c.btn; b.addEventListener('click', () => select(id)); d.appendChild(b); });
+    pk.appendChild(d);
+  });
+})();
+$('#power').addEventListener('click', () => power(!st.on));
+$('#fresh').addEventListener('click', () => select(cur, true));
+document.querySelectorAll('#speed button').forEach((b) => b.addEventListener('click', () => { speed = +b.dataset.v; document.querySelectorAll('#speed button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }));
+$('#snd').addEventListener('click', () => { SND.on = !SND.on; SND.init(); const b = $('#snd'); b.setAttribute('aria-pressed', String(SND.on)); b.textContent = SND.on ? '🔊 Ton an' : '🔇 Ton aus'; if (!SND.on) SND.hiss(0); });
+
+/* =================== Zeichnen =================== */
+function drawSupply(c, comp) {
+  const x = 18, y = 120, w = 150, h = 170, dc = comp.src === 'dc';
+  c.save(); rr(c, x, y, w, h, 10); const g = c.createLinearGradient(0, y, 0, y + h); g.addColorStop(0, '#3b4a55'); g.addColorStop(1, '#25323b'); c.fillStyle = g; c.fill(); c.strokeStyle = '#5d6f7c'; c.lineWidth = 1.5; c.stroke();
+  txt(c, dc ? 'Labornetzgerät' : comp.src === 'iq' ? 'Prüfstromquelle' : 'Netz 230 V~', x + w / 2, y + 16, { s: 12, c: '#c3d2dc' });
+  // Anzeigen
+  rr(c, x + 12, y + 30, w - 24, 34, 4); c.fillStyle = '#0d1a10'; c.fill(); rr(c, x + 12, y + 70, w - 24, 34, 4); c.fill();
+  const segCol = st.on ? '#6dff8a' : '#2a5a33';
+  txt(c, (comp.src === 'iq' ? '' : '') + fmtU(st.U), x + w - 18, y + 48, { s: 17, mono: true, c: segCol, a: 'right' });
+  txt(c, fmtI(st.I), x + w - 18, y + 88, { s: 17, mono: true, c: st.on && st.I >= 2.99 && dc ? '#ff6f62' : segCol, a: 'right' });
+  txt(c, 'U', x + 22, y + 48, { s: 11, c: '#6a8' }); txt(c, 'I', x + 22, y + 88, { s: 11, c: '#6a8' });
+  if (dc) txt(c, 'max. 3 A (Strombegrenzung)', x + w / 2, y + 118, { s: 10, c: '#9ab' });
+  // Schalter-LED
+  c.beginPath(); c.arc(x + 26, y + 142, 7, 0, TAU); c.fillStyle = st.on ? '#ff5a4a' : '#552'; c.fill(); if (st.on) glow(c, x + 26, y + 142, 18, '255,90,70', 0.6);
+  txt(c, st.on ? 'EIN' : 'AUS', x + 44, y + 142, { s: 12, c: '#c3d2dc', a: 'left' });
+  // Buchsen
+  c.beginPath(); c.arc(x + 100, y + 150, 8, 0, TAU); c.fillStyle = '#d33'; c.fill(); c.beginPath(); c.arc(x + 128, y + 150, 8, 0, TAU); c.fillStyle = '#222'; c.fill(); c.strokeStyle = '#888'; c.stroke();
+  txt(c, dc ? '+' : 'L', x + 100, y + 132, { s: 13, c: '#f99', w: 700 }); txt(c, dc ? '−' : 'N', x + 128, y + 132, { s: 13, c: '#9cf', w: 700 });
+  c.restore();
+  return [[x + 100, y + 150], [x + 128, y + 150]];
+}
+function wirePath(a, b, dip = 70) { return [a, [a[0], Math.max(a[1], b[1]) + dip], [b[0], Math.max(a[1], b[1]) + dip], b]; }
+function bez(c, P) { c.beginPath(); c.moveTo(...P[0]); c.bezierCurveTo(...P[1], ...P[2], ...P[3]); }
+function bezPt(P, t) { const u = 1 - t; return [0, 1].map((i) => u * u * u * P[0][i] + 3 * u * u * t * P[1][i] + 3 * u * t * t * P[2][i] + t * t * t * P[3][i]); }
+function drawWires(c, comp, terms) {
+  let L = comp.leads(st); if (comp.wiresSwap && comp.wiresSwap(st)) L = [L[1], L[0]];
+  const cols = ['#d33', '#222'], paths = [wirePath(terms[0], L[0], 40), wirePath(terms[1], L[1], 60)], t = performance.now() / 1000;
+  const Rw = comp.wireR ? comp.wireR(st) : null;
+  paths.forEach((P, i) => {
+    c.save(); c.lineCap = 'round'; c.strokeStyle = '#0a0f13'; c.lineWidth = 7; bez(c, P); c.stroke(); c.strokeStyle = cols[i]; c.lineWidth = 5; bez(c, P); c.stroke();
+    if (st.I > 1e-4 && !REDUCED) { c.setLineDash([2, 14]); c.lineDashOffset = -t * (20 + 40 * clamp(Math.log10(st.I * 1000 + 1) / 4)) * (i ? -1 : 1); c.strokeStyle = 'rgba(255,220,80,.85)'; c.lineWidth = 3; bez(c, P); c.stroke(); }
+    c.restore();
+  });
+  if (Rw != null) { const p = bezPt(paths[0], 0.5); resistorBox(c, p[0], p[1], (cur === 'trans' ? 'R_C ' : 'R_V ') + fmtR(Rw), cur === 'led' ? clamp((st.I * st.I * Rw - 0.25) / 1.5) : 0); }
+}
+function draw() {
+  const c = ctx, comp = C[cur];
+  c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cv.width, cv.height);
+  const sx = FX.shake ? rnd(-FX.shake, FX.shake) : 0, sy = FX.shake ? rnd(-FX.shake, FX.shake) : 0;
+  c.setTransform(DPR * SC, 0, 0, DPR * SC, DPR * (OX + sx * SC), DPR * (OY + sy * SC));
+  // Raum
+  const bg = c.createLinearGradient(0, 0, 0, VH); bg.addColorStop(0, '#16222b'); bg.addColorStop(1, '#0f1820'); c.fillStyle = bg; c.fillRect(-40, -40, VW + 80, VH + 80);
+  c.strokeStyle = 'rgba(255,255,255,.035)'; c.lineWidth = 1; for (let x = 0; x < VW; x += 32) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, FLOOR); c.stroke(); } for (let y = 0; y < FLOOR; y += 32) { c.beginPath(); c.moveTo(0, y); c.lineTo(VW, y); c.stroke(); }
+  const tb = c.createLinearGradient(0, FLOOR, 0, VH); tb.addColorStop(0, '#3a4a40'); tb.addColorStop(1, '#25302a'); c.fillStyle = tb; c.fillRect(-40, FLOOR, VW + 80, VH - FLOOR + 40);
+  c.fillStyle = 'rgba(255,255,255,.08)'; c.fillRect(-40, FLOOR, VW + 80, 2);
+  const terms = drawSupply(c, comp);
+  drawWires(c, comp, terms);
+  comp.draw(c, st);
+  flashes = flashes.filter((f) => (f.t -= 1 / 60) > 0); flashes.forEach((f) => glow(c, f.x, f.y, 30, '170,200,255', f.t * 7));
+  drawFX(c);
+  // Infozeile
+  txt(c, comp.name, VW - 14, 66, { s: 14, a: 'right', c: '#DDE7EE' });
+  if (speed > 1) txt(c, 'Zeitraffer ' + speed + '×', VW - 14, 86, { s: 12, a: 'right', c: '#F2A659' });
+  if (FX.flash > 0) { c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = `rgba(${FX.flashCol},${Math.min(0.9, FX.flash)})`; c.fillRect(0, 0, cv.width, cv.height); }
+}
+function fit() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.max(1, Math.round(r.width * DPR)); cv.height = Math.max(1, Math.round(r.height * DPR));
+  SC = Math.min(r.width / VW, r.height / VH); OX = (r.width - VW * SC) / 2; OY = (r.height - VH * SC) / 2;
+}
+
+/* =================== Anzeige =================== */
+let lastDiag = null, uiT = 0;
+function ui() {
+  const comp = C[cur];
+  $('#mU').textContent = fmtU(st.U); $('#mI').textContent = fmtI(st.I); $('#mP').textContent = comp.src === 'ac' ? 'Q = ' + nf(st.U * st.I, 1) + ' var' : fmtP(st.P);
+  const [l, v] = comp.lim(st); $('#mXl').innerHTML = subs(l); $('#mX').textContent = v;
+  if (comp.bar) {
+    const m = st.m != null ? st.m : st.th; $('#tLbl').textContent = cur === 'ls' ? 'Bimetall-Erwärmung' : 'Schmelzintegral (Fortschritt bis zum Abschmelzen)';
+    $('#tVal').textContent = nf(clamp(m) * 100, 0) + ' %'; $('#tFill').style.width = clamp(m) * 100 + '%'; $('#tMark').style.left = '99%'; $('#tNote').textContent = '';
+  } else if (cur === 'rcd') {
+    const k = clamp((st.If || 0) / st.p.In / 1.4); $('#tLbl').innerHTML = subs('Fehlerstrom im Vergleich zu I_Δn'); $('#tVal').textContent = nf(st.If || 0, 0) + ' mA';
+    $('#tFill').style.width = k * 100 + '%'; $('#tMark').style.left = (0.75 / 1.4 * 100) + '%'; $('#tNote').innerHTML = subs('Strich = Auslöseschwelle dieses Geräts (75 % von I_Δn)');
+  } else {
+    const unit = comp.tUnit || '°C', lo = unit === 'K' ? 300 : 25; $('#tLbl').textContent = comp.tLbl || 'Temperatur (Bauteil bzw. Sperrschicht)';
+    $('#tVal').textContent = nf(st.T, 0) + ' ' + unit; $('#tFill').style.width = clamp((st.T - lo) / (comp.Tmax - lo)) * 100 + '%'; $('#tMark').style.left = clamp((comp.Tlim - lo) / (comp.Tmax - lo)) * 100 + '%';
+    $('#tNote').textContent = 'Strich = zulässige Grenze (' + nf(comp.Tlim, 0) + ' ' + unit + ')';
+  }
+  const [lvl, t] = comp.status(st); const s = $('#status'); s.className = 'status ' + lvl; s.textContent = t;
+  $('#clock').textContent = 't = ' + fmtT(st.time) + (speed > 1 ? ' (Zeitraffer ' + speed + '×)' : '');
+  $('#hint').innerHTML = comp.hint(st);
+  if (st.diag !== lastDiag) { lastDiag = st.diag; const d = $('#diag'); if (st.diag) { d.hidden = false; d.className = 'diag' + (st.diag.trip ? ' trip' : ''); d.innerHTML = `<h3>${st.diag.t}</h3><p>${st.diag.x}</p>`; } else d.hidden = true; }
+  updPower();
+}
+
+/* =================== Schleife =================== */
+let last = 0;
+function loop(ts) {
+  const rdt = last ? Math.min(0.05, (ts - last) / 1000) : 0; last = ts;
+  const dt = rdt * speed; st.hiss = 0;
+  if (st.on) st.time += dt;
+  C[cur].step(st, dt, rdt);
+  SND.hiss(st.hiss || 0);
+  stepFX(rdt);
+  draw();
+  uiT -= rdt; if (uiT <= 0) { ui(); uiT = 0.12; }
+  requestAnimationFrame(loop);
+}
+cv = $('#stage'); ctx = cv.getContext('2d');
+try { new ResizeObserver(fit).observe(cv); } catch (e) { addEventListener('resize', fit); }
+fit(); select('wid'); requestAnimationFrame(loop);
+document.addEventListener('visibilitychange', () => { if (document.hidden) SND.hiss(0); });
+</script>
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span><a href="hinweise.html">Hinweise und Haftung · Nutzung auf eigene Gefahr</a></footer>
+<script src="hfs-app.js"></script>
+</body>
+</html>

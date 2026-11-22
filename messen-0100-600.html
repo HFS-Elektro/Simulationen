@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="messen-0100-600|sim|95b1383dd1d7">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Prüfen nach DIN VDE 0100">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Prüfen nach DIN VDE 0100-600</title>
+<link rel="stylesheet" href="fonts/barlow.css">
+<link rel="stylesheet" href="fonts/ibmplexmono.css">
+<link rel="stylesheet" href="fonts/barlowsemicondensed.css">
+<style>
+:root {
+  --bg: #EDF2F5; --surface: #FFFFFF; --surface2: #F5F8FA; --ink: #13202A; --muted: #586B78; --line: #D2DDE4; --grid: #E3EAEF;
+  --accent: #0089C4; --accent-ink: #FFFFFF; --warn: #C8372D; --ok: #2E8B4A; --q: #D9822B;
+  --L: #8B5A2B; --N: #1E88E5; --pe1: #2E9B48; --pe2: #E8B90F; --probe: #E8721C; --dev: #DDE4E9;
+  --f-head: "Barlow Semi Condensed", "Arial Narrow", "Segoe UI", sans-serif; --f-body: "Barlow", "Segoe UI", system-ui, sans-serif; --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3; --line: #2A3B47; --grid: #1F2E38;
+  --accent: #29B6F0; --accent-ink: #062030; --warn: #FF6F62; --ok: #5BD488; --q: #F2A659; --L: #C98E55; --N: #4FA3FF; --dev: #2A3A46; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3; --line: #2A3B47; --grid: #1F2E38;
+  --accent: #29B6F0; --accent-ink: #062030; --warn: #FF6F62; --ok: #5BD488; --q: #F2A659; --L: #C98E55; --N: #4FA3FF; --dev: #2A3A46; color-scheme: dark }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--f-body); padding: 18px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left)) }
+.wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px }
+h1, h2, h3 { font-family: var(--f-head); margin: 0; line-height: 1.15; text-wrap: balance }
+h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 700 } h2 { font-size: 1.15rem; font-weight: 600 } h3 { font-size: 1rem }
+p { margin: 0 }
+.top { display: flex; flex-direction: column; gap: 6px; border-bottom: 2px solid var(--accent); padding-bottom: 12px }
+.tags { font: 600 .74rem/1 var(--f-head); text-transform: uppercase; letter-spacing: .09em; color: var(--muted) } .tags b { color: var(--accent) }
+.lead { color: var(--muted); max-width: 80ch }
+.lab { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(300px, 1fr); gap: 16px; align-items: start }
+@media (max-width: 920px) { .lab { grid-template-columns: minmax(0, 1fr) } }
+@media (min-width: 921px) { .lab > .col:last-child { position: sticky; top: 12px } }
+.col { display: flex; flex-direction: column; gap: 16px; min-width: 0 }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.panel > header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+.panel > header small { color: var(--muted); font-size: .8rem }
+.stage { background: var(--surface2); border-radius: 8px; padding: 6px; overflow-x: auto }
+svg.gfx { display: block; width: 100%; height: auto }
+#inst { min-width: 600px }
+svg.gfx text { font: 500 12px var(--f-body); fill: var(--ink) }
+svg .t-m { fill: var(--muted); font-size: 11px } svg .t-b { font-weight: 700; font-family: var(--f-head); font-size: 13px; letter-spacing: .03em } svg .t-mono { font-family: var(--f-mono); font-size: 12px }
+svg .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5 }
+svg .w { fill: none; stroke-width: 3; stroke-linejoin: round }
+svg .probe { fill: none; stroke: var(--probe); stroke-width: 4; stroke-dasharray: 8 5; stroke-linecap: round; animation: pr 1s linear infinite }
+@keyframes pr { to { stroke-dashoffset: -26 } }
+@media (prefers-reduced-motion: reduce) { svg .probe { animation: none } }
+.seg { display: flex; flex-wrap: wrap; gap: 6px }
+.ctl { display: flex; flex-direction: column; gap: 4px }
+.ctl .lbl { display: block; font-size: .88rem; color: var(--muted) }
+button { font: 600 .9rem var(--f-head); letter-spacing: .02em; border-radius: 8px; border: 1px solid var(--line); background: var(--surface2); color: var(--ink); padding: 7px 12px; cursor: pointer; min-height: 38px }
+button:hover { border-color: var(--accent) } button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+button:disabled { opacity: .4; cursor: not-allowed }
+button.big { font-size: 1.02rem; min-height: 46px; padding: 10px 16px }
+button.test { background: var(--probe); border-color: var(--probe); color: #fff; font-size: 1.1rem; min-height: 50px; padding: 10px 22px }
+button.main-on { background: var(--ok); border-color: var(--ok); color: #fff } button.main-off { background: var(--warn); border-color: var(--warn); color: #fff }
+.msg { font-size: .92rem; padding: 9px 12px; border-radius: 8px; background: var(--surface2); border-left: 4px solid var(--accent) }
+.msg.warn { border-left-color: var(--warn); background: color-mix(in srgb, var(--warn) 8%, var(--surface)) }
+.msg.ok { border-left-color: var(--ok) }
+.steps { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 4px; font-size: .92rem }
+.steps li.done { color: var(--muted); text-decoration: line-through }
+.tw { overflow-x: auto }
+table.prot { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 820px }
+table.prot th, table.prot td { padding: 6px 7px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle }
+table.prot th { color: var(--muted); font-weight: 600; font-size: .8rem }
+table.prot td.v { font-family: var(--f-mono); white-space: nowrap }
+table.prot td.miss { color: var(--muted) }
+table.prot tr.lim td { font-size: .78rem; color: var(--muted); background: var(--surface2) }
+select { font: 500 .9rem var(--f-body); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface2); color: var(--ink) }
+.result { display: flex; flex-direction: column; gap: 8px }
+.result .item { padding: 9px 12px; border-radius: 8px; border-left: 4px solid var(--ok); background: color-mix(in srgb, var(--ok) 7%, var(--surface)); font-size: .92rem }
+.result .item.bad { border-left-color: var(--warn); background: color-mix(in srgb, var(--warn) 7%, var(--surface)) }
+.result .score { font: 700 1.3rem var(--f-head) }
+.tasks ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; max-width: 85ch }
+.tasks details { border-top: 1px solid var(--line); padding-top: 8px } .tasks summary { cursor: pointer; color: var(--accent); font-weight: 600 } .tasks details p { margin-top: 6px; color: var(--muted) }
+footer.foot { font-size: .8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 16px; border-top: 1px solid var(--line); padding-top: 10px }
+[hidden] { display: none !important }
+</style>
+<link rel="stylesheet" href="hfs-app.css">
+</head>
+<body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Prüfen nach DIN VDE 0100-600</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="tags"><span><b>Simulation</b> · Erstprüfung nach DIN VDE 0100-600 · Installationstester</span></div>
+    <h1>Prüfen und Messen nach DIN VDE 0100-600</h1>
+    <p class="lead">Eine neue Unterverteilung mit drei Stromkreisen soll in Betrieb gehen. Prüfe sie mit dem Installationstester in der richtigen Reihenfolge, trage die Messwerte ins Prüfprotokoll ein und entscheide für jeden Stromkreis: in Ordnung oder nicht? In der Anlage können Fehler versteckt sein. Mit „Neue Anlage“ bekommst du jedes Mal eine andere.</p>
+  </header>
+
+  <div class="lab">
+    <div class="col">
+      <section class="panel">
+        <header><h2>Unterverteilung und Stromkreise</h2><small id="instTxt">orange = Anschluss der Messleitungen</small></header>
+        <div class="stage"><svg id="inst" class="gfx" viewBox="0 0 720 372" role="img" aria-label="Unterverteilung mit Hauptschalter, RCD, drei Leitungsschutzschaltern und den Verbrauchern"></svg></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+          <button type="button" class="big" id="main">Hauptschalter: AUS</button>
+          <button type="button" class="big" id="rcdOn" hidden>RCD wieder einschalten</button>
+          <button type="button" class="big" id="neu" style="margin-left:auto">Neue Anlage</button>
+        </div>
+        <p class="msg" id="msg" aria-live="polite">Die Anlage ist freigeschaltet. Beginne mit der Prüfung des Schutzleiters.</p>
+      </section>
+
+      <section class="panel">
+        <header><h2>Prüfprotokoll</h2><small>Werte werden beim Messen eingetragen – die Bewertung machst du</small></header>
+        <div class="tw"><table class="prot">
+          <thead><tr><th>Stromkreis</th><th>R<sub>PE</sub></th><th>R<sub>ISO</sub> L–PE</th><th>R<sub>ISO</sub> N–PE</th><th>Z<sub>s</sub> (L–PE)</th><th>I<sub>k</sub></th><th>RCD I<sub>Δ</sub></th><th>RCD t<sub>A</sub> (1 · I<sub>Δn</sub>)</th><th>Drehfeld</th><th>Bewertung</th></tr></thead>
+          <tbody id="prot"></tbody>
+        </table></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><button type="button" class="big" id="check">Protokoll abgeben und prüfen</button><span class="note" style="font-size:.85rem;color:var(--muted)">Zeigt, welche Fehler in der Anlage steckten.</span></div>
+        <div class="result" id="result" hidden aria-live="polite"></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="panel">
+        <header><h2>Installationstester</h2><small id="tName"></small></header>
+        <svg id="tester" class="gfx" viewBox="0 0 320 250" role="img" aria-label="Anzeige des Installationstesters"></svg>
+        <div class="ctl"><span class="lbl">1 · Messfunktion (Drehschalter)</span>
+          <div class="seg" id="fn">
+            <button type="button" data-v="rlo" aria-pressed="true">R<sub>LO</sub> Schutzleiter</button>
+            <button type="button" data-v="iso">R<sub>ISO</sub> Isolation</button>
+            <button type="button" data-v="zs">Z<sub>s</sub> Schleife</button>
+            <button type="button" data-v="rcd">RCD</button>
+            <button type="button" data-v="dreh">Drehfeld</button>
+          </div></div>
+        <div class="ctl"><span class="lbl">2 · Stromkreis</span><div class="seg" id="kreis"><button type="button" data-v="0" aria-pressed="true">F1 Küche</button><button type="button" data-v="1">F2 Licht</button><button type="button" data-v="2">F3 CEE</button></div></div>
+        <div class="ctl"><span class="lbl">3 · Messpunkte / Einstellung</span><div class="seg" id="pt"></div></div>
+        <button type="button" class="test" id="test">TEST</button>
+        <p class="msg" id="hint"></p>
+      </section>
+      <section class="panel">
+        <header><h2>Reihenfolge der Prüfung</h2><small>DIN VDE 0100-600</small></header>
+        <ol class="steps" id="steps">
+          <li>Besichtigen (hier erledigt)</li>
+          <li><b>Freigeschaltet:</b> Durchgängigkeit der Schutzleiter (R<sub>LO</sub>, Prüfstrom ≥ 200 mA)</li>
+          <li><b>Freigeschaltet:</b> Isolationswiderstand (500 V DC, Grenzwert ≥ 1 MΩ)</li>
+          <li><b>Unter Spannung:</b> Schleifenimpedanz Z<sub>s</sub> (Messwert ≤ ⅔ · U<sub>0</sub> / I<sub>a</sub>)</li>
+          <li><b>Unter Spannung:</b> RCD (Auslösestrom ≤ I<sub>Δn</sub>, t<sub>A</sub> ≤ 300 ms, U<sub>B</sub> ≤ 50 V)</li>
+          <li><b>Unter Spannung:</b> Drehfeld an Drehstromsteckdosen (rechts)</li>
+          <li>Funktionsprüfung, Protokoll</li>
+        </ol>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel tasks">
+    <h2>Arbeitsaufträge</h2>
+    <ol>
+      <li>Warum wird der Schutzleiter zuerst und im freigeschalteten Zustand geprüft, bevor man die Schleifenimpedanz misst?</li>
+      <li>Berechne den erwarteten Schutzleiterwiderstand für F1 (1,5 mm², 22 m, κ = 56 m/(Ω·mm²), zusätzlich ca. 0,05 Ω für Klemmen und Messleitungen). Welcher Messwert wäre auffällig?</li>
+      <li>Berechne den höchstzulässigen Messwert Z<sub>s</sub> für F1 (B16) und F2 (B10). Warum wird mit ⅔ gerechnet?</li>
+      <li>Welche drei Werte nimmst du bei der RCD-Prüfung auf und welche Grenzwerte gelten für einen RCD 30 mA (allgemeiner Typ)?</li>
+      <li>Warum muss man vor der Isolationsmessung empfindliche Verbraucher abklemmen und alle Schalter einschalten?</li>
+    </ol>
+    <details><summary>Lösungen anzeigen</summary>
+      <p>1. Bei unterbrochenem Schutzleiter würde bei der Z<sub>s</sub>- oder RCD-Messung Spannung auf berührbare Gehäuse gelangen (der Tester schickt einen Prüfstrom über den PE). Deshalb wird zuerst ohne Netzspannung mit kleiner Prüfspannung und mindestens 200 mA nachgewiesen, dass der PE durchgehend und niederohmig ist.
+      2. R = l / (κ · A) = 22 m / (56 · 1,5 mm²) ≈ 0,26 Ω, mit Klemmen etwa 0,31 Ω. Auffällig wären deutlich größere Werte (z. B. über 0,5 Ω): Hinweis auf eine lose Klemme oder einen falschen Querschnitt. „OL“ bedeutet: Schutzleiter unterbrochen.
+      3. B16: I<sub>a</sub> = 5 · 16 A = 80 A → ⅔ · 230 V / 80 A ≈ 1,92 Ω. B10: I<sub>a</sub> = 50 A → ⅔ · 230 V / 50 A ≈ 3,07 Ω. Die Messung erfolgt bei kalten Leitern. Im Kurzschluss erwärmen sie sich, ihr Widerstand steigt. Dazu kommen Messabweichungen. Der Faktor ⅔ ist die Reserve dafür.
+      4. Auslösefehlerstrom I<sub>Δ</sub> (Rampe): zwischen 0,5 · I<sub>Δn</sub> und I<sub>Δn</sub>, also 15 bis 30 mA. Auslösezeit t<sub>A</sub> bei 1 · I<sub>Δn</sub>: höchstens 300 ms. Berührungsspannung U<sub>B</sub> bei I<sub>Δn</sub>: höchstens 50 V.
+      5. Die Prüfspannung von 500 V DC kann Elektronik (Netzteile, LED-Treiber, Dimmer) zerstören. Angeschlossene Verbraucher verfälschen außerdem die Messung zwischen den aktiven Leitern. Alle Schalter müssen eingeschaltet sein, damit auch die Leitungsabschnitte hinter den Schaltern mitgemessen werden.</p>
+    </details>
+  </section>
+
+  <footer class="foot"><span>Hans-Freudenberg-Schule Weinheim</span><span>Pablo Disson</span><span>Vereinfachte Lernsimulation – im echten Betrieb gelten die fünf Sicherheitsregeln, die Bedienungsanleitung des Messgeräts und DIN VDE 0100-600 / DIN VDE 0105-100.</span></footer>
+</div>
+
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+function nf(v, d = 2) { if (!isFinite(v)) return '–'; return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false }); }
+function sub(a, b) { return `${a}<tspan dy="3" font-size="75%">${b}</tspan><tspan dy="-3"></tspan>`; }
+function T(x, y, t, cls = '', anchor = 'middle', extra = '') { return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}" ${extra}>${t}</text>`; }
+const ZV = 0.35, K = 56;
+const CIRC = [
+  { name: 'F1 Steckdosen Küche', short: 'F1 Küche', ls: 'B16', In: 16, A: 1.5, l: 22, load: 'dose' },
+  { name: 'F2 Beleuchtung Wohnzimmer', short: 'F2 Licht', ls: 'B10', In: 10, A: 1.5, l: 15, load: 'lampe' },
+  { name: 'F3 CEE-Steckdose Werkstatt 400 V', short: 'F3 CEE', ls: 'B16 3p', In: 16, A: 2.5, l: 30, load: 'cee' }];
+const zsMax = (c) => 2 / 3 * 230 / (5 * c.In);
+
+/* ---------- Anlage mit versteckten Fehlern ---------- */
+let A;   // Anlage (Wahrheit)
+const FEHLER = {
+  pe_open: { t: 'Schutzleiter unterbrochen', x: 'R<sub>LO</sub> zeigte „OL“: Der PE ist zur Steckdose hin unterbrochen (z. B. Ader nicht in der Klemme). Ohne PE gibt es keine Fehlerschleife, kein Abschalten im Fehlerfall – Lebensgefahr. Unbedingt vor dem Einschalten finden!' },
+  pe_loose: { t: 'Lose Klemmstelle im Schutzleiter', x: 'R<sub>PE</sub> war deutlich größer als nach l / (κ · A) zu erwarten. Ursache ist eine lose oder oxidierte Klemme. Sie kann sich im Fehlerfall erhitzen und erhöht Z<sub>s</sub>.' },
+  iso: { t: 'Isolationsfehler L–PE', x: 'R<sub>ISO</sub> zwischen L und PE lag unter 1 MΩ – z. B. Feuchtigkeit in einer Dose oder eine beim Einziehen beschädigte Ader.' },
+  iso_n: { t: 'Isolationsfehler N–PE', x: 'R<sub>ISO</sub> zwischen N und PE lag unter 1 MΩ – z. B. N und PE in einer Dose vertauscht oder gequetscht. Im Betrieb würde ein Teil des Stroms über den PE fließen und der RCD auslösen.' },
+  zs_high: { t: 'Schleifenimpedanz zu hoch', x: 'Z<sub>s</sub> lag über ⅔ · U<sub>0</sub> / I<sub>a</sub>. Die Leitung ist zu lang für den Querschnitt. Abhilfe: größerer Querschnitt, kürzerer Leitungsweg oder Schutzorgan mit kleinerem Auslösestrom. Achtung: Der Wert lag unter U<sub>0</sub> / I<sub>a</sub> – ohne ⅔-Regel hättest du den Fehler übersehen!' },
+  rcd_slow: { t: 'RCD löst zu langsam aus', x: 'Die Auslösezeit bei 1 · I<sub>Δn</sub> lag über 300 ms. Der RCD ist defekt (z. B. verharzte Mechanik) und muss getauscht werden.' },
+  rcd_high: { t: 'RCD löst erst über 30 mA aus', x: 'Der gemessene Auslösefehlerstrom lag über I<sub>Δn</sub> = 30 mA. Bei 1 · I<sub>Δn</sub> löste er gar nicht aus. Der RCD erfüllt den Zusatzschutz nicht und muss getauscht werden.' },
+  dreh: { t: 'Linksdrehfeld an der CEE-Steckdose', x: 'Zwei Außenleiter sind vertauscht. Ein Drehstrommotor würde falsch herum laufen. Abhilfe: zwei Außenleiter tauschen (nicht den N!).' }
+};
+function neueAnlage() {
+  A = { circ: CIRC.map((c) => ({ rpe: c.l / (K * c.A) + 0.05, isoL: rnd(180, 999), isoN: rnd(180, 999), zs: ZV + 2 * c.l / (K * c.A) + 0.02, dreh: 'rechts', faults: [] })), rcdI: rnd(17, 26), rcdT: rnd(16, 34), rcdF: [] };
+  const n = Math.random() < 0.12 ? 0 : Math.random() < 0.55 ? 1 : 2, pool = ['pe_open', 'pe_loose', 'iso', 'iso_n', 'zs_high', 'rcd_slow', 'rcd_high', 'dreh'];
+  const used = new Set();
+  for (let k = 0; k < n; k++) {
+    let f = pick(pool); while (used.has(f) || (f.startsWith('rcd') && [...used].some((u) => u.startsWith('rcd')))) f = pick(pool); used.add(f);
+    if (f === 'rcd_slow') { A.rcdT = rnd(340, 520); A.rcdF.push(f); continue; }
+    if (f === 'rcd_high') { A.rcdI = rnd(34, 44); A.rcdT = Infinity; A.rcdF.push(f); continue; }
+    const ci = f === 'dreh' ? 2 : Math.floor(Math.random() * 3), c = A.circ[ci], cc = CIRC[ci];
+    if (c.faults.length) { k--; used.delete(f); if (used.size > 6) break; continue; }
+    c.faults.push(f);
+    if (f === 'pe_open') { c.rpe = Infinity; c.zs = Infinity; }
+    if (f === 'pe_loose') { const d = rnd(1.1, 2.4); c.rpe += d; c.zs += d; }
+    if (f === 'iso') c.isoL = rnd(0.12, 0.7);
+    if (f === 'iso_n') c.isoN = rnd(0.01, 0.6);
+    if (f === 'zs_high') { c.zs = zsMax(cc) * rnd(1.12, 1.35); c.rpe = (c.zs - ZV) / 2 + 0.05; }
+    if (f === 'dreh') c.dreh = 'links';
+  }
+  S = { main: false, rcdTripped: false, fn: 'rlo', ci: 0, pt: 'pe', disp: null, busy: 0, log: [], prot: CIRC.map(() => ({})), bew: CIRC.map(() => ''), rcdProt: {} };
+  press('fn', 'rlo'); press('kreis', '0'); $('#result').hidden = true; $('#check').disabled = false;
+  points(); renderProt(); msg('Neue Anlage. Sie ist freigeschaltet. Beginne mit der Prüfung des Schutzleiters (R<sub>LO</sub>).', ''); draw();
+}
+let S;
+
+/* ---------- Bedienung ---------- */
+function press(id, v) { document.querySelectorAll('#' + id + ' button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.v === String(v)))); }
+function seg(id, cb) { const box = document.getElementById(id); box.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || b.disabled) return; press(id, b.dataset.v); cb(b.dataset.v); }); }
+const PTS = {
+  rlo: [['pe', 'PE-Schiene ↔ Schutzkontakt']],
+  iso: [['lpe', 'L – PE'], ['npe', 'N – PE']],
+  zs: [['lpe', 'L – PE an der Steckdose']],
+  rcd: [['ramp', 'Auslösestrom (Rampe)'], ['t1', 'Auslösezeit bei 1 · I_Δn']],
+  dreh: [['l123', 'L1 – L2 – L3']]
+};
+function points() {
+  const box = $('#pt'), list = PTS[S.fn]; if (!list.some(([v]) => v === S.pt)) S.pt = list[0][0];
+  box.innerHTML = list.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === S.pt}">${l.replace(/_([^\s]+)/, '<sub>$1</sub>')}</button>`).join('');
+  document.querySelector('#fn button[data-v="dreh"]').disabled = S.ci !== 2;
+  if (S.fn === 'dreh' && S.ci !== 2) { S.fn = 'rlo'; press('fn', 'rlo'); return points(); }
+  hint();
+}
+seg('fn', (v) => { S.fn = v; S.disp = null; points(); draw(); });
+seg('kreis', (v) => { S.ci = +v; S.disp = null; points(); draw(); });
+seg('pt', (v) => { S.pt = v; S.disp = null; hint(); draw(); });
+function hint() {
+  const H = { rlo: 'Freigeschaltet messen. Prüfstrom ≥ 200 mA. Erwartung: R ≈ l / (κ · A) + Übergangswiderstände.', iso: 'Freigeschaltet messen, Messspannung 500 V DC. Grenzwert ≥ 1 MΩ. Empfindliche Verbraucher vorher abklemmen.',
+    zs: 'Unter Spannung messen. Grenzwert für den Messwert: ⅔ · U<sub>0</sub> / I<sub>a</sub>.', rcd: 'Unter Spannung an einer Steckdose des Stromkreises. Grenzwerte: I<sub>Δ</sub> 15–30 mA, t<sub>A</sub> ≤ 300 ms, U<sub>B</sub> ≤ 50 V.', dreh: 'Unter Spannung an der CEE-Steckdose. Gefordert: Rechtsdrehfeld.' };
+  const c = CIRC[S.ci];
+  $('#hint').innerHTML = `<b>${c.name}</b>: ${c.ls}, NYM-J ${nf(c.A, 1)} mm², ${c.l} m.<br>` + H[S.fn];
+}
+function msg(t, cls) { const m = $('#msg'); m.className = 'msg ' + (cls || ''); m.innerHTML = t; }
+$('#main').addEventListener('click', () => {
+  S.main = !S.main;
+  if (S.main) {
+    const pe = A.circ.findIndex((c) => c.faults.includes('pe_open'));
+    const loggedRlo = CIRC.every((_, i) => S.log.some((l) => l.ci === i && l.fn === 'rlo'));
+    msg(loggedRlo ? 'Anlage eingeschaltet. Jetzt kannst du Z<sub>s</sub>, RCD und Drehfeld messen.' : '<b>Achtung:</b> Du hast eingeschaltet, ohne in allen Stromkreisen den Schutzleiter zu prüfen. In echt kann dann ein Gehäuse unter Spannung stehen!', loggedRlo ? 'ok' : 'warn');
+  } else msg('Anlage freigeschaltet (gegen Wiedereinschalten sichern!). Jetzt R<sub>LO</sub> und R<sub>ISO</sub> messen.', '');
+  S.disp = null; draw();
+});
+$('#rcdOn').addEventListener('click', () => { S.rcdTripped = false; msg('RCD wieder eingeschaltet.', 'ok'); draw(); });
+$('#neu').addEventListener('click', neueAnlage);
+
+/* ---------- Messen ---------- */
+$('#test').addEventListener('click', () => {
+  if (S.busy > 0) return;
+  const live = S.main && !S.rcdTripped, c = A.circ[S.ci], cc = CIRC[S.ci], fn = S.fn;
+  const needOff = fn === 'rlo' || fn === 'iso';
+  if (needOff && S.main) { S.disp = { big: '230', unit: 'V', l1: 'FREMDSPANNUNG!', l2: 'Messung gesperrt', warn: true }; msg('<b>Fremdspannung erkannt:</b> R<sub>LO</sub> und R<sub>ISO</sub> nur im freigeschalteten Zustand messen! Der Tester sperrt die Messung, um sich und dich zu schützen.', 'warn'); draw(); return; }
+  if (!needOff && !live) { S.disp = { big: '0', unit: 'V', l1: S.rcdTripped ? 'RCD ausgelöst' : 'keine Netzspannung', l2: '', warn: true }; msg(S.rcdTripped ? 'Der RCD hat ausgelöst – erst wieder einschalten.' : 'Für diese Messung muss die Anlage eingeschaltet sein (Hauptschalter EIN).', 'warn'); draw(); return; }
+  S.busy = 1; S.disp = { big: '- - -', unit: '', l1: 'Messung läuft …', l2: '' }; draw();
+  setTimeout(() => { S.busy = 0; measure(fn, c, cc); draw(); renderProt(); }, fn === 'rcd' && S.pt === 'ramp' ? 1400 : 800);
+});
+function noise(v, p = 0.03) { return v * (1 + rnd(-p, p)); }
+function measure(fn, c, cc) {
+  const P = S.prot[S.ci]; S.log.push({ ci: S.ci, fn, main: S.main, n: S.log.length });
+  if (fn === 'rlo') { const v = noise(c.rpe); S.disp = { big: isFinite(v) ? nf(v, 2) : 'OL', unit: 'Ω', l1: 'R LO  I ≥ 200 mA', l2: isFinite(v) ? 'Erwartet ≈ ' + nf(cc.l / (K * cc.A) + 0.05, 2) + ' Ω' : 'Leitung offen!' }; P.rpe = v; msg(isFinite(v) ? 'Schutzleiterwiderstand gemessen und eingetragen.' : '<b>OL:</b> Kein Durchgang – der Schutzleiter ist unterbrochen!', isFinite(v) ? '' : 'warn'); }
+  if (fn === 'iso') { const raw = S.pt === 'lpe' ? c.isoL : c.isoN, v = noise(raw, 0.05), big = v > 999 ? '>999' : nf(v, v < 10 ? 2 : 0); S.disp = { big, unit: 'MΩ', l1: 'R ISO  ' + (S.pt === 'lpe' ? 'L–PE' : 'N–PE'), l2: 'U = 500 V DC' }; P[S.pt === 'lpe' ? 'isoL' : 'isoN'] = v; msg('Isolationswiderstand ' + (S.pt === 'lpe' ? 'L–PE' : 'N–PE') + ' eingetragen.', ''); }
+  if (fn === 'zs') { if (!isFinite(c.zs)) { S.disp = { big: '- - -', unit: 'Ω', l1: 'Z S  L–PE', l2: 'keine Schleife (PE?)', warn: true }; P.zs = Infinity; msg('<b>Keine Fehlerschleife messbar</b> – der Schutzleiter fehlt. Sofort freischalten!', 'warn'); }
+    else { const v = noise(c.zs, 0.02); S.disp = { big: nf(v, 2), unit: 'Ω', l1: 'Z S  L–PE', l2: 'I k = ' + nf(230 / v, 0) + ' A' }; P.zs = v; msg('Schleifenimpedanz eingetragen.', ''); } }
+  if (fn === 'rcd') {
+    const R = S.rcdProt;
+    if (!isFinite(c.zs)) { S.disp = { big: '>50', unit: 'V', l1: 'U B zu hoch', l2: 'Messung abgebrochen', warn: true }; msg('<b>Abbruch:</b> Der Tester misst vorab die Berührungsspannung. Ohne Schutzleiter wäre sie zu hoch – die Messung wird nicht durchgeführt.', 'warn'); return; }
+    const ub = 0.03 * c.zs * rnd(0.9, 1.1);
+    if (S.pt === 'ramp') { const v = noise(A.rcdI, 0.03); S.disp = { big: nf(v, 1), unit: 'mA', l1: 'I Δ (Rampe)', l2: 'U B = ' + nf(ub, 1) + ' V' }; R.i = v; R.ub = ub; S.rcdTripped = true; msg('RCD hat bei der Rampe ausgelöst. Wert eingetragen. Zum Weitermessen RCD wieder einschalten.', ''); }
+    else { const t = A.rcdT; if (!isFinite(t)) { S.disp = { big: '>500', unit: 'ms', l1: 't A  1 · I Δn', l2: 'keine Auslösung!', warn: true }; R.t = Infinity; msg('<b>Der RCD hat bei 30 mA nicht ausgelöst!</b>', 'warn'); }
+      else { const v = noise(t, 0.04); S.disp = { big: nf(v, 0), unit: 'ms', l1: 't A  1 · I Δn', l2: 'U B = ' + nf(ub, 1) + ' V' }; R.t = v; R.ub = ub; S.rcdTripped = true; msg('Auslösezeit eingetragen. RCD wieder einschalten.', ''); } }
+  }
+  if (fn === 'dreh') { S.disp = { big: c.dreh === 'rechts' ? 'R ↻' : 'L ↺', unit: '', l1: 'Drehfeld', l2: c.dreh === 'rechts' ? 'rechtsdrehend' : 'LINKSDREHEND' }; P.dreh = c.dreh; msg('Drehfeld eingetragen.', ''); }
+}
+
+/* ---------- Protokoll ---------- */
+function fv(v, unit, d = 2) { if (v === undefined) return null; if (!isFinite(v)) return unit === 'MΩ' ? '>999 MΩ' : unit === 'ms' ? 'keine Ausl.' : 'OL'; if (unit === 'MΩ' && v > 999) return '>999 MΩ'; return nf(v, d) + ' ' + unit; }
+function renderProt() {
+  const R = S.rcdProt;
+  let h = `<tr class="lim"><td>Grenzwert</td><td>plausibel zu l/(κ·A)</td><td>≥ 1 MΩ</td><td>≥ 1 MΩ</td><td>≤ ⅔ · U₀/Iₐ</td><td>–</td><td>15–30 mA</td><td>≤ 300 ms</td><td>rechts</td><td></td></tr>`;
+  CIRC.forEach((cc, i) => {
+    const P = S.prot[i], cell = (t) => t == null ? '<td class="v miss">–</td>' : `<td class="v">${t}</td>`;
+    h += `<tr><td><b>${cc.short}</b><br><small>${cc.ls} · ${nf(cc.A, 1)} mm² · ${cc.l} m · Z<sub>s,max</sub> ${nf(zsMax(cc), 2)} Ω</small></td>` + cell(fv(P.rpe, 'Ω')) + cell(fv(P.isoL, 'MΩ')) + cell(fv(P.isoN, 'MΩ')) + cell(fv(P.zs, 'Ω')) + cell(P.zs ? (isFinite(P.zs) ? nf(230 / P.zs, 0) + ' A' : '–') : null) +
+      (i === 0 ? `<td class="v" rowspan="3">${fv(R.i, 'mA', 1) || '–'}</td><td class="v" rowspan="3">${fv(R.t, 'ms', 0) || '–'}${R.ub != null ? '<br><small>U<sub>B</sub> ' + nf(R.ub, 1) + ' V</small>' : ''}</td>` : '') +
+      cell(i === 2 ? P.dreh || null : 'entfällt') + `<td><select data-i="${i}" aria-label="Bewertung ${cc.short}"><option value="">– wählen –</option><option value="io"${S.bew[i] === 'io' ? ' selected' : ''}>in Ordnung</option><option value="nio"${S.bew[i] === 'nio' ? ' selected' : ''}>nicht in Ordnung</option></select></td></tr>`;
+  });
+  h += `<tr><td><b>RCD 30 mA</b><br><small>gemeinsam für F1–F3</small></td><td colspan="8" class="miss" style="font-size:.85rem">Die RCD-Werte gelten für alle Stromkreise. Ist der RCD fehlerhaft, ist <b>jeder</b> Stromkreis nicht in Ordnung.</td><td></td></tr>`;
+  $('#prot').innerHTML = h;
+  document.querySelectorAll('#prot select').forEach((sel) => sel.addEventListener('change', () => (S.bew[+sel.dataset.i] = sel.value)));
+}
+$('#check').addEventListener('click', () => {
+  const out = []; let points = 0, max = 0;
+  const rcdBad = A.rcdF.length > 0;
+  CIRC.forEach((cc, i) => {
+    const c = A.circ[i], P = S.prot[i], need = ['rpe', 'isoL', 'isoN', 'zs'].concat(i === 2 ? ['dreh'] : []), names = { rpe: 'R<sub>PE</sub>', isoL: 'R<sub>ISO</sub> L–PE', isoN: 'R<sub>ISO</sub> N–PE', zs: 'Z<sub>s</sub>', dreh: 'Drehfeld' };
+    const missing = need.filter((k) => P[k] === undefined && !(k === 'zs' && c.faults.includes('pe_open') && P.rpe !== undefined));
+    const bad = c.faults.length > 0 || rcdBad, says = S.bew[i];
+    max += 2; const correct = says && (says === 'nio') === bad; if (correct) points += missing.length ? 1 : 2;
+    const order = S.log.find((l) => l.ci === i && (l.fn === 'zs' || l.fn === 'rcd')), rloFirst = S.log.find((l) => l.ci === i && l.fn === 'rlo');
+    const orderBad = order && (!rloFirst || rloFirst.n > order.n);
+    let t = `<b>${cc.name}: ${bad ? 'NICHT in Ordnung' : 'in Ordnung'}</b> – deine Bewertung: ${says === 'io' ? 'in Ordnung' : says === 'nio' ? 'nicht in Ordnung' : 'keine'} ${correct ? '✓' : '✗'}`;
+    c.faults.forEach((f) => (t += `<br>⚠ <b>${FEHLER[f].t}:</b> ${FEHLER[f].x}`));
+    if (rcdBad) t += '<br>⚠ Der gemeinsame RCD ist fehlerhaft (siehe unten).';
+    if (missing.length) t += `<br>Nicht gemessen: ${missing.map((k) => names[k]).join(', ')}. Eine Bewertung ohne vollständige Messung ist nicht zulässig.`;
+    if (orderBad) t += '<br>Reihenfolge: Du hast unter Spannung gemessen, bevor der Schutzleiter geprüft war.';
+    out.push(`<div class="item${correct && !missing.length ? '' : ' bad'}">${t}</div>`);
+  });
+  const R = S.rcdProt, rcdMissing = R.i === undefined || R.t === undefined;
+  max += 1; if (!rcdMissing) points += 1;
+  out.push(`<div class="item${rcdBad || rcdMissing ? ' bad' : ''}"><b>RCD 30 mA: ${rcdBad ? 'NICHT in Ordnung' : 'in Ordnung'}</b>${A.rcdF.map((f) => `<br>⚠ <b>${FEHLER[f].t}:</b> ${FEHLER[f].x}`).join('')}${rcdMissing ? '<br>RCD nicht vollständig geprüft (Auslösestrom und Auslösezeit).' : ''}</div>`);
+  const r = $('#result'); r.hidden = false;
+  r.innerHTML = `<div class="score">${points} von ${max} Punkten</div>` + out.join('') + '<p style="font-size:.9rem;color:var(--muted)">Mit „Neue Anlage“ bekommst du eine andere Anlage mit anderen Fehlern.</p>';
+  $('#check').disabled = true; S.reveal = true; draw();
+});
+
+/* ---------- Zeichnen ---------- */
+function draw() {
+  const live = S.main && !S.rcdTripped;
+  $('#main').textContent = 'Hauptschalter: ' + (S.main ? 'EIN' : 'AUS'); $('#main').className = 'big ' + (S.main ? 'main-on' : 'main-off');
+  $('#rcdOn').hidden = !S.rcdTripped;
+  // Anlage
+  const xV = 20, yT = 20, ys = [70, 170, 270], xC = 560;
+  let g = `<rect x="${xV}" y="${yT}" width="300" height="310" rx="10" class="box"/>` + T(xV + 150, yT + 300, 'UNTERVERTEILUNG', 't-b');
+  // Einspeisung
+  g += `<path d="M0 40 H${xV + 30}" class="w" style="stroke:var(--L)"/>` + T(4, 58, 'Einspeisung', 't-m', 'start');
+  const sw = (x, y, on, lbl, col = 'var(--ink)') => `<rect x="${x}" y="${y - 14}" width="40" height="28" rx="4" fill="var(--surface2)" stroke="${col}" stroke-width="1.5"/>` + (on ? `<path d="M${x + 6} ${y}H${x + 34}" stroke="${col}" stroke-width="2.5"/>` : `<path d="M${x + 6} ${y + 6}L${x + 32} ${y - 9}" stroke="var(--warn)" stroke-width="2.5"/>`) + T(x + 20, y - 18, lbl, 't-mono');
+  g += sw(xV + 30, 40, S.main, 'Q1 Haupt');
+  g += `<path d="M${xV + 70} 40 H${xV + 100}" class="w" style="stroke:var(--L)"/>` + sw(xV + 100, 40, !S.rcdTripped, 'RCD 30 mA', 'var(--accent)');
+  g += `<path d="M${xV + 140} 40 H${xV + 160} V${ys[2]}" class="w" style="stroke:var(--L)"/>`;
+  // PE- und N-Schiene
+  g += `<rect x="${xV + 20}" y="${yT + 250}" width="120" height="10" rx="3" fill="var(--pe1)"/><rect x="${xV + 20}" y="${yT + 250}" width="120" height="10" rx="3" fill="none" stroke="var(--pe2)" stroke-dasharray="4 4" stroke-width="2"/>` + T(xV + 80, yT + 245, 'PE-Schiene', 't-m');
+  g += `<rect x="${xV + 20}" y="${yT + 220}" width="120" height="10" rx="3" fill="var(--N)"/>` + T(xV + 80, yT + 215, 'N-Schiene', 't-m');
+  CIRC.forEach((cc, i) => {
+    const y = ys[i], c = A.circ[i], sel = S.ci === i, on = live;
+    g += `<path d="M${xV + 160} ${y} H${xV + 200}" class="w" style="stroke:var(--L)"/>` + sw(xV + 200, y, true, cc.ls);
+    g += `<path d="M${xV + 240} ${y} H${xC}" class="w" style="stroke:var(--L)"/>`;
+    g += `<path d="M${xV + 140} ${yT + 225} H${xV + 150} V${y + 14} H${xC}" class="w" style="stroke:var(--N)"/>`;
+    const peBroken = S.reveal && c.faults.includes('pe_open');
+    g += `<path d="M${xV + 140} ${yT + 255} H${xV + 280} V${y + 28} H${xC}" class="w" style="stroke:var(--pe1)"/><path d="M${xV + 140} ${yT + 255} H${xV + 280} V${y + 28} H${xC}" class="w" style="stroke:var(--pe2);stroke-dasharray:6 6"/>`;
+    g += `<path d="M${xV + 300} ${y - 22} H${xC - 20}" stroke="var(--muted)" stroke-width="1"/>` + T((xV + 300 + xC - 20) / 2, y - 26, `NYM-J ${cc.load === 'cee' ? '5' : '3'} × ${nf(cc.A, 1)} mm² · ${cc.l} m`, 't-m');
+    // Verbraucher
+    const bx = xC + 10, by = y - 26;
+    g += `<rect x="${bx}" y="${by}" width="130" height="64" rx="8" fill="${sel ? 'color-mix(in srgb, var(--accent) 12%, var(--surface))' : 'var(--dev)'}" stroke="${sel ? 'var(--accent)' : 'var(--muted)'}" stroke-width="${sel ? 2.5 : 1.5}"/>`;
+    if (cc.load === 'dose') g += `<circle cx="${bx + 32}" cy="${by + 32}" r="18" fill="var(--surface)" stroke="var(--muted)" stroke-width="2"/><circle cx="${bx + 26}" cy="${by + 32}" r="3" fill="var(--ink)"/><circle cx="${bx + 38}" cy="${by + 32}" r="3" fill="var(--ink)"/><path d="M${bx + 32} ${by + 15}v5M${bx + 32} ${by + 44}v5" stroke="var(--pe1)" stroke-width="3"/>`;
+    if (cc.load === 'lampe') g += `<circle cx="${bx + 32}" cy="${by + 32}" r="16" fill="${on ? '#FFE27A' : 'var(--surface)'}" stroke="var(--muted)" stroke-width="2"/><path d="M${bx + 21} ${by + 21}l22 22M${bx + 43} ${by + 21}l-22 22" stroke="var(--muted)" stroke-width="2"/>`;
+    if (cc.load === 'cee') { g += `<circle cx="${bx + 32}" cy="${by + 32}" r="20" fill="#d23" stroke="var(--muted)" stroke-width="2"/>`; for (let k = 0; k < 5; k++) { const a = -Math.PI / 2 + k * 1.2566; g += `<circle cx="${bx + 32 + Math.cos(a) * 11}" cy="${by + 32 + Math.sin(a) * 11}" r="2.5" fill="#fff"/>`; } }
+    g += T(bx + 60, by + 26, cc.short, 't-b', 'start') + T(bx + 60, by + 44, on ? '230 V' : '0 V', 't-mono', 'start', `style="fill:${on ? 'var(--warn)' : 'var(--ok)'}"`);
+    if (S.reveal && c.faults.length) g += `<circle cx="${bx + 122}" cy="${by + 6}" r="11" fill="var(--warn)"/>` + T(bx + 122, by + 10, '!', 't-b', 'middle', 'style="fill:#fff"');
+    if (peBroken) g += `<path d="M${xC - 60} ${y + 20}l14 16M${xC - 46} ${y + 20}l-14 16" stroke="var(--warn)" stroke-width="3"/>`;
+    // Messleitungen
+    if (sel) {
+      const pe = `M${xV + 80} ${yT + 262} V${yT + 290}`, sock = `M${bx + 32} ${by + 64} V${by + 80}`;
+      if (S.fn === 'rlo') g += `<path d="M${xV + 80} ${yT + 260} C ${xV + 300} ${yT + 330}, ${bx - 40} ${by + 120}, ${bx + 32} ${by + 52}" class="probe"/>`;
+      else g += `<path d="M${bx + 20} ${by + 70} q 12 30 40 30" class="probe"/><path d="M${bx + 44} ${by + 70} q 6 22 24 28" class="probe"/>` + T(bx + 66, by + 112, 'Messleitungen', 't-m', 'start');
+    }
+  });
+  if (S.reveal && A.rcdF.length) g += `<circle cx="${xV + 140}" cy="22" r="11" fill="var(--warn)"/>` + T(xV + 140, 26, '!', 't-b', 'middle', 'style="fill:#fff"');
+  $('#inst').innerHTML = g;
+  $('#instTxt').textContent = live ? 'Anlage unter Spannung' : S.rcdTripped && S.main ? 'RCD ausgelöst – Stromkreise spannungsfrei' : 'Anlage freigeschaltet';
+  // Tester
+  const d = S.disp, FN = { rlo: 'R LO', iso: 'R ISO', zs: 'Z S', rcd: 'RCD', dreh: 'DREH' };
+  let t = `<rect x="6" y="6" width="308" height="238" rx="18" fill="#F2C230" stroke="#6b5a10" stroke-width="2"/><rect x="22" y="20" width="276" height="118" rx="8" fill="#B9C7A8" stroke="#3a4a30" stroke-width="2"/>`;
+  t += `<text x="34" y="44" style="font:600 13px var(--f-mono);fill:#2a3520">${d ? d.l1 : FN[S.fn] + ' bereit'}</text>`;
+  t += `<text x="250" y="102" text-anchor="end" style="font:600 46px var(--f-mono);fill:${d && d.warn ? '#8a1010' : '#1d2716'}">${d ? d.big : '- - -'}</text><text x="286" y="102" text-anchor="end" style="font:600 18px var(--f-mono);fill:#1d2716">${d ? d.unit : ''}</text>`;
+  t += `<text x="34" y="128" style="font:500 12px var(--f-mono);fill:#2a3520">${d ? d.l2 : (S.main ? 'Netz erkannt 230 V' : 'Netz: 0 V')}</text>`;
+  // Drehschalter
+  const fns = ['rlo', 'iso', 'zs', 'rcd', 'dreh'], cx = 160, cy = 196;
+  t += `<circle cx="${cx}" cy="${cy}" r="30" fill="#222" stroke="#000"/>`;
+  fns.forEach((f, i) => { const a = Math.PI + (i + 0.5) * Math.PI / 5, x = cx + Math.cos(a) * 52, y = cy + Math.sin(a) * 40 + 6; t += `<text x="${x}" y="${y}" text-anchor="middle" style="font:700 11px var(--f-head);fill:${f === S.fn ? '#7a1a00' : '#3a3000'}">${FN[f]}</text>`; });
+  const ia = fns.indexOf(S.fn), aa = Math.PI + (ia + 0.5) * Math.PI / 5; t += `<path d="M${cx} ${cy} L${cx + Math.cos(aa) * 26} ${cy + Math.sin(aa) * 26}" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`;
+  t += `<circle cx="40" cy="${cy + 8}" r="10" fill="${S.main ? '#e33' : '#552'}"/><text x="40" y="${cy + 32}" text-anchor="middle" style="font:600 10px var(--f-body);fill:#3a3000">Netz</text>`;
+  $('#tester').innerHTML = t; $('#tName').textContent = 'Funktion: ' + FN[S.fn];
+  // Schritte abhaken
+  const done = [true, CIRC.every((_, i) => S.prot[i].rpe !== undefined), CIRC.every((_, i) => S.prot[i].isoL !== undefined && S.prot[i].isoN !== undefined), CIRC.every((_, i) => S.prot[i].zs !== undefined), S.rcdProt.i !== undefined && S.rcdProt.t !== undefined, S.prot[2].dreh !== undefined, !!S.reveal];
+  document.querySelectorAll('#steps li').forEach((li, i) => li.classList.toggle('done', done[i]));
+}
+neueAnlage();
+</script>
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span><a href="hinweise.html">Hinweise und Haftung · Nutzung auf eigene Gefahr</a></footer>
+<script src="hfs-app.js"></script>
+</body>
+</html>

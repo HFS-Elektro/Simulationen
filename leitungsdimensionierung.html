@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf8>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="hfs-app" content="leitungsdimensionierung|sim|ea32c7c31d41">
+<meta name="hfs-app" content="leitungsdimensionierung|sim|ce03e9143913">
 <meta name="theme-color" content="#13202A">
 <meta name="apple-mobile-web-app-title" content="Leitungsdimensionierung">
 <link rel="icon" href="icon-192.png" type="image/png">
@@ -11,7 +11,9 @@
 
 <title>Leitungsdimensionierung</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="fonts/barlow.css">
+<link rel="stylesheet" href="fonts/ibmplexmono.css">
+<link rel="stylesheet" href="fonts/barlowsemicondensed.css">
 <style>/* Layout: Laborgerät – Kopfleiste wie ein Typenschild, Bühne (3D/Diagramm) + Messpanel, darunter Arbeitsaufträge */
 :root {
   --bg: #EDF2F5; --surface: #FFFFFF; --surface2: #F5F8FA; --ink: #13202A; --muted: #586B78;
@@ -113,6 +115,32 @@ table.qs tr.pick td { background: color-mix(in srgb, var(--ok) 14%, transparent)
 .bar b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink) }
 .st { font-family: var(--f-body); font-weight: 600 }
 .st.ok { color: var(--ok) } .st.no { color: var(--warn) } .st.dim { color: var(--muted) }
+
+/* ---------- Grafiken (Build-Patch) ---------- */
+.gfx { width: 100%; height: auto; display: block; --sheath: #C3CCD3; --sheath2: #A9B4BC }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .gfx { --sheath: #56677A; --sheath2: #44535F } }
+:root[data-theme="dark"] .gfx { --sheath: #56677A; --sheath2: #44535F }
+.gfx text { font: 500 12px var(--f-body); fill: var(--ink) }
+.gfx .tl { font-size: 11px; fill: var(--muted) }
+.gfx .ml { font-weight: 600; font-size: 13px }
+.gfx .bt { font: 600 12px var(--f-head); fill: var(--muted); letter-spacing: .06em; text-transform: uppercase }
+.gfx .bv { font: 600 14px var(--f-mono) }
+.gfx .mono { font-family: var(--f-mono) }
+.gfx .ax { stroke: var(--muted); stroke-width: 1.2 }
+.gfx .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5 }
+.gfx .ls { fill: var(--surface2); stroke: var(--muted); stroke-width: 1.4 }
+.gfx .flow { fill: none; stroke: #FFD54A; stroke-linecap: round; stroke-dasharray: 2 14; animation: gflow 1s linear infinite }
+@keyframes gflow { to { stroke-dashoffset: -32 } }
+@media (prefers-reduced-motion: reduce) { .gfx .flow { animation: none } }
+.stage-g { background: var(--surface2); border-radius: 8px; padding: 8px 10px }
+.gpair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; align-items: start }
+#gXs { max-height: 220px } #gLay { max-height: 280px }
+.stage-g.scroll { overflow-x: auto } #gCirc { min-width: 470px }
+.gcap { font-size: .85rem; color: var(--muted); margin-top: 6px }
+.chain div { border-left: 3px solid var(--accent) }
+.chain div.dim-ok { border-left-color: var(--ok) }
+@media (min-width: 881px) { .lab > .col:last-child { position: sticky; top: 12px } }
+table.qs tr.pick td:first-child { box-shadow: inset 4px 0 0 var(--ok) }
 </style>
 
 <div class="wrap">
@@ -134,7 +162,28 @@ table.qs tr.pick td { background: color-mix(in srgb, var(--ok) 14%, transparent)
           <div><dt>5 · Querschnitt</dt><dd id="o5"></dd><small id="o5f"></small></div>
           <div><dt>6 · Spannungsfall</dt><dd id="o6"></dd><small id="o6f"></small></div>
         </dl>
+
+        <div class="stage-g"><svg id="gAxis" class="gfx" viewBox="0 0 430 136" role="img" aria-label="Balkenvergleich: Betriebsstrom, Nennstrom des Schutzorgans und Belastbarkeit der Leitung"></svg>
+        <p class="gcap" id="axTxt"></p></div>
         <p class="note" id="verdict" aria-live="polite"></p>
+      </section>
+
+      <section class="panel">
+        <header><h2>Stromkreis im Bild</h2><small>gelbe Punkte = Strom · je schneller, desto höher die Stromdichte</small></header>
+        <div class="stage-g scroll"><svg id="gCirc" class="gfx" viewBox="0 0 520 236" role="img" aria-label="Verteiler, Leitung und Verbraucher mit Spannungsverlauf entlang der Leitung"></svg></div>
+      </section>
+      <section class="panel">
+        <header><h2>Verlegung und Querschnitt</h2><small>im Schnitt, Querschnitt maßstäblich</small></header>
+        <div class="gpair">
+          <div><div class="stage-g"><svg id="gLay" class="gfx" viewBox="0 0 340 176" role="img" aria-label="Verlegeart und gebündelte Stromkreise im Schnitt">
+            <defs>
+              <pattern id="gHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" style="fill:var(--surface)"/><rect width="2" height="8" style="fill:var(--line)"/></pattern>
+              <pattern id="gWool" width="24" height="12" patternUnits="userSpaceOnUse"><rect width="24" height="12" fill="#F3D772" opacity=".42"/><path d="M0 6 Q6 0 12 6 T24 6" fill="none" stroke="#C9A227" stroke-width="1.2" opacity=".7"/></pattern>
+              <radialGradient id="gGlow"><stop offset=".35" style="stop-color:var(--warn);stop-opacity:.9"/><stop offset="1" style="stop-color:var(--warn);stop-opacity:0"/></radialGradient>
+              <pattern id="gPE" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#2E9B48"/><rect width="3" height="6" fill="#F2C318"/></pattern>
+            </defs><g id="gLayIn"></g></svg></div><p class="gcap" id="layTxt"></p></div>
+          <div><div class="stage-g"><svg id="gXs" class="gfx" viewBox="0 0 200 200" role="img" aria-label="Querschnitt der gewählten Leitung"></svg></div><p class="gcap" id="xsTxt"></p></div>
+        </div>
       </section>
 
     </div>
@@ -548,6 +597,142 @@ function fillBetween(ctx, A, f, g, x0, x1, color, alpha = 0.25, cond = null) {
   const PRE = { dle: [3, 21, 1, "C", 35, 2, 18], wb: [3, 11, 1, "C", 30, 3, 35], sd: [1, 3.68, 1, "C", 30, 1, 28], pu: [3, 7.5, 0.85, "E", 30, 1, 60] };
   bindSeg("pre", (v) => { const p = PRE[v]; segNet.pick(String(p[0])); sP.set(p[1]); sC.set(p[2]); $("#va").value = p[3]; s.va = p[3]; sT.set(p[4]); sN.set(p[5]); sL.set(p[6]); });
 
+  function drawGfx(d) {
+  const L = (m, sb, rest = '') => `${m}<tspan dy="4" font-size="74%">${sb}</tspan><tspan dy="-4">${rest}</tspan>`;
+  const T = (x, y, cls, txt, anchor = 'middle', fill = '') => `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" class="${cls}" text-anchor="${anchor}"${fill ? ` style="fill:${fill}"` : ''}>${txt}</text>`;
+  const show = d.pick ? d.rows.find((r) => r.A === d.pick.A) : d.rows[d.rows.length - 1];
+  const A = show.A, Iz = show.Iz, Ir = show.Ir, ok = !!d.pick, tri = s.net === 3;
+  const okCol = ok ? 'var(--ok)' : 'var(--warn)';
+
+  /* 1) Zahlenstrahl I_B ≤ I_n ≤ I_z */
+  {
+    const mx = Math.max(d.IB, d.In || 0, Iz, Ir) * 1.04;
+    const x0 = 112, x1 = 410, X = (v) => x0 + v / mx * (x1 - x0);
+    const step = [1, 2, 5, 10, 20, 25, 50].find((x) => mx / x <= 7) || 50;
+    let g = '';
+    for (let v = 0; v <= mx + 1e-9; v += step) g += `<line x1="${X(v)}" y1="8" x2="${X(v)}" y2="112" style="stroke:var(--grid)"/>` + T(X(v), 128, 'tl', String(v));
+    g += T(x1 + 4, 128, 'tl', 'A', 'start');
+    const bar = (y, v, col, name, txt) => {
+      const w = Math.max(0, X(v) - x0), inside = w > 64;
+      return T(4, y + 11, 'ml', name, 'start', col) + T(4, y + 25, 'tl', txt, 'start') +
+        `<rect x="${x0}" y="${y}" width="${w.toFixed(1)}" height="24" rx="4" style="fill:${col}"/>` +
+        T(inside ? X(v) - 6 : X(v) + 6, y + 16.5, 'mono', nf(v, 1) + ' A', inside ? 'end' : 'start', inside ? '#fff' : col);
+    };
+    g += bar(8, d.IB, 'var(--i)', L('I', 'B'), 'Betriebsstrom');
+    if (d.In) g += bar(42, d.In, 'var(--accent)', L('I', 'n'), 'Schutzorgan');
+    // I_z mit dem Tabellenwert I_r als Umriss dahinter
+    g += `<rect x="${x0}" y="76" width="${(X(Ir) - x0).toFixed(1)}" height="24" rx="4" fill="none" style="stroke:var(--muted)" stroke-dasharray="4 3"/>`;
+    g += bar(76, Iz, okCol, L('I', 'z'), 'Leitung ' + nf(A, 1) + ' mm²');
+    if (X(Ir) - X(Iz) > 70) g += T(X(Ir) - 5, 92.5, 'tl', L('I', 'r', ' ' + nf(Ir, 1) + ' A'), 'end');
+    if (d.In) g += `<line x1="${X(d.In)}" y1="4" x2="${X(d.In)}" y2="112" style="stroke:var(--accent)" stroke-width="1.5" stroke-dasharray="5 3"/>`;
+    $('#gAxis').innerHTML = g;
+    $('#axTxt').innerHTML = `Bedingung I<sub>B</sub> ≤ I<sub>n</sub> ≤ I<sub>z</sub>: ` + (ok ? '<b style="color:var(--ok)">erfüllt ✓</b>' : '<b style="color:var(--warn)">nicht erfüllt</b>') +
+      ` · gestrichelt: Tabellenwert I<sub>r</sub> = ${nf(Ir, 1)} A, durch f<sub>1</sub> · f<sub>2</sub> = ${nf(d.f, 2)} verringert auf I<sub>z</sub>.`;
+  }
+
+  /* 2) Stromkreis: Verteiler – Leitung – Verbraucher, darunter der Spannungsverlauf */
+  {
+    const x0 = 100, x1 = 412, y = 84, w = 7 + Math.sqrt(A) * 3.2;
+    const util = d.IB / Iz, J = d.IB / A, dU = show.dup, Uend = d.U * (1 - dU / 100);
+    let g = `<rect x="4" y="22" width="96" height="124" rx="10" class="box"/>` + T(52, 40, 'bt', 'Verteiler');
+    const nP = tri ? 3 : 1;
+    for (let i = 0; i < nP; i++) {
+      const bx = 52 - nP * 13 + i * 26 + 1;
+      g += `<rect x="${bx}" y="52" width="24" height="58" rx="4" class="ls"/><rect x="${bx + 7}" y="60" width="10" height="18" rx="2" style="fill:var(--accent)"/>` +
+        `<line x1="${bx + 12}" y1="110" x2="${bx + 12}" y2="${y}" style="stroke:var(--muted)" stroke-width="0"/>`;
+    }
+    g += T(52, 132, 'bv', d.In ? (tri ? '3 × ' : '') + d.In + ' A' : '> 100 A', 'middle', 'var(--accent)');
+    // Leitung: Mantel, Erwärmung, Strom
+    g += `<path d="M${x0} ${y}H${x1}" style="stroke:var(--sheath)" stroke-width="${w}"/>`;
+    g += `<path d="M${x0} ${y - w / 2 + 1.5}H${x1}" style="stroke:var(--sheath2)" stroke-width="1.5" opacity=".9"/><path d="M${x0} ${y + w / 2 - 1.5}H${x1}" style="stroke:var(--sheath2)" stroke-width="1.5" opacity=".9"/>`;
+    g += `<path d="M${x0} ${y}H${x1}" style="stroke:var(--warn)" stroke-width="${w}" opacity="${Math.min(0.8, util * util * 0.7).toFixed(2)}"/>`;
+    const dur = Math.max(0.2, Math.min(6, 5 / Math.max(J, 0.01)));
+    g += `<path d="M${x0 + 4} ${y}H${x1 - 4}" class="flow" stroke-width="${Math.max(2.5, w * 0.3).toFixed(1)}" style="animation-duration:${dur.toFixed(2)}s"/>`;
+    g += T((x0 + x1) / 2, y - w / 2 - 10, 'ml', `${nf(A, 1)} mm² Cu · J = ${nf(J, 1)} A/mm² · Auslastung ${nf(util * 100, 0)} %`, 'middle', okCol);
+    // Bemaßung l
+    const yd = y + w / 2 + 18;
+    g += `<path d="M${x0} ${yd - 6}v12M${x1} ${yd - 6}v12M${x0} ${yd}H${x1}" style="stroke:var(--muted)" stroke-width="1.2" fill="none"/>` +
+      `<path d="M${x0} ${yd}l8 -4v8zM${x1} ${yd}l-8 -4v8z" style="fill:var(--muted)"/>`;
+    g += `<rect x="${(x0 + x1) / 2 - 38}" y="${yd - 9}" width="76" height="18" rx="4" style="fill:var(--surface2)"/>` + T((x0 + x1) / 2, yd + 4, 'ml', `l = ${s.l} m`);
+    // Verbraucher
+    g += `<rect x="${x1}" y="22" width="104" height="124" rx="10" class="box"/>` + T(x1 + 52, 40, 'bt', 'Verbraucher');
+    g += T(x1 + 9, 64, 'mono', `P = ${nf(s.P, 1)} kW`, 'start') + T(x1 + 9, 84, 'mono', `cos φ = ${nf(s.cos, 2)}`, 'start') +
+      T(x1 + 9, 104, 'mono', L('I', 'B', ` = ${nf(d.IB, 1)} A`), 'start', 'var(--i)') + T(x1 + 9, 132, 'mono', `U = ${nf(Uend, 1)} V`, 'start', show.okU ? 'var(--u)' : 'var(--warn)');
+    // Spannungsverlauf
+    const top = 176, hh = 50, sc = Math.max(s.du * 1.5, dU * 1.15), Yd = (p) => top + p / sc * hh;
+    g += T((x0 + x1) / 2, top - 10, 'tl', `Spannung entlang der Leitung (Δu gerechnet mit ${s.ib === 'n' ? 'I<tspan dy="3" font-size="74%">n</tspan><tspan dy="-3"></tspan>' : 'I<tspan dy="3" font-size="74%">B</tspan><tspan dy="-3"></tspan>'})`);
+    g += `<line x1="${x0}" y1="${top}" x2="${x1}" y2="${top}" class="ax"/>` + T(x0 - 8, top + 4, 'tl', `${d.U} V`, 'end');
+    const yl = Yd(s.du);
+    g += `<line x1="${x0}" y1="${yl}" x2="${x1}" y2="${yl}" style="stroke:var(--warn)" stroke-dasharray="6 4" stroke-width="1.4"/>` +
+      T(x0 - 8, Math.max(yl, top + 15) + 4, 'tl', `−${nf(s.du, 1)} % zul.`, 'end', 'var(--warn)');
+    const lc = show.okU ? 'var(--u)' : 'var(--warn)';
+    g += `<path d="M${x0} ${top}L${x1} ${Yd(dU)}V${top}Z" style="fill:${lc};opacity:.16"/><path d="M${x0} ${top}L${x1} ${Yd(dU)}" style="stroke:${lc}" stroke-width="2.6" stroke-linecap="round"/>` +
+      `<circle cx="${x1}" cy="${Yd(dU)}" r="4.5" style="fill:${lc}"/>` + T(x1 + 9, Yd(dU) + 4, 'ml', `−${nf(dU, 2)} %`, 'start', lc);
+    $('#gCirc').innerHTML = g;
+  }
+
+  /* 3) Verlegeart im Schnitt mit gebündelten Stromkreisen */
+  const VA = {
+    A1: 'Aderleitungen im Rohr in einer wärmegedämmten Wand', A2: 'Mantelleitung im Rohr in einer wärmegedämmten Wand',
+    B1: 'Aderleitungen im Rohr auf der Wand', B2: 'Mantelleitung im Rohr auf der Wand',
+    C: 'Mantelleitung direkt auf der Wand', E: 'Mantelleitung frei in Luft (z. B. auf einer Kabelpritsche)'
+  };
+  const va = s.va, ins = va[0] === 'A', tube = va !== 'C' && va !== 'E', single = va === 'A1' || va === 'B1', air = va === 'E';
+  const COLS = tri ? ['#8B5A2B', '#1E1E1E', '#8C969E', '#1E88E5', 'url(#gPE)'] : ['#8B5A2B', '#1E88E5', 'url(#gPE)'];
+  const cores = (cx, cy, rr, rc) => COLS.map((c, j) => {
+    const a = -Math.PI / 2 + j * 2 * Math.PI / COLS.length;
+    return `<circle cx="${(cx + rr * Math.cos(a)).toFixed(1)}" cy="${(cy + rr * Math.sin(a)).toFixed(1)}" r="${rc.toFixed(1)}" fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width=".6"/>`;
+  }).join('');
+  {
+    const n = s.n, wallY = 140;
+    const sp = Math.min((tube ? 54 : 44), 280 / Math.max(1, n - 1)), R = Math.min(tube ? 24 : 19, sp / 2 - 1.5), cx0 = 170 - sp * (n - 1) / 2;
+    const cy = ins ? 94 + R * 0.2 : air ? 74 - R : wallY - R;
+    let g = `<rect x="0" y="${wallY}" width="340" height="36" fill="url(#gHatch)"/><line x1="0" y1="${wallY}" x2="340" y2="${wallY}" class="ax"/>` + T(8, 168, 'tl', 'Wand', 'start');
+    if (ins) g += `<rect x="0" y="50" width="340" height="${wallY - 50}" fill="url(#gWool)"/>` + T(334, wallY - 5, 'tl', 'Wärmedämmung', 'end');
+    if (air) {
+      g += `<rect x="12" y="74" width="316" height="6" rx="2" style="fill:var(--steel)"/><rect x="32" y="80" width="6" height="${wallY - 80}" style="fill:var(--steel)"/><rect x="302" y="80" width="6" height="${wallY - 80}" style="fill:var(--steel)"/>`;
+      g += T(170, 116, 'tl', 'Luft kann rundherum strömen') + `<path d="M76 134 q-8 -10 0 -20 M264 134 q8 -10 0 -20" style="stroke:var(--muted)" fill="none" stroke-width="1.3"/>`;
+    }
+    const heat = Math.min(1, Math.max(0, (1 / d.f - 0.9) * 1.1 + (ins ? 0.25 : 0) - (air ? 0.15 : 0)));
+    for (let i = 0; i < n; i++) g += `<circle cx="${cx0 + i * sp}" cy="${cy}" r="${(R + 5 + 12 * heat).toFixed(1)}" fill="url(#gGlow)" opacity="${(0.15 + 0.8 * heat).toFixed(2)}"/>`;
+    for (let i = 0; i < n; i++) {
+      const cx = cx0 + i * sp;
+      if (tube) {
+        g += `<circle cx="${cx}" cy="${cy}" r="${R}" style="fill:var(--surface);stroke:var(--muted)" stroke-width="2"/>`;
+        g += single ? cores(cx, cy, R * 0.5, R * (tri ? 0.27 : 0.33))
+          : `<circle cx="${cx}" cy="${cy}" r="${R * 0.74}" style="fill:var(--sheath);stroke:var(--sheath2)"/>` + cores(cx, cy, R * 0.36, R * 0.17);
+      } else g += `<circle cx="${cx}" cy="${cy}" r="${R}" style="fill:var(--sheath);stroke:var(--sheath2)" stroke-width="1.4"/>` + cores(cx, cy, R * 0.5, R * 0.24);
+      if (i === 0) g += `<circle cx="${cx}" cy="${cy}" r="${R + 3.5}" fill="none" style="stroke:var(--accent)" stroke-width="2.5"/>`;
+    }
+    g += T(Math.max(cx0, 58), air ? 98 : cy - R - 10, 'ml', n > 1 ? 'dein Stromkreis' : 'dein Stromkreis (allein)', cx0 < 58 ? 'start' : 'middle', 'var(--accent)');
+    // Thermometer
+    const tf = (s.t - 15) / 45;
+    g += `<rect x="236" y="12" width="92" height="10" rx="5" style="fill:var(--surface);stroke:var(--muted)"/><rect x="238" y="14" width="${(88 * tf).toFixed(1)}" height="6" rx="3" style="fill:${s.t > 30 ? 'var(--warn)' : s.t < 30 ? 'var(--u)' : 'var(--q)'}"/>` +
+      `<circle cx="234" cy="17" r="8" style="fill:${s.t > 30 ? 'var(--warn)' : s.t < 30 ? 'var(--u)' : 'var(--q)'};stroke:var(--muted)"/>` + T(220, 21, 'ml', `${s.t} °C`, 'end');
+    $('#gLayIn').innerHTML = g;
+    $('#layTxt').innerHTML = `<b>Verlegeart ${va}:</b> ${VA[va]}. ${n} Stromkreis${n > 1 ? 'e' : ''} gebündelt → f<sub>2</sub> = ${nf(d.f2, 2)}, ${s.t} °C Umgebung → f<sub>1</sub> = ${nf(d.f1, 2)}. Je röter, desto schlechter wird die Wärme abgeführt.`;
+  }
+
+  /* 4) Leitungsquerschnitt maßstäblich */
+  {
+    const m = COLS.length, rc = 4.8 * Math.sqrt(A), ri = rc + 3 + A * 0.04;
+    const Rr = m === 3 ? ri * 1.16 : ri / Math.sin(Math.PI / 5), Rs = Rr + ri + 5, cx = 100, cy = 94;
+    let g = single ? `<circle cx="${cx}" cy="${cy}" r="${Rs + 5}" style="fill:var(--surface);stroke:var(--muted)" stroke-width="3"/>`
+      : `<circle cx="${cx}" cy="${cy}" r="${Rs}" style="fill:var(--sheath);stroke:var(--sheath2)" stroke-width="2"/>`;
+    COLS.forEach((c, j) => {
+      const a = -Math.PI / 2 + j * 2 * Math.PI / m, x = cx + Rr * Math.cos(a), y = cy + Rr * Math.sin(a);
+      g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${ri.toFixed(1)}" fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width=".8"/>` +
+        `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rc.toFixed(1)}" style="fill:var(--copper)" stroke="rgba(0,0,0,.3)" stroke-width=".6"/>` +
+        `<circle cx="${(x - rc * 0.3).toFixed(1)}" cy="${(y - rc * 0.3).toFixed(1)}" r="${(rc * 0.35).toFixed(1)}" fill="#fff" opacity=".35"/>`;
+    });
+    g += T(cx, 190, 'ml', `${m} × ${nf(A, 1)} mm²`, 'middle', okCol);
+    $('#gXs').innerHTML = g;
+    $('#xsTxt').innerHTML = `${single ? 'Einzelne Aderleitungen (z. B. H07V-U) im Rohr' : 'Mantelleitung (z. B. NYM-J)'}: ${tri ? 'L1, L2, L3, N, PE' : 'L, N, PE'}. Stromdichte J = I<sub>B</sub> / A = ${nf(d.IB / A, 1)} A/mm².` +
+      (ok ? '' : ' <b style="color:var(--warn)">Bis 25 mm² passt kein Querschnitt.</b>');
+  }
+  // Rechenweg: gewählte Schritte grün markieren
+  document.querySelectorAll('.chain div').forEach((el) => el.classList.toggle('dim-ok', ok));
+}
   function calc() {
     const U = s.net === 3 ? 400 : 230, k = s.net === 3 ? Math.sqrt(3) : 1, kd = s.net === 3 ? Math.sqrt(3) : 2;
     const IB = s.P * 1000 / (k * U * s.cos);
@@ -587,12 +772,13 @@ function fillBetween(ctx, A, f, g, x0, x1, color, alpha = 0.25, cond = null) {
       setText("o5", "> 25 mm²"); setText("o5f", "Tabellenbuch"); setText("o6", "–"); setText("o6f", "");
       $("#verdict").innerHTML = `<span class="badge warn">Kein Querschnitt bis 25 mm²</span> Größeren Querschnitt aus dem Tabellenbuch wählen, Leitung kürzen oder Verlegeart verbessern.`;
     }
+    drawGfx({ U, IB, In, f1, f2, f, rows, pick });
   }
   calc();
 })();
 </script>
 
 
-<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span></footer>
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span><a href="hinweise.html">Hinweise und Haftung · Nutzung auf eigene Gefahr</a></footer>
 <script src="hfs-app.js"></script>
 </body></html>

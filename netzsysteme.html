@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="netzsysteme|sim|536bcdaaa20d">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Netzsysteme TN, TT und I">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Netzsysteme TN, TT, IT</title>
+<link rel="stylesheet" href="fonts/barlow.css">
+<link rel="stylesheet" href="fonts/ibmplexmono.css">
+<link rel="stylesheet" href="fonts/barlowsemicondensed.css">
+<style>
+:root {
+  --bg: #EDF2F5; --surface: #FFFFFF; --surface2: #F5F8FA; --ink: #13202A; --muted: #586B78; --line: #D2DDE4; --grid: #E3EAEF;
+  --accent: #0089C4; --accent-ink: #FFFFFF; --warn: #C8372D; --ok: #2E8B4A; --q: #D9822B;
+  --L1: #8B5A2B; --L2: #1E1E1E; --L3: #8C969E; --N: #1E88E5; --pe1: #2E9B48; --pe2: #E8B90F; --fault: #E0352B; --dev: #DDE4E9; --earth: #8A6A45;
+  --f-head: "Barlow Semi Condensed", "Arial Narrow", "Segoe UI", sans-serif; --f-body: "Barlow", "Segoe UI", system-ui, sans-serif; --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3; --line: #2A3B47; --grid: #1F2E38;
+  --accent: #29B6F0; --accent-ink: #062030; --warn: #FF6F62; --ok: #5BD488; --q: #F2A659; --L1: #C98E55; --L2: #D8D8D8; --L3: #8F9AA3; --N: #4FA3FF; --fault: #FF6F62; --dev: #2A3A46; --earth: #B08A60; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3; --line: #2A3B47; --grid: #1F2E38;
+  --accent: #29B6F0; --accent-ink: #062030; --warn: #FF6F62; --ok: #5BD488; --q: #F2A659; --L1: #C98E55; --L2: #D8D8D8; --L3: #8F9AA3; --N: #4FA3FF; --fault: #FF6F62; --dev: #2A3A46; --earth: #B08A60; color-scheme: dark }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--f-body); padding: 18px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left)) }
+.wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px }
+h1, h2, h3 { font-family: var(--f-head); margin: 0; line-height: 1.15; text-wrap: balance }
+h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 700 } h2 { font-size: 1.15rem; font-weight: 600 } h3 { font-size: 1rem }
+p { margin: 0 }
+.top { display: flex; flex-direction: column; gap: 6px; border-bottom: 2px solid var(--accent); padding-bottom: 12px }
+.tags { font: 600 .74rem/1 var(--f-head); text-transform: uppercase; letter-spacing: .09em; color: var(--muted) } .tags b { color: var(--accent) }
+.lead { color: var(--muted); max-width: 78ch }
+.lab { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); gap: 16px; align-items: start }
+@media (max-width: 900px) { .lab { grid-template-columns: minmax(0, 1fr) } }
+@media (min-width: 901px) { .lab > .col:last-child { position: sticky; top: 12px } }
+.col { display: flex; flex-direction: column; gap: 16px; min-width: 0 }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.panel > header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+.panel > header small { color: var(--muted); font-size: .8rem }
+.stage { background: var(--surface2); border-radius: 8px; padding: 6px; overflow-x: auto }
+svg.gfx { display: block; width: 100%; height: auto; min-width: 600px }
+svg.gfx text { font: 500 12px var(--f-body); fill: var(--ink) }
+svg .t-m { fill: var(--muted); font-size: 11px } svg .t-b { font-weight: 700; font-family: var(--f-head); font-size: 13px; letter-spacing: .04em } svg .t-mono { font-family: var(--f-mono); font-size: 12px }
+svg .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5 }
+svg .w { fill: none; stroke-width: 3; stroke-linejoin: round }
+svg .loop { stroke: var(--fault); stroke-width: 7; fill: none; opacity: .3; stroke-linejoin: round; stroke-linecap: round }
+svg .flow { stroke: #FFD54A; stroke-width: 3.5; fill: none; stroke-dasharray: 3 13; animation: fl .5s linear infinite; stroke-linejoin: round }
+@keyframes fl { to { stroke-dashoffset: -32 } }
+@media (prefers-reduced-motion: reduce) { svg .flow { animation: none } }
+.seg { display: flex; flex-wrap: wrap; gap: 6px }
+.ctls { display: flex; flex-direction: column; gap: 12px }
+.ctl { display: flex; flex-direction: column; gap: 4px }
+.ctl label { display: flex; justify-content: space-between; gap: 8px; font-size: .88rem; color: var(--muted) }
+.ctl .lbl { display: block; font-size: .88rem; color: var(--muted) }
+.ctl output { font: 500 .9rem var(--f-mono); color: var(--ink) }
+input[type=range] { width: 100%; accent-color: var(--accent); height: 28px }
+button { font: 600 .9rem var(--f-head); letter-spacing: .02em; border-radius: 8px; border: 1px solid var(--line); background: var(--surface2); color: var(--ink); padding: 7px 12px; cursor: pointer; min-height: 38px }
+button:hover { border-color: var(--accent) } button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+button:disabled { opacity: .4; cursor: not-allowed }
+button.go { background: var(--fault); color: #fff; border-color: var(--fault); font-size: 1rem; min-height: 46px; padding: 10px 16px }
+.sysbtn button { font-size: 1.05rem; min-width: 74px }
+.vals { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin: 0 }
+.vals div { background: var(--surface2); border-radius: 8px; padding: 8px 10px; min-width: 0; border-left: 3px solid var(--accent) }
+.vals dt { font-size: .76rem; color: var(--muted) } .vals dd { margin: 0; font: 500 1.02rem var(--f-mono); white-space: nowrap } .vals small { display: block; font-size: .74rem; color: var(--muted) }
+.verdict { font-size: .95rem; padding: 10px 12px; border-radius: 8px; border: 2px solid var(--ok); background: color-mix(in srgb, var(--ok) 8%, var(--surface)) }
+.verdict.no { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 8%, var(--surface)) }
+.verdict.info { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)) }
+.verdict b.big { font-family: var(--f-head); font-size: 1.1rem; display: block; margin-bottom: 2px }
+.verdict.ok b.big { color: var(--ok) } .verdict.no b.big { color: var(--warn) } .verdict.info b.big { color: var(--accent) }
+.letters { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: baseline }
+.letters b { font: 700 1.6rem/1 var(--f-head); color: var(--accent); min-width: 34px; text-align: center }
+.note { font-size: .86rem; color: var(--muted) }
+.tw { overflow-x: auto }
+table.cmp { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 720px }
+table.cmp th, table.cmp td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top }
+table.cmp th { color: var(--muted); font-weight: 600 } table.cmp tr.cur td { background: color-mix(in srgb, var(--accent) 10%, transparent) }
+table.cmp td:first-child { font: 700 1rem var(--f-head); white-space: nowrap }
+.tasks ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; max-width: 85ch }
+.tasks details { border-top: 1px solid var(--line); padding-top: 8px } .tasks summary { cursor: pointer; color: var(--accent); font-weight: 600 } .tasks details p { margin-top: 6px; color: var(--muted) }
+footer.foot { font-size: .8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 16px; border-top: 1px solid var(--line); padding-top: 10px }
+[hidden] { display: none !important }
+</style>
+<link rel="stylesheet" href="hfs-app.css">
+</head>
+<body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Netzsysteme TN, TT und IT</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="tags"><span><b>Simulation</b> · Netzsysteme nach DIN VDE 0100-100 · Schutz bei indirektem Berühren</span></div>
+    <h1>Netzsysteme TN, TT und IT</h1>
+    <p class="lead">Wie ist der Trafo geerdet, wie die Gehäuse der Geräte? Davon hängt ab, welcher Strom bei einem Fehler fließt, welche Berührungsspannung entsteht und welches Schutzorgan abschaltet. Wähle ein Netzsystem und einen Fehler und schau dir an, was passiert.</p>
+  </header>
+
+  <div class="lab">
+    <div class="col">
+      <section class="panel">
+        <header><h2 id="sysTitle">TN-S-System</h2><small>rot = Weg des Fehlerstroms</small></header>
+        <div class="stage"><svg id="net" class="gfx" viewBox="0 0 760 370" role="img" aria-label="Schaltbild des Netzsystems mit Trafo, Verteiler, Gerät, Erdern und Person"></svg></div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button type="button" class="go" id="go">⚡ Fehler auslösen</button>
+          <span class="note" id="goTxt">Zeitlupe: Der Ablauf nach dem Fehler wird stark verlangsamt gezeigt.</span>
+        </div>
+        <div class="verdict" id="verdict" aria-live="polite"></div>
+      </section>
+
+      <section class="panel">
+        <header><h2>Messwerte im Fehlerfall</h2><small>U<sub>0</sub> = 230 V gegen Erde · vereinfachte Rechnung</small></header>
+        <dl class="vals">
+          <div><dt>Fehlerstrom I<sub>F</sub></dt><dd id="vI"></dd><small id="vIf"></small></div>
+          <div><dt>Berührungsspannung U<sub>B</sub></dt><dd id="vU"></dd><small>dauernd zulässig: 50 V~</small></div>
+          <div><dt>Schutzorgan</dt><dd id="vP"></dd><small id="vPf"></small></div>
+          <div><dt>Abschaltzeit</dt><dd id="vT"></dd><small>Endstromkreis: max. 0,4 s (TN) bzw. 0,2 s (TT)</small></div>
+        </dl>
+        <p class="note" id="calc"></p>
+      </section>
+
+      <section class="panel">
+        <header><h2>Was bedeuten die Buchstaben?</h2></header>
+        <div class="letters" id="letters"></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="panel">
+        <header><h2>Netzsystem</h2></header>
+        <div class="seg sysbtn" id="sys">
+          <button type="button" data-v="TNC">TN-C</button><button type="button" data-v="TNS" aria-pressed="true">TN-S</button><button type="button" data-v="TNCS">TN-C-S</button><button type="button" data-v="TT">TT</button><button type="button" data-v="IT">IT</button>
+        </div>
+      </section>
+      <section class="panel">
+        <header><h2>Fehler</h2></header>
+        <div class="seg" id="fall">
+          <button type="button" data-v="ks" aria-pressed="true">Körperschluss L1 → Gehäuse</button>
+          <button type="button" data-v="pen">Unterbrechung PEN / N</button>
+          <button type="button" data-v="f2">2. Fehler (L2 an 2. Gerät)</button>
+        </div>
+        <p class="note" id="fallTxt"></p>
+      </section>
+      <section class="panel">
+        <header><h2>Schutz und Erdung</h2></header>
+        <div class="ctls">
+          <div class="ctl"><span class="lbl">Schutzorgan im Stromkreis</span><div class="seg" id="prot"><button type="button" data-v="ls" aria-pressed="true">nur LS B16</button><button type="button" data-v="rcd">LS B16 + RCD 30 mA</button></div></div>
+          <div class="ctl" id="raBox"><label for="ra"><span>Anlagenerder R<sub>A</sub></span> <output for="ra"></output></label><input type="range" id="ra" min="1" max="500" step="1" value="30"></div>
+          <div class="ctl"><label for="rb"><span>Betriebserder R<sub>B</sub> am Trafo</span> <output for="rb"></output></label><input type="range" id="rb" min="0.5" max="10" step="0.5" value="2"></div>
+        </div>
+        <p class="note">Leitung zum Gerät: 1,5 mm² Cu, 25 m (R<sub>L</sub> ≈ 0,6 Ω hin und zurück), Netz bis Hausanschluss Z<sub>v</sub> = 0,3 Ω, Last: Heizgerät 2 kW.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel">
+    <header><h2>Die Netzsysteme im Vergleich</h2></header>
+    <div class="tw"><table class="cmp" id="cmp">
+      <thead><tr><th>System</th><th>Trafo-Sternpunkt</th><th>Gehäuse (Körper)</th><th>Schutz bei Körperschluss</th><th>Typischer Einsatz</th><th>Vor- und Nachteile</th></tr></thead>
+      <tbody>
+        <tr data-s="TNC"><td>TN-C</td><td>direkt geerdet</td><td>am PEN (N und PE in einem Leiter)</td><td>LS / Sicherung (Kurzschluss über PEN). RCD nicht möglich.</td><td>nur noch Altanlagen; Leiter ≥ 10 mm² Cu</td><td>spart einen Leiter · <b>PEN-Bruch gefährlich</b>: Gehäuse bekommen Spannung</td></tr>
+        <tr data-s="TNS"><td>TN-S</td><td>direkt geerdet</td><td>am eigenen PE (getrennt von N)</td><td>LS / Sicherung, zusätzlich RCD möglich</td><td>Neuanlagen ab dem Verteiler, EDV, Gewerbe</td><td>PE führt im Betrieb keinen Strom · N-Bruch ungefährlich · ein Leiter mehr</td></tr>
+        <tr data-s="TNCS"><td>TN-C-S</td><td>direkt geerdet</td><td>bis zum Hausanschluss PEN, danach getrennt N + PE</td><td>LS / Sicherung, nach der Aufteilung RCD möglich</td><td><b>Normalfall in Deutschland</b> (öffentliches Netz TN-C, im Haus TN-S)</td><td>wirtschaftlich · PEN-Bruch vor der Aufteilung bleibt gefährlich</td></tr>
+        <tr data-s="TT"><td>TT</td><td>direkt geerdet (R<sub>B</sub>)</td><td>am eigenen Anlagenerder R<sub>A</sub></td><td><b>RCD notwendig</b>: Fehlerstrom fließt über das Erdreich und ist zu klein für den LS</td><td>ländliche Netze, Baustellen, viele Nachbarländer</td><td>unabhängig vom Netz-PEN · Erdungswiderstände schwanken</td></tr>
+        <tr data-s="IT"><td>IT</td><td>isoliert (oder hochohmig)</td><td>geerdet (einzeln oder gemeinsam)</td><td>1. Fehler: nur Meldung durch Isolationsüberwachung, Betrieb läuft weiter. 2. Fehler: Abschaltung durch LS</td><td>OP-Säle, Intensivstationen, Industrie mit hoher Verfügbarkeit, Schiffe</td><td>hohe Ausfallsicherheit · Isolationsüberwachung nötig, 1. Fehler schnell suchen</td></tr>
+      </tbody></table></div>
+  </section>
+
+  <section class="panel tasks">
+    <h2>Arbeitsaufträge</h2>
+    <ol>
+      <li>TN-S, Körperschluss, nur LS B16: Wie groß ist der Fehlerstrom und warum schaltet der LS so schnell ab?</li>
+      <li>TT-System, R<sub>A</sub> = 30 Ω, R<sub>B</sub> = 2 Ω, nur LS B16. Berechne den Fehlerstrom und die Berührungsspannung. Warum ist das gefährlich? Was ändert ein RCD 30 mA?</li>
+      <li>Bis zu welchem Anlagenerder R<sub>A</sub> ist ein TT-System mit RCD 30 mA noch zulässig (U<sub>L</sub> = 50 V)?</li>
+      <li>Vergleiche die Unterbrechung von PEN bzw. N im TN-C- und im TN-S-System. Warum hilft im TN-C-S-System auch ein RCD nicht, wenn der PEN vor der Aufteilung bricht?</li>
+      <li>IT-System: Warum darf der Betrieb nach dem ersten Fehler weiterlaufen, und warum muss der erste Fehler trotzdem schnell gesucht werden?</li>
+    </ol>
+    <details><summary>Lösungen anzeigen</summary>
+      <p>1. Die Fehlerschleife besteht nur aus Metall: Z<sub>s</sub> ≈ Z<sub>v</sub> + R<sub>L</sub> = 0,3 Ω + 0,6 Ω = 0,9 Ω, I<sub>F</sub> ≈ 230 V / 0,9 Ω ≈ 256 A. Das ist weit über dem Auslösestrom des magnetischen Auslösers (5 · 16 A = 80 A), der LS schaltet in wenigen Millisekunden ab.
+      2. I<sub>F</sub> ≈ 230 V / (R<sub>A</sub> + R<sub>B</sub> + Leitung) ≈ 230 V / (30 Ω + 2 Ω + 0,6 Ω) ≈ 7,1 A. Das liegt sogar unter dem Nennstrom 16 A – der LS löst nie aus. Am Gehäuse liegt dauerhaft U<sub>B</sub> = I<sub>F</sub> · R<sub>A</sub> ≈ 7,1 A · 30 Ω ≈ 214 V an: lebensgefährlich. Ein RCD 30 mA erkennt die 7,1 A Fehlerstrom sofort und schaltet in höchstens 0,3 s, praktisch in etwa 20–40 ms, ab.
+      3. Bedingung R<sub>A</sub> · I<sub>Δn</sub> ≤ 50 V → R<sub>A</sub> ≤ 50 V / 0,03 A ≈ 1667 Ω. Das schafft praktisch jeder Erder. Ohne RCD müsste R<sub>A</sub> winzig sein, was mit Erdern nicht erreichbar ist.
+      4. TN-C: Hinter der Bruchstelle ist das Gehäuse über den PEN mit dem Gerät verbunden. Über die Last (Heizwiderstand) liegt fast die volle Spannung von 230 V am Gehäuse, es fließt kein Kurzschlussstrom, nichts schaltet ab – sehr gefährlich. TN-S: Bricht der N, geht das Gerät einfach aus, der PE ist unbeschädigt, das Gehäuse bleibt spannungsfrei. TN-C-S: Der Strom über die Person fließt über L zum Gerät und über N durch den RCD zurück zur Aufteilungsstelle, von dort über PE und Gehäuse durch die Person zur Erde. Durch den RCD fließen hin und zurück gleiche Ströme, deshalb „sieht“ er keinen Fehler. Darum muss der PEN mit großem Querschnitt fest verlegt werden (mindestens 10 mm² Cu).
+      5. Beim ersten Fehler fließt nur ein kleiner Strom über die Leitungskapazitäten des Netzes zurück, weil der Trafo nicht geerdet ist. Die Berührungsspannung bleibt klein und es gibt keinen Kurzschluss. Die Isolationsüberwachung meldet den Fehler, und Geräte wie im OP laufen weiter. Kommt ein zweiter Fehler an einem anderen Außenleiter dazu, entsteht ein Kurzschluss zwischen zwei Außenleitern über die Schutzleiter (400 V). Dann muss abgeschaltet werden, der Vorteil des IT-Systems ist weg.</p>
+    </details>
+  </section>
+
+  <footer class="foot"><span>Hans-Freudenberg-Schule Weinheim</span><span>Pablo Disson</span><span>Vereinfachte Rechnung mit Wirkwiderständen, ohne Körperwiderstand und Standortisolierung. Normen: DIN VDE 0100-100, -410, -540.</span></footer>
+</div>
+
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+function nf(v, d = 1) { if (!isFinite(v)) return '–'; return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false }); }
+function sub(a, b) { return `${a}<tspan dy="3" font-size="75%">${b}</tspan><tspan dy="-3"></tspan>`; }
+function T(x, y, t, cls = '', anchor = 'middle', extra = '') { return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}" ${extra}>${t}</text>`; }
+function fI(i) { return i < 1 ? nf(i * 1000, 0) + ' mA' : nf(i, i < 10 ? 1 : 0) + ' A'; }
+function fT(t) { return !isFinite(t) ? 'keine' : t < 0.1 ? '< 0,1 s' : nf(t, 2) + ' s'; }
+const s = { sys: 'TNS', fall: 'ks', rcd: false, RA: 30, RB: 2, fault: false, ft: 0 };
+const ZV = 0.3, RL = 0.6, RPE = 0.3, IN = 16, IA = 80, RLAST = 230 * 230 / 2000;
+
+function seg(id, cb) { const box = document.getElementById(id); box.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || b.disabled) return; box.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); }); }
+function press(id, v) { document.querySelectorAll('#' + id + ' button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.v === v))); }
+function range(id, fmt, cb) { const el = document.getElementById(id), out = document.querySelector(`output[for="${id}"]`); const u = () => { out.textContent = fmt(+el.value); cb(+el.value); }; el.addEventListener('input', u); u(); }
+
+/* ---------- Berechnung ---------- */
+let R = {};
+function compute() {
+  const sys = s.sys, f = s.fall, tn = sys[0] === 'T' && sys[1] === 'N';
+  let I = 0, UB = 0, t = Infinity, by = '–', info = '', danger = false, path = 'none', kind = 'ok', cap = '';
+  const lsT = (i) => (i >= IA ? 0.01 : i / IN > 1.13 ? 120 / ((i / IN) ** 2 - 1.2) : Infinity);
+  if (f === 'ks') {
+    if (tn) { I = 230 / (ZV + RL); UB = I * RPE; path = 'tn'; cap = 'nur über Metall: Z<sub>s</sub> = Z<sub>v</sub> + R<sub>L</sub>'; }
+    else if (sys === 'TT') { I = 230 / (s.RA + s.RB + RL / 2); UB = I * s.RA; path = 'tt'; cap = 'über das Erdreich: R<sub>A</sub> + R<sub>B</sub>'; }
+    else { I = 230 / (s.RA + 460); UB = I * s.RA; path = 'it1'; cap = 'nur über die Netzkapazitäten (≈ 460 Ω)'; }
+    const tLs = sys === 'IT' ? Infinity : lsT(I), tR = s.rcd && sys !== 'TNC' && sys !== 'IT' && I >= 0.0225 ? 0.03 : Infinity;
+    t = Math.min(tLs, tR); by = !isFinite(t) ? 'keins' : tR < tLs ? 'RCD' : 'LS (magnetisch)';
+    if (sys === 'IT') { kind = 'info'; by = 'Meldung'; info = `<b class="big">1. Fehler: keine Abschaltung – Meldung durch die Isolationsüberwachung</b>Der Trafo ist nicht geerdet. Es fließen nur ${fI(I)} über die Leitungskapazitäten zurück. Die Berührungsspannung beträgt U<sub>B</sub> = ${nf(UB, 1)} V${UB > 50 ? ' – bei diesem schlechten Erder schon zu viel!' : ' und bleibt ungefährlich'}. Der Betrieb läuft weiter, der Fehler muss aber schnell gesucht werden.`; danger = UB > 50; if (danger) kind = 'no'; }
+    else if (isFinite(t) && t <= (sys === 'TT' ? 0.2 : 0.4)) { kind = 'ok'; info = `<b class="big">Abschaltung rechtzeitig ✓</b>${by === 'RCD' ? 'Der RCD erkennt die Differenz zwischen hin- und zurückfließendem Strom' : `Der große Fehlerstrom (${fI(I)} ≥ 5 · I<sub>n</sub> = 80 A) löst den magnetischen Auslöser aus`} und schaltet in ${fT(t)} ab. Die Berührungsspannung von ${nf(UB, 0)} V liegt nur ganz kurz an.`; }
+    else { kind = 'no'; danger = UB > 50; info = `<b class="big">Keine rechtzeitige Abschaltung ✗</b>Es fließen nur ${fI(I)} – zu wenig für den magnetischen Auslöser (80 A)${I < IN * 1.13 ? ', sogar weniger als der Nennstrom: Der LS löst nie aus' : ''}. Am Gehäuse liegen <b>${nf(UB, 0)} V dauerhaft</b> an. ${sys === 'TT' ? 'Im TT-System ist deshalb ein <b>RCD vorgeschrieben</b>.' : ''}`; }
+  } else if (f === 'pen') {
+    if (sys === 'IT') { kind = 'info'; info = '<b class="big">Nicht vorgesehen</b>In IT-Systemen wird der Neutralleiter meist nicht mitgeführt.'; }
+    else if (sys === 'TNC' || sys === 'TNCS') {
+      path = 'pen'; I = 230 / (RLAST + 1000) ; UB = 230 * 1000 / (RLAST + 1000); danger = true; kind = 'no'; by = 'keins';
+      info = `<b class="big">Lebensgefahr: Gehäuse unter Spannung ✗</b>${sys === 'TNC' ? 'Das Gehäuse hängt am PEN.' : 'Der PEN ist <b>vor</b> der Aufteilung in N und PE gebrochen.'} Hinter der Bruchstelle gelangt die Spannung über den Heizwiderstand des Geräts auf den Schutzleiter und damit auf das Gehäuse. Es fließt kein Kurzschlussstrom, also schaltet der LS nicht ab. ${sys === 'TNCS' && s.rcd ? 'Auch der RCD hilft nicht: Hin- und Rückstrom fließen beide durch ihn hindurch.' : ''} Wer das Gehäuse berührt, bekommt fast die volle Netzspannung.`;
+    } else { kind = 'ok'; path = 'nbreak'; info = `<b class="big">Gerät aus – aber ungefährlich ✓</b>${sys === 'TNS' ? 'Im TN-S-System sind N und PE getrennt. Bricht der N, ist der Stromkreis unterbrochen und das Gerät geht aus. Der PE ist unbeschädigt, das Gehäuse bleibt spannungsfrei.' : 'Im TT-System hat das Gehäuse einen eigenen Erder. Bricht der N, geht das Gerät aus, das Gehäuse bleibt spannungsfrei.'}`; }
+  } else if (f === 'f2') {
+    if (sys !== 'IT') { kind = 'info'; info = '<b class="big">Nur im IT-System sinnvoll</b>In geerdeten Netzen wird schon beim ersten Fehler abgeschaltet. Wähle das IT-System.'; }
+    else { path = 'it2'; I = 400 / (2 * RL + 0.1); UB = I * RPE; t = Math.min(lsT(I), s.rcd ? 0.03 : Infinity); by = 'LS (magnetisch)'; kind = 'ok';
+      info = `<b class="big">2. Fehler: Kurzschluss zwischen L1 und L2 → Abschaltung ✓</b>Zwei Fehler an verschiedenen Außenleitern bilden über die verbundenen Schutzleiter einen Kurzschluss mit 400 V. Es fließen etwa ${fI(I)}, der LS schaltet sofort ab. Der Vorteil des IT-Systems ist damit weg – deshalb muss der erste Fehler schnell beseitigt werden.`; }
+  }
+  if (f === 'ks' && (sys === 'TT' || sys === 'IT') && !s.rcd && sys === 'TT') danger = UB > 50;
+  R = { I, UB, t, by, info, danger, path, kind, cap };
+}
+
+/* ---------- Anzeige ---------- */
+const TXT = {
+  TNC: [['T', 'Trafo-Sternpunkt direkt geerdet (Terra)'], ['N', 'Gehäuse über den Schutzleiter mit dem geerdeten Sternpunkt verbunden (Neutral)'], ['C', 'N und PE in einem Leiter vereint: PEN (combined)']],
+  TNS: [['T', 'Trafo-Sternpunkt direkt geerdet'], ['N', 'Gehäuse über den Schutzleiter mit dem Sternpunkt verbunden'], ['S', 'N und PE auf ganzer Länge getrennt (separated)']],
+  TNCS: [['T', 'Trafo-Sternpunkt direkt geerdet'], ['N', 'Gehäuse über den Schutzleiter mit dem Sternpunkt verbunden'], ['C-S', 'erst PEN (combined), am Hausanschluss bzw. Verteiler aufgeteilt in N und PE (separated)']],
+  TT: [['T', 'Trafo-Sternpunkt direkt geerdet (Betriebserder R_B)'], ['T', 'Gehäuse an einem eigenen Erder (Anlagenerder R_A), unabhängig vom Netz']],
+  IT: [['I', 'Trafo-Sternpunkt isoliert gegen Erde (oder hochohmig)'], ['T', 'Gehäuse direkt geerdet']]
+};
+const NAME = { TNC: 'TN-C-System', TNS: 'TN-S-System', TNCS: 'TN-C-S-System', TT: 'TT-System', IT: 'IT-System' };
+function update() {
+  compute();
+  $('#sysTitle').textContent = NAME[s.sys];
+  $('#letters').innerHTML = TXT[s.sys].map(([l, t]) => `<b>${l}</b><span>${t.replace(/_([A-Z])/g, '<sub>$1</sub>')}</span>`).join('');
+  document.querySelectorAll('#cmp tbody tr').forEach((tr) => tr.classList.toggle('cur', tr.dataset.s === s.sys));
+  // Bedienelemente passend sperren
+  const rcdBtn = document.querySelector('#prot button[data-v="rcd"]'); rcdBtn.disabled = s.sys === 'TNC' || s.sys === 'IT';
+  if (rcdBtn.disabled && s.rcd) { s.rcd = false; press('prot', 'ls'); }
+  $('#raBox').hidden = !(s.sys === 'TT' || s.sys === 'IT');
+  document.querySelector('#fall button[data-v="f2"]').disabled = s.sys !== 'IT';
+  document.querySelector('#fall button[data-v="pen"]').disabled = s.sys === 'IT';
+  if ((s.fall === 'f2' && s.sys !== 'IT') || (s.fall === 'pen' && s.sys === 'IT')) { s.fall = 'ks'; press('fall', 'ks'); }
+  $('#fallTxt').innerHTML = s.sys === 'TNC' ? 'Im TN-C-System ist kein RCD möglich: Der PEN würde durch den Wandler laufen, Fehlerströme fließen über ihn zurück.' : s.sys === 'IT' ? 'IT: Der RCD ist hier nicht üblich, die Überwachung übernimmt ein Isolationswächter (IMD).' : '';
+  compute();
+  const v = $('#verdict');
+  if (!s.fault) { v.className = 'verdict info'; v.innerHTML = '<b class="big">Normalbetrieb</b>Drücke „Fehler auslösen“, um den gewählten Fehler zu simulieren.'; }
+  else { v.className = 'verdict ' + R.kind; v.innerHTML = R.info; }
+  $('#vI').textContent = s.fault ? fI(R.I) : '–'; $('#vIf').innerHTML = s.fault ? R.cap || '' : '';
+  $('#vU').textContent = s.fault ? nf(R.UB, 0) + ' V' : '–'; $('#vU').style.color = s.fault && R.UB > 50 ? 'var(--warn)' : '';
+  $('#vP').textContent = s.fault ? R.by : (s.rcd ? 'LS + RCD' : s.sys === 'IT' ? 'LS + IMD' : 'LS B16'); $('#vPf').innerHTML = s.rcd ? 'RCD löst bei ≥ 22,5 mA aus' : 'LS: magnetisch ab 80 A';
+  $('#vT').textContent = s.fault ? fT(R.t) : '–';
+  $('#calc').innerHTML = s.fault && s.fall === 'ks' ? (s.sys === 'TT' ? `I<sub>F</sub> = 230 V / (R<sub>A</sub> + R<sub>B</sub> + R<sub>L</sub>/2) = 230 V / (${nf(s.RA, 0)} Ω + ${nf(s.RB, 1)} Ω + 0,3 Ω) = ${fI(R.I)} · U<sub>B</sub> = I<sub>F</sub> · R<sub>A</sub> = ${nf(R.UB, 0)} V` :
+    s.sys === 'IT' ? `I<sub>F</sub> ≈ 230 V / (R<sub>A</sub> + X<sub>C</sub>) = 230 V / (${nf(s.RA, 0)} Ω + 460 Ω) = ${fI(R.I)} · U<sub>B</sub> = I<sub>F</sub> · R<sub>A</sub> = ${nf(R.UB, 1)} V` :
+    `I<sub>F</sub> = 230 V / (Z<sub>v</sub> + R<sub>L</sub>) = 230 V / (0,3 Ω + 0,6 Ω) = ${fI(R.I)} · U<sub>B</sub> ≈ I<sub>F</sub> · R<sub>PE</sub> = ${fI(R.I)} · 0,3 Ω = ${nf(R.UB, 0)} V`) : '';
+  draw();
+}
+
+/* ---------- Schaltbild ---------- */
+function draw() {
+  const sys = s.sys, tn = sys === 'TNC' || sys === 'TNS' || sys === 'TNCS', tripped = s.fault && s.ft >= R.t, live = s.fault && !tripped && R.path !== 'none' && R.path !== 'nbreak';
+  const yL = [50, 70, 90], yN = 116, yPE = 142, xT = 70, xH = 250, xV = 340, xD = 560, yG = 330;
+  const W = (d, col, extra = '') => `<path d="${d}" class="w" style="stroke:var(${col})" ${extra}/>`;
+  const PE = (d) => W(d, '--pe1') + `<path d="${d}" class="w" style="stroke:var(--pe2);stroke-dasharray:6 6"/>`;
+  const PEN = (d) => W(d, '--pe1') + `<path d="${d}" class="w" style="stroke:var(--N);stroke-dasharray:6 6"/>`;
+  const earth = (x, y, lbl) => `<path d="M${x} ${y}V${yG - 14}M${x - 12} ${yG - 14}h24M${x - 8} ${yG - 8}h16M${x - 4} ${yG - 2}h8" stroke="var(--earth)" stroke-width="2.5" fill="none"/>` + (lbl ? T(x + 10, yG - 22, lbl, 't-mono', 'start') : '');
+  let g = `<rect x="0" y="${yG}" width="760" height="40" fill="var(--earth)" opacity=".18"/><path d="M0 ${yG}H760" stroke="var(--earth)" stroke-width="1.5"/>` + T(8, yG + 18, 'Erdreich', 't-m', 'start');
+  // Trafo (Sternschaltung)
+  g += `<circle cx="${xT}" cy="80" r="40" class="box"/>`; ['--L1', '--L2', '--L3'].forEach((c, i) => { const a = -Math.PI / 2 + i * 2.094; g += `<path d="M${xT} 80 L${xT + Math.cos(a) * 26} ${80 + Math.sin(a) * 26}" stroke="var(${c})" stroke-width="3"/>`; });
+  g += T(xT, 34, 'TRAFO', 't-b');
+  yL.forEach((y, i) => { g += W(`M${xT + 40} ${y}H${xD + 20 + (i === 0 ? 0 : 0)}`, ['--L1', '--L2', '--L3'][i]) + T(xT + 46 + i * 0, y - 4, 'L' + (i + 1), 't-m', 'start'); });
+  // Sternpunkt-Leiter
+  const star = `M${xT} 80 V${sys === 'IT' ? 120 : 130}`;
+  if (sys === 'IT') g += `<path d="${star}" stroke="var(--muted)" stroke-width="2"/>` + T(xT, 136, 'isoliert', 't-m') + `<path d="M${xT - 60} 175 h20 M${xT - 50} 165 v20" stroke="none"/>` +
+    [0, 1].map((k) => `<path d="M${xT + 120 + k * 260} ${yL[2]} V${yL[2] + 120} M${xT + 112 + k * 260} ${yL[2] + 120}h16 M${xT + 112 + k * 260} ${yL[2] + 126}h16 M${xT + 120 + k * 260} ${yL[2] + 126} V${yG}" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>`).join('') + T(xT + 130, yL[2] + 116, sub('C', 'E') + ' (Netzkapazität)', 't-m', 'start');
+  else { g += `<path d="${star} H${xT + 40}" stroke="var(--N)" stroke-width="3" fill="none"/>` + earth(xT, 130, sub('R', 'B') + ' = ' + nf(s.RB, 1) + ' Ω'); }
+  // N/PE/PEN bis Gerät
+  const penBreak = s.fault && s.fall === 'pen' && sys !== 'IT', bx = 190;
+  if (sys === 'TNC') { g += PEN(`M${xT + 40} 130 H${xD - 30} V230`); g += T(xT + 46, 124, 'PEN', 't-m', 'start'); }
+  else if (sys === 'TNCS') { g += PEN(`M${xT + 40} 130 H${xH}`) + T(xT + 46, 124, 'PEN', 't-m', 'start') + `<circle cx="${xH}" cy="130" r="5" fill="var(--ink)"/>` + W(`M${xH} 130 V${yN} H${xD + 50} V230`, '--N') + PE(`M${xH} 130 V${yPE} H${xD - 30} V230`) + T(xH + 6, 160, 'Aufteilung PEN → N + PE', 't-m', 'start'); }
+  else if (sys === 'TNS') { g += W(`M${xT + 40} 130 V${yN} H${xD + 50} V230`, '--N') + PE(`M${xT + 40} 130 V${yPE} H${xD - 30} V230`) + T(xT + 46, yN - 4, 'N', 't-m', 'start') + T(xT + 46, yPE - 4, 'PE', 't-m', 'start'); }
+  else if (sys === 'TT') { g += W(`M${xT + 40} 130 V${yN} H${xD + 50} V230`, '--N') + T(xT + 46, yN - 4, 'N', 't-m', 'start') + PE(`M${xD - 30} 230 V${yPE + 70} H${xD - 70} V${yPE + 90}`) + earth(xD - 70, yPE + 90, sub('R', 'A') + ' = ' + nf(s.RA, 0) + ' Ω'); }
+  else { g += PE(`M${xD - 30} 230 V${yPE + 70} H${xD - 70} V${yPE + 90}`) + earth(xD - 70, yPE + 90, sub('R', 'A') + ' = ' + nf(s.RA, 0) + ' Ω'); }
+  if (penBreak) { const y = sys === 'TNS' || sys === 'TT' ? yN : 130; g += `<rect x="${bx - 8}" y="${y - 12}" width="16" height="24" fill="var(--surface2)"/><path d="M${bx - 9} ${y - 10}l18 20M${bx + 9} ${y - 10}l-18 20" stroke="var(--fault)" stroke-width="3"/>` + T(bx, y + 26, 'Bruch', 't-b', 'middle', 'style="fill:var(--fault)"'); }
+  // Verteiler mit LS (und RCD)
+  g += `<rect x="${xV}" y="30" width="96" height="${s.rcd ? 140 : 80}" rx="8" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/>` + T(xV + 48, 26, 'VERTEILER', 't-m');
+  const open = tripped && s.fall !== 'pen';
+  g += `<rect x="${xV + 14}" y="${yL[0] - 12}" width="34" height="24" rx="4" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5"/>` + (open ? `<path d="M${xV + 18} ${yL[0] + 6}L${xV + 44} ${yL[0] - 8}" stroke="var(--warn)" stroke-width="2.5"/>` : `<path d="M${xV + 18} ${yL[0]}H${xV + 44}" stroke="var(--ink)" stroke-width="2.5"/>`) + T(xV + 31, yL[0] - 16, 'B16', 't-mono');
+  if (s.rcd) g += `<rect x="${xV + 56}" y="${yL[0] - 12}" width="30" height="${yN - yL[0] + 24}" rx="4" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5"/>` + T(xV + 71, yN + 26, 'RCD', 't-mono') + (open && R.by === 'RCD' ? T(xV + 71, yN + 40, 'AUS', 't-b', 'middle', 'style="fill:var(--warn)"') : '');
+  // Gerät 1
+  g += `<rect x="${xD - 40}" y="230" width="140" height="80" rx="10" fill="var(--dev)" stroke="var(--muted)" stroke-width="2"/>` + T(xD + 30, 252, 'GERÄT 1', 't-b') + T(xD + 30, 270, 'Heizgerät 2 kW', 't-m');
+  g += W(`M${xD + 20} ${yL[0]} H${xD + 20} V230`, '--L1');
+  g += `<path d="M${xD + 2} 290 h56" stroke="var(--muted)" stroke-width="2"/><rect x="${xD + 14}" y="283" width="32" height="14" rx="2" fill="none" stroke="var(--muted)" stroke-width="2"/>`;
+  // Fehler
+  if (s.fault && (s.fall === 'ks' || s.fall === 'f2')) g += `<path d="M${xD + 20} 230 l-8 14 h10 l-8 14" stroke="var(--fault)" stroke-width="3" fill="none"/>`;
+  // Gerät 2 (für IT 2. Fehler)
+  if (sys === 'IT' && s.fall === 'f2') {
+    g += `<rect x="${xD + 120}" y="230" width="70" height="80" rx="10" fill="var(--dev)" stroke="var(--muted)" stroke-width="2"/>` + T(xD + 155, 252, 'GERÄT 2', 't-b') + W(`M${xD + 20} ${yL[1]} H${xD + 160} V230`, '--L2') + PE(`M${xD + 130} 310 V318 H${xD - 30} V310`);
+    if (s.fault) g += `<path d="M${xD + 160} 230 l-8 14 h10 l-8 14" stroke="var(--fault)" stroke-width="3" fill="none"/>`;
+  }
+  // Fehlerschleife
+  let loop = '';
+  if (R.path === 'tn') loop = `M${xT + 40} ${yL[0]} H${xD + 20} V244 H${xD - 30} V${sys === 'TNC' ? 130 : yPE} ${sys === 'TNCS' ? `H${xH} V130` : ''} H${xT + 40}`;
+  else if (R.path === 'tt') loop = `M${xT + 40} ${yL[0]} H${xD + 20} V244 H${xD - 30} V${yPE + 70} H${xD - 70} V${yG + 10} H${xT} V130 H${xT}`;
+  else if (R.path === 'it1') loop = `M${xT + 40} ${yL[0]} H${xD + 20} V244 H${xD - 30} V${yPE + 70} H${xD - 70} V${yG + 10} H${xT + 380} V${yL[2] + 126}`;
+  else if (R.path === 'it2') loop = `M${xT + 40} ${yL[0]} H${xD + 20} V244 H${xD - 30} V318 H${xD + 130} V244 H${xD + 160} V${yL[1]} H${xT + 40}`;
+  else if (R.path === 'pen') loop = `M${xT + 40} ${yL[0]} H${xD + 20} V290 H${xD + 50} V${sys === 'TNC' ? 230 : 230} ${sys === 'TNC' ? `M${xD - 30} 230 V130 H${bx + 10}` : `M${xD + 50} 230 V${yN} H${xH} V130 H${bx + 10} M${xH} 130 V${yPE} H${xD - 30} V244`} M${xD - 95} 260 V${yG}`;
+  if (s.fault && loop) { g += `<path d="${loop}" class="loop"/>`; if (live) g += `<path d="${loop}" class="flow"/>`; }
+  // Person
+  const px = xD - 100, py = 262, touch = s.fault && !tripped && R.UB > 50;
+  g += `<g stroke="${touch ? 'var(--fault)' : 'var(--muted)'}" stroke-width="3" fill="none" stroke-linecap="round"><circle cx="${px}" cy="${py - 30}" r="10"/><path d="M${px} ${py - 20}v34M${px} ${py + 14}l-12 ${yG - py - 16}M${px} ${py + 14}l12 ${yG - py - 16}M${px} ${py - 10}l58 4"/></g>`;
+  if (s.fault) g += T(px - 16, py - 50, 'U<tspan dy="3" font-size="75%">B</tspan><tspan dy="-3"> = ' + nf(tripped ? 0 : R.UB, 0) + ' V</tspan>', 't-b', 'middle', `style="fill:${touch ? 'var(--fault)' : 'var(--ok)'}"`);
+  // Zeitanzeige
+  if (s.fault && isFinite(R.t)) g += `<rect x="190" y="200" width="170" height="54" rx="8" fill="var(--surface)" stroke="${tripped ? 'var(--ok)' : 'var(--q)'}" stroke-width="2"/>` + T(202, 220, 't = ' + nf(Math.min(s.ft, R.t) * 1000, 0) + ' ms', 't-mono', 'start', 'style="font-size:16px"') + T(202, 242, tripped ? 'abgeschaltet ✓' : 'Fehlerstrom fließt …', 't-b', 'start', `style="fill:${tripped ? 'var(--ok)' : 'var(--q)'}"`);
+  if (s.fault && sys === 'IT' && s.fall === 'ks') g += `<rect x="190" y="200" width="170" height="54" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>` + T(202, 222, 'Isolationswächter:', 't-m', 'start') + T(202, 242, '⚠ Isolationsfehler!', 't-b', 'start', 'style="fill:var(--q)"');
+  $('#net').innerHTML = g;
+  $('#go').textContent = s.fault ? 'Fehler beheben' : '⚡ Fehler auslösen';
+}
+
+/* ---------- Bedienung und Zeitlupe ---------- */
+function reset() { s.fault = false; s.ft = 0; }
+seg('sys', (v) => { s.sys = v; reset(); update(); });
+seg('fall', (v) => { s.fall = v; reset(); update(); });
+seg('prot', (v) => { s.rcd = v === 'rcd'; reset(); update(); });
+range('ra', (v) => nf(v, 0) + ' Ω', (v) => { s.RA = v; reset(); update(); });
+range('rb', (v) => nf(v, 1) + ' Ω', (v) => { s.RB = v; reset(); update(); });
+$('#go').addEventListener('click', () => { if (s.fault) reset(); else s.fault = true; update(); });
+let last = 0;
+function tick(ts) { const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0; last = ts; if (s.fault && isFinite(R.t) && s.ft < R.t) { s.ft = Math.min(R.t, s.ft + dt * 0.02); draw(); } requestAnimationFrame(tick); }
+update(); requestAnimationFrame(tick);
+</script>
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span><a href="hinweise.html">Hinweise und Haftung · Nutzung auf eigene Gefahr</a></footer>
+<script src="hfs-app.js"></script>
+</body>
+</html>

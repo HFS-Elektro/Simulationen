@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="motoranlauf|sim|4d7e87480611">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Motor-Anlauf">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Motor-Anlauf</title>
+<link rel="stylesheet" href="fonts/barlow.css">
+<link rel="stylesheet" href="fonts/ibmplexmono.css">
+<link rel="stylesheet" href="fonts/barlowsemicondensed.css">
+<style>
+:root { --bg:#EDF2F5; --surface:#FFFFFF; --surface2:#F5F8FA; --ink:#13202A; --muted:#586B78; --line:#D2DDE4; --grid:#E3EAEF; --accent:#0089C4; --accent-ink:#FFFFFF; --warn:#C8372D; --ok:#2E8B4A; --q:#D9822B; --i:#C8372D; --m:#1B63A8; --load:#7A4DB0; --steel:#9AA6AE; --copper:#C77D3A;
+  --f-head:"Barlow Semi Condensed","Arial Narrow","Segoe UI",sans-serif; --f-body:"Barlow","Segoe UI",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace; color-scheme:light }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0D151B; --surface:#142028; --surface2:#1A2832; --ink:#E2EBF1; --muted:#93A6B3; --line:#2A3B47; --grid:#1F2E38; --accent:#29B6F0; --accent-ink:#062030; --warn:#FF6F62; --ok:#5BD488; --q:#F2A659; --i:#FF6F62; --m:#5CB4FF; --load:#B78CF0; --steel:#7D8A93; --copper:#D98C46; color-scheme:dark } }
+:root[data-theme="dark"] { --bg:#0D151B; --surface:#142028; --surface2:#1A2832; --ink:#E2EBF1; --muted:#93A6B3; --line:#2A3B47; --grid:#1F2E38; --accent:#29B6F0; --accent-ink:#062030; --warn:#FF6F62; --ok:#5BD488; --q:#F2A659; --i:#FF6F62; --m:#5CB4FF; --load:#B78CF0; --steel:#7D8A93; --copper:#D98C46; color-scheme:dark }
+* { box-sizing:border-box } body { margin:0; background:var(--bg); color:var(--ink); font:400 16px/1.5 var(--f-body); padding:18px max(16px,env(safe-area-inset-right)) 32px max(16px,env(safe-area-inset-left)) }
+.wrap { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:16px } h1,h2 { font-family:var(--f-head); margin:0; line-height:1.15 } h1 { font-size:clamp(1.7rem,4.5vw,2.4rem) } h2 { font-size:1.15rem; font-weight:600 } p { margin:0 }
+.top { display:flex; flex-direction:column; gap:6px; border-bottom:2px solid var(--accent); padding-bottom:12px } .tags { font:600 .74rem/1 var(--f-head); text-transform:uppercase; letter-spacing:.09em; color:var(--muted) } .tags b { color:var(--accent) } .lead { color:var(--muted); max-width:80ch }
+.lab { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr); gap:16px; align-items:start } @media (max-width:900px) { .lab { grid-template-columns:minmax(0,1fr) } } @media (min-width:901px) { .lab > .col:last-child { position:sticky; top:12px } }
+.col { display:flex; flex-direction:column; gap:16px; min-width:0 } .panel { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:12px; min-width:0 }
+.panel > header { display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap } .panel > header small { color:var(--muted); font-size:.8rem }
+.stage { background:var(--surface2); border-radius:8px; padding:6px } svg.gfx { display:block; width:100%; height:auto } svg.gfx text { font:500 12px var(--f-body); fill:var(--ink) } svg .t-m { fill:var(--muted); font-size:11px } svg .t-b { font:700 13px var(--f-head) } svg .t-mono { font-family:var(--f-mono) }
+.seg { display:flex; flex-wrap:wrap; gap:6px } .ctl { display:flex; flex-direction:column; gap:4px } .ctl label { display:flex; justify-content:space-between; gap:8px; font-size:.88rem; color:var(--muted) } .ctl .lbl { display:block; font-size:.88rem; color:var(--muted) } .ctl output { font:500 .9rem var(--f-mono); color:var(--ink) }
+input[type=range] { width:100%; accent-color:var(--accent); height:28px }
+button { font:600 .9rem var(--f-head); letter-spacing:.02em; border-radius:8px; border:1px solid var(--line); background:var(--surface2); color:var(--ink); padding:7px 12px; cursor:pointer; min-height:38px } button:hover { border-color:var(--accent) } button:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+button[aria-pressed="true"] { background:var(--accent); color:var(--accent-ink); border-color:var(--accent) } button:disabled { opacity:.4; cursor:not-allowed } button.go { background:var(--ok); border-color:var(--ok); color:#fff; font-size:1.05rem; min-height:46px; padding:10px 18px } button.go.stop { background:var(--warn); border-color:var(--warn) }
+.vals { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; margin:0 } .vals div { background:var(--surface2); border-radius:8px; padding:8px 10px; border-left:3px solid var(--accent) } .vals dt { font-size:.76rem; color:var(--muted) } .vals dd { margin:0; font:500 1.05rem var(--f-mono) }
+.verdict { font-size:.95rem; padding:10px 12px; border-radius:8px; border:2px solid var(--accent); background:color-mix(in srgb,var(--accent) 7%,var(--surface)) } .verdict.no { border-color:var(--warn); background:color-mix(in srgb,var(--warn) 8%,var(--surface)) } .verdict.ok { border-color:var(--ok); background:color-mix(in srgb,var(--ok) 8%,var(--surface)) }
+.note { font-size:.86rem; color:var(--muted) } .k { display:inline-flex; gap:6px; flex-wrap:wrap } .k span { font:700 .85rem var(--f-mono); padding:4px 9px; border-radius:6px; border:1px solid var(--line); color:var(--muted) } .k span.on { background:var(--ok); color:#fff; border-color:var(--ok) }
+.tasks ol { margin:0; padding-left:1.3em; display:flex; flex-direction:column; gap:6px; max-width:85ch } .tasks details { border-top:1px solid var(--line); padding-top:8px } .tasks summary { cursor:pointer; color:var(--accent); font-weight:600 } .tasks details p { margin-top:6px; color:var(--muted) }
+footer.foot { font-size:.8rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px 16px; border-top:1px solid var(--line); padding-top:10px } [hidden] { display:none!important }
+</style>
+<link rel="stylesheet" href="hfs-app.css">
+</head>
+<body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Motor-Anlauf</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="tags"><span><b>Simulation</b> · Drehstrom-Asynchronmotor 7,5 kW · Anlaufverfahren</span></div>
+    <h1>Motor-Anlauf: Direkt, Stern-Dreieck, Sanftanlauf, Umrichter</h1>
+    <p class="lead">Ein Käfigläufermotor zieht beim Einschalten ein Vielfaches seines Nennstroms. Vergleiche vier Anlaufverfahren: Wie groß ist der Anlaufstrom, wie lange dauert der Hochlauf, und kommt der Motor mit seiner Last überhaupt hoch?</p>
+  </header>
+  <div class="lab">
+    <div class="col">
+      <section class="panel">
+        <header><h2>Hochlauf</h2><small id="stTxt">bereit</small></header>
+        <div class="stage"><svg id="motor" class="gfx" viewBox="0 0 640 190" role="img" aria-label="Motor mit Drehzahlanzeige und Schützen"></svg></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button type="button" class="go" id="go">▶ Motor einschalten</button><button type="button" id="umsch" hidden>Jetzt auf Dreieck umschalten</button><span class="k" id="schuetze"></span></div>
+        <div class="verdict" id="verdict">Wähle Verfahren und Last, dann einschalten.</div>
+      </section>
+      <section class="panel">
+        <header><h2>Strom über der Zeit</h2><small>Vielfaches des Nennstroms I<sub>N</sub> = 15,2 A</small></header>
+        <div class="stage"><svg id="ct" class="gfx" viewBox="0 0 640 230" role="img" aria-label="Diagramm Strom über Zeit"></svg></div>
+      </section>
+      <section class="panel">
+        <header><h2>Drehmoment über der Drehzahl</h2><small>Motorkennlinie und Lastkennlinie</small></header>
+        <div class="stage"><svg id="cm" class="gfx" viewBox="0 0 640 250" role="img" aria-label="Drehmoment-Drehzahl-Kennlinien"></svg></div>
+        <p class="note">Der Motor beschleunigt nur, solange sein Moment (blau) über dem Lastmoment (violett) liegt. Der Schnittpunkt ist der Arbeitspunkt.</p>
+      </section>
+    </div>
+    <div class="col">
+      <section class="panel">
+        <header><h2>Anlaufverfahren</h2></header>
+        <div class="seg" id="ver"><button type="button" data-v="d" aria-pressed="true">Direkt</button><button type="button" data-v="sd">Stern-Dreieck</button><button type="button" data-v="sa">Sanftanlauf</button><button type="button" data-v="fu">Frequenzumrichter</button></div>
+        <div class="ctl" id="cSd"><label for="tu"><span>Umschaltzeit Stern → Dreieck</span> <output for="tu"></output></label><input type="range" id="tu" min="0.3" max="8" step="0.1" value="3"></div>
+        <div class="ctl" id="cSa"><label for="u0"><span>Startspannung</span> <output for="u0"></output></label><input type="range" id="u0" min="20" max="80" step="5" value="40"></div>
+        <div class="ctl" id="cTr"><label for="tr"><span>Rampenzeit</span> <output for="tr"></output></label><input type="range" id="tr" min="1" max="15" step="0.5" value="5"></div>
+        <p class="note" id="verTxt"></p>
+      </section>
+      <section class="panel">
+        <header><h2>Last</h2></header>
+        <div class="seg" id="last"><button type="button" data-v="lee">Leerlauf</button><button type="button" data-v="luf" aria-pressed="true">Lüfter</button><button type="button" data-v="foe">Förderband (beladen)</button></div>
+        <div class="ctl"><label for="ml"><span>Lastmoment bei Nenndrehzahl</span> <output for="ml"></output></label><input type="range" id="ml" min="10" max="100" step="5" value="90"></div>
+      </section>
+      <section class="panel">
+        <header><h2>Ergebnis</h2></header>
+        <dl class="vals"><div><dt>Drehzahl</dt><dd id="vN">0 1/min</dd></div><div><dt>Strom</dt><dd id="vI">0 A</dd></div><div><dt>größter Strom</dt><dd id="vImax">–</dd></div><div><dt>Hochlaufzeit</dt><dd id="vT">–</dd></div><div><dt>Spannungseinbruch Netz</dt><dd id="vDU">–</dd></div><div><dt>Motormoment</dt><dd id="vM">–</dd></div></dl>
+      </section>
+    </div>
+  </div>
+  <section class="panel tasks">
+    <h2>Arbeitsaufträge</h2>
+    <ol>
+      <li>Starte direkt mit Lüfterlast. Lies den größten Strom ab. Warum ist der Anlaufstrom so groß, obwohl der Motor noch gar nichts leistet?</li>
+      <li>Wiederhole mit Stern-Dreieck. Um welchen Faktor sinken Anlaufstrom und Anlaufmoment? Begründe mit den Strangspannungen.</li>
+      <li>Stelle die Umschaltzeit auf 0,5 s. Was passiert beim Umschalten und warum?</li>
+      <li>Wähle „Förderband (beladen)“ mit 90 % Lastmoment. Welche Verfahren schaffen den Anlauf, welche nicht?</li>
+      <li>Nenne je einen Vorteil des Sanftanlaufs und des Frequenzumrichters.</li>
+    </ol>
+    <details><summary>Lösungen anzeigen</summary>
+      <p>1. Etwa das 6- bis 7-Fache des Nennstroms (ca. 100 A). Im Stillstand ist der Schlupf s = 1: Das Drehfeld schneidet den Läufer mit voller Geschwindigkeit. Wie bei einem Trafo mit kurzgeschlossener Sekundärwicklung (Käfig) fließt ein sehr großer Strom, der nur durch die Wicklungswiderstände und Streureaktanzen begrenzt ist.
+      2. In Sternschaltung liegt an jedem Strang nur 230 V statt 400 V (Faktor 1/√3). Der Strangstrom sinkt um 1/√3, und in Sternschaltung ist der Leiterstrom gleich dem Strangstrom (in Dreieck √3-mal größer). Zusammen sinkt der Netzstrom auf 1/3. Das Moment hängt von U² ab: (1/√3)² = 1/3.
+      3. Der Motor hat in Stern noch nicht hochgelaufen. Beim Umschalten auf Dreieck bei kleiner Drehzahl entsteht eine zweite, fast so hohe Stromspitze wie beim Direktanlauf. Umgeschaltet wird erst, wenn der Motor in Stern nahezu seine Enddrehzahl erreicht hat.
+      4. Direktanlauf und Frequenzumrichter schaffen es. Stern-Dreieck nicht: Das Anlaufmoment sinkt auf etwa 0,73 · M<sub>N</sub>, die Last braucht 0,9 · M<sub>N</sub>. Beim Sanftanlauf hängt es von der Startspannung ab. Stern-Dreieck und Sanftanlauf eignen sich deshalb für Leer- oder Schwachlastanlauf (Lüfter, Pumpen), nicht für Schweranlauf.
+      5. Sanftanlauf: günstig, weicher Anlauf ohne Stromsprung, schont Mechanik (Riemen, Getriebe). Frequenzumrichter: Anlauf mit vollem Moment bei kleinem Strom (etwa Nennstrom), zusätzlich stufenlose Drehzahlregelung und Energieeinsparung bei Pumpen und Lüftern.</p>
+    </details>
+  </section>
+  <footer class="foot"><span>Hans-Freudenberg-Schule Weinheim</span><span>Pablo Disson</span><span>Vereinfachtes Motormodell (7,5 kW, 1450 1/min, I<sub>A</sub>/I<sub>N</sub> ≈ 6,5, M<sub>A</sub>/M<sub>N</sub> ≈ 2,2, M<sub>K</sub>/M<sub>N</sub> ≈ 2,6).</span></footer>
+</div>
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+function nf(v, d = 1) { if (!isFinite(v)) return '–'; return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false }); }
+function T(x, y, t, cls = '', a = 'middle', ex = '') { return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${a}" ${ex}>${t}</text>`; }
+const NS = 1500, IN = 15.2, MN = 49.4, TMAX = 12;
+/* Motorkennlinien bei voller Spannung (Vielfache von M_N bzw. I_N) über dem Schlupf */
+const Mm = (s) => (s <= 0 ? 0 : 5.2 / (s / 0.18 + 0.18 / s) + 1.3 * s * s);
+const Im = (s) => Math.sqrt(0.35 ** 2 + (6.7 * s / Math.sqrt(s * s + 0.26 ** 2)) ** 2);
+const st = { ver: 'd', last: 'luf', ml: 0.9, tu: 3, u0: 0.4, tr: 5, run: false, t: 0, n: 0, hist: [], imax: 0, tup: null, umgeschaltet: false, gap: 0, stall: 0, done: false };
+const LAST = { lee: { J: 0.05, f: () => 0.08 }, luf: { J: 0.6, f: (n) => (n / 1450) ** 2 }, foe: { J: 1.2, f: (n) => (n < 30 ? 1.15 : 1) } };
+function loadM(n) { return st.last === 'lee' ? 0.08 : st.ml * LAST[st.last].f(n); }
+/* Momentanwerte für das gewählte Verfahren: [M/MN, I/IN, Spannung k, Schütze] */
+function motor(t, n) {
+  const s = Math.max(0, (NS - n) / NS);
+  if (st.ver === 'd') return { M: Mm(s), I: Im(s), k: 1, K: ['K1'] };
+  if (st.ver === 'sd') {
+    if (st.gap > 0) return { M: 0, I: 0, k: 0, K: ['K1'] };
+    if (!st.umgeschaltet) return { M: Mm(s) / 3, I: Im(s) / 3, k: 1 / Math.sqrt(3), K: ['K1', 'K3 (Stern)'] };
+    return { M: Mm(s), I: Im(s), k: 1, K: ['K1', 'K2 (Dreieck)'] };
+  }
+  if (st.ver === 'sa') { const k = Math.min(1, st.u0 + (1 - st.u0) * t / st.tr); return { M: k * k * Mm(s), I: k * Im(s), k, K: [k < 1 ? 'Thyristoren' : 'Bypass'] }; }
+  // Frequenzumrichter: Drehfelddrehzahl folgt der Rampe, Strom auf 1,5 · I_N begrenzt
+  const nsf = NS * Math.min(1, t / st.tr), sl = (nsf - n) / NS, M = Math.max(-1.5, Math.min(1.5, sl / 0.033));
+  return { M, I: Math.sqrt(0.35 ** 2 + M * M) * 0.95, k: Math.min(1, t / st.tr), K: ['FU ' + nf(50 * Math.min(1, t / st.tr), 0) + ' Hz'] };
+}
+function reset() { Object.assign(st, { run: false, t: 0, n: 0, hist: [], imax: 0, tup: null, umgeschaltet: false, gap: 0, stall: 0, done: false }); $('#umsch').hidden = true; ui(); }
+let last = 0;
+function loop(ts) {
+  const rdt = last ? Math.max(0, Math.min(0.05, (ts - last) / 1000)) : 0; last = ts;
+  if (st.run && !st.done) {
+    const steps = 10, dt = rdt / steps;
+    for (let i = 0; i < steps; i++) {
+      if (st.ver === 'sd' && !st.umgeschaltet && st.t >= st.tu) { st.umgeschaltet = true; st.gap = 0.05; }
+      if (st.gap > 0) st.gap -= dt;
+      const m = motor(st.t, st.n), ML = loadM(st.n), J = LAST[st.last].J + 0.035;
+      const a = ((m.M - ML) * MN) / J * 60 / (2 * Math.PI);   // 1/min pro s
+      st.n = Math.max(0, Math.min(NS, st.n + a * dt)); st.t += dt; st.cur = m;
+      if (m.I > st.imax) st.imax = m.I;
+      if (st.tup === null && st.n >= 0.95 * 1450) st.tup = st.t;
+    }
+    st.hist.push([st.t, st.cur.I, st.n]);
+    if (st.n < 20 && st.t > 1.5 && st.cur.M < loadM(0)) st.stall += rdt;
+    if (st.t >= TMAX) st.done = true;
+  }
+  ui(); requestAnimationFrame(loop);
+}
+function ui() {
+  const m = st.cur || { I: 0, M: 0, k: 0, K: [] };
+  $('#vN').textContent = nf(st.n, 0) + ' 1/min'; $('#vI').textContent = nf((st.run ? m.I : 0) * IN, 0) + ' A';
+  $('#vImax').textContent = st.imax ? nf(st.imax * IN, 0) + ' A (' + nf(st.imax, 1) + ' · I_N)'.replace('I_N', 'Iₙ') : '–';
+  $('#vT').textContent = st.tup !== null ? nf(st.tup, 2) + ' s' : st.run ? '…' : '–'; $('#vDU').textContent = st.imax ? '≈ ' + nf(st.imax * 0.8, 1) + ' %' : '–';
+  $('#vM').textContent = st.run ? nf(m.M * MN, 0) + ' Nm' : '–';
+  $('#schuetze').innerHTML = st.run ? m.K.map((k) => `<span class="on">${k}</span>`).join('') : '<span>aus</span>';
+  $('#umsch').hidden = !(st.run && st.ver === 'sd' && !st.umgeschaltet);
+  const g = $('#go'); g.textContent = st.run ? '■ Ausschalten / zurücksetzen' : '▶ Motor einschalten'; g.classList.toggle('stop', st.run);
+  $('#stTxt').textContent = !st.run ? 'bereit' : st.tup !== null ? 'Nenndrehzahl erreicht' : st.stall > 0.5 ? 'Motor kommt nicht hoch!' : 'läuft hoch …';
+  const v = $('#verdict');
+  if (!st.run) { v.className = 'verdict'; v.innerHTML = 'Wähle Verfahren und Last, dann einschalten.'; }
+  else if (st.stall > 0.5 && st.tup !== null) { v.className = 'verdict no'; v.innerHTML = `<b>Erst bei voller Spannung angelaufen (nach ${nf(st.tup, 1)} s).</b> ${st.ver === 'sd' ? 'In Stern reichte das Moment (⅓) nicht – der Motor stand mit Strom still. Erst nach dem Umschalten auf Dreieck lief er an, mit einer Stromspitze wie beim Direktanlauf.' : 'Bei kleiner Startspannung reichte das Moment (~ U²) nicht – der Motor stand still, bis die Rampe fast 100 % erreicht hatte.'} Für dieses Schweranlauf-Problem ist das Verfahren ungeeignet – besser Frequenzumrichter.`; }
+  else if (st.stall > 0.5 || (st.done && st.tup === null)) { v.className = 'verdict no'; v.innerHTML = '<b>Der Motor kommt nicht hoch!</b> Das Motormoment ist kleiner als das Lastmoment. Er steht mit Anlaufstrom unter Strom und würde ohne Motorschutz in kurzer Zeit überhitzen. ' + (st.ver === 'sd' ? 'Stern-Dreieck liefert nur ⅓ des Anlaufmoments.' : st.ver === 'sa' ? 'Die Startspannung ist zu klein (M ~ U²).' : ''); }
+  else if (st.tup !== null) { v.className = 'verdict ok'; v.innerHTML = `<b>Hochgelaufen in ${nf(st.tup, 2)} s.</b> Größter Strom ${nf(st.imax * IN, 0)} A = ${nf(st.imax, 1)}-facher Nennstrom.` + (st.ver === 'sd' && st.hist.some((h) => h[0] > st.tu && h[1] > 3.5) ? ' Achtung: Beim Umschalten auf Dreieck gab es eine zweite Stromspitze – zu früh umgeschaltet.' : ''); }
+  else { v.className = 'verdict'; v.innerHTML = 'Motor läuft hoch …'; }
+  drawMotor(m); drawCt(); drawCm();
+}
+let ang = 0;
+function drawMotor(m) {
+  ang += st.n / 60 * 2 * Math.PI * 0.016 * 0.15;
+  let g = `<rect x="40" y="40" width="200" height="110" rx="16" fill="var(--steel)" opacity=".5"/>`;
+  for (let i = 0; i < 9; i++) g += `<rect x="${52 + i * 21}" y="32" width="10" height="126" rx="3" fill="var(--steel)" opacity=".7"/>`;
+  g += `<rect x="240" y="85" width="70" height="20" rx="4" fill="var(--steel)"/>`;
+  const cx = 340, cy = 95; g += `<circle cx="${cx}" cy="${cy}" r="42" fill="var(--surface)" stroke="var(--muted)" stroke-width="2"/>`;
+  for (let i = 0; i < 4; i++) { const a = ang + i * Math.PI / 2; g += `<path d="M${cx} ${cy} L${cx + Math.cos(a) * 38} ${cy + Math.sin(a) * 38}" stroke="${st.last === 'luf' ? 'var(--accent)' : 'var(--ink)'}" stroke-width="${st.last === 'luf' ? 10 : 4}" stroke-linecap="round"/>`; }
+  g += T(cx, 160, st.last === 'luf' ? 'Lüfterrad' : st.last === 'foe' ? 'Förderband-Antrieb' : 'Welle frei', 't-m') + T(140, 100, 'M 3~', 't-b', 'middle', 'style="font-size:22px"');
+  // Drehzahlanzeige
+  const gx = 520, gy = 120, R = 70, f = st.n / NS; g += `<path d="M${gx - R} ${gy} A${R} ${R} 0 0 1 ${gx + R} ${gy}" fill="none" stroke="var(--grid)" stroke-width="12"/>`;
+  g += `<path d="M${gx - R} ${gy} A${R} ${R} 0 0 1 ${gx - R * Math.cos(Math.PI * f)} ${gy - R * Math.sin(Math.PI * f)}" fill="none" stroke="var(--ok)" stroke-width="12"/>`;
+  g += T(gx, gy - 8, nf(st.n, 0), 't-mono', 'middle', 'style="font-size:22px"') + T(gx, gy + 12, '1/min', 't-m') + T(gx, gy + 34, 'Strom ' + nf((st.run ? m.I : 0) * IN, 0) + ' A', 't-mono', 'middle', `style="fill:${m.I > 3 ? 'var(--warn)' : 'var(--ink)'}"`);
+  $('#motor').innerHTML = g;
+}
+function axes(W, H, P, xs, ys, xl, yl, X, Y) {
+  let g = ''; xs.forEach((v) => (g += `<line x1="${X(v)}" y1="${P.t}" x2="${X(v)}" y2="${H - P.b}" stroke="var(--grid)"/>` + T(X(v), H - P.b + 15, nf(v, 0), 't-m')));
+  ys.forEach((v) => (g += `<line x1="${P.l}" y1="${Y(v)}" x2="${W - P.r}" y2="${Y(v)}" stroke="var(--grid)"/>` + T(P.l - 6, Y(v) + 4, nf(v, 0), 't-m', 'end')));
+  return g + T(W - P.r, H - 3, xl, 't-m', 'end') + T(P.l + 4, P.t + 10, yl, 't-m', 'start');
+}
+function drawCt() {
+  const W = 640, H = 230, P = { l: 40, r: 12, t: 12, b: 30 }, X = (t) => P.l + t / TMAX * (W - P.l - P.r), Y = (i) => H - P.b - Math.min(i, 8) / 8 * (H - P.t - P.b);
+  let g = axes(W, H, P, [0, 2, 4, 6, 8, 10, 12], [0, 1, 2, 4, 6, 8], 't in s', 'I / Iₙ', X, Y);
+  g += `<line x1="${P.l}" y1="${Y(1)}" x2="${W - P.r}" y2="${Y(1)}" stroke="var(--ok)" stroke-dasharray="5 4"/>` + T(W - P.r - 4, Y(1) - 5, 'Nennstrom', 't-m', 'end');
+  if (st.hist.length > 1) g += `<path d="M${st.hist.map((h) => X(h[0]) + ' ' + Y(h[1])).join(' L')}" fill="none" stroke="var(--i)" stroke-width="2.6"/>`;
+  if (st.ver === 'sd') g += `<line x1="${X(st.tu)}" y1="${P.t}" x2="${X(st.tu)}" y2="${H - P.b}" stroke="var(--q)" stroke-dasharray="3 3"/>` + T(X(st.tu) + 4, P.t + 22, 'Y → Δ', 't-m', 'start');
+  $('#ct').innerHTML = g;
+}
+function drawCm() {
+  const W = 640, H = 250, P = { l: 40, r: 12, t: 12, b: 30 }, X = (n) => P.l + n / NS * (W - P.l - P.r), Y = (m) => H - P.b - Math.max(-0.2, Math.min(m, 3)) / 3 * (H - P.t - P.b);
+  let g = axes(W, H, P, [0, 300, 600, 900, 1200, 1500], [0, 1, 2, 3], 'n in 1/min', 'M / Mₙ', X, Y);
+  const curve = (f, col, w = 2.4, dash = '') => { let d = ''; for (let n = 0; n <= NS; n += 10) d += (n ? 'L' : 'M') + X(n) + ' ' + Y(f(n)); return `<path d="${d}" fill="none" stroke="var(${col})" stroke-width="${w}" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`; };
+  const sl = (n) => (NS - n) / NS;
+  if (st.ver === 'd' || st.ver === 'sd') g += curve((n) => Mm(sl(n)), '--m', 2.6) + T(X(80), Y(Mm(1)) - 8, 'Direkt / Dreieck', 't-m', 'start');
+  if (st.ver === 'sd') g += curve((n) => Mm(sl(n)) / 3, '--m', 2, '6 4') + T(X(80), Y(Mm(1) / 3) - 8, 'Stern (⅓)', 't-m', 'start');
+  if (st.ver === 'sa') { g += curve((n) => st.u0 ** 2 * Mm(sl(n)), '--m', 2, '6 4') + curve((n) => Mm(sl(n)), '--m', 1.4) + T(X(80), Y(st.u0 ** 2 * Mm(1)) - 8, 'bei Startspannung', 't-m', 'start'); }
+  if (st.ver === 'fu') { g += `<path d="M${X(0)} ${Y(1.5)} H${X(1450)} L${X(NS)} ${Y(0)}" fill="none" stroke="var(--m)" stroke-width="2.6"/>` + T(X(80), Y(1.5) - 8, 'FU: bis 1,5 · Mₙ über den ganzen Bereich', 't-m', 'start'); }
+  g += curve(loadM, '--load', 2.4) + T(X(1000), Y(loadM(1000)) - 8, 'Last', 't-m', 'start', 'style="fill:var(--load)"');
+  if (st.run && st.cur) g += `<circle cx="${X(st.n)}" cy="${Y(st.cur.M)}" r="6" fill="var(--i)" stroke="var(--surface)" stroke-width="2"/>`;
+  $('#cm').innerHTML = g;
+}
+function seg(id, cb) { const box = document.getElementById(id); box.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; box.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); }); }
+function range(id, fmt, cb) { const el = document.getElementById(id), o = document.querySelector(`output[for="${id}"]`); const u = () => { o.textContent = fmt(+el.value); cb(+el.value); }; el.addEventListener('input', u); u(); }
+const VTXT = { d: 'Einfachstes Verfahren: volle Spannung sofort. Großer Anlaufstrom (6–8 · Iₙ) und großes Anlaufmoment.', sd: 'Anlauf in Stern (230 V je Strang), nach dem Hochlauf Umschaltung auf Dreieck (400 V je Strang). Strom und Moment sinken auf ⅓. Nur für Motoren, die in Dreieck für 400 V ausgelegt sind.', sa: 'Ein Sanftanlaufgerät erhöht die Spannung mit Thyristoren von der Startspannung bis 100 %. Strom ~ U, Moment ~ U².', fu: 'Der Umrichter erhöht Frequenz und Spannung gemeinsam (U/f = konstant). Der Motor läuft immer mit kleinem Schlupf: volles Moment bei etwa Nennstrom.' };
+seg('ver', (v) => { st.ver = v; reset(); $('#cSd').hidden = v !== 'sd'; $('#cSa').hidden = v !== 'sa'; $('#cTr').hidden = !(v === 'sa' || v === 'fu'); $('#verTxt').textContent = VTXT[v]; });
+seg('last', (v) => { st.last = v; reset(); });
+range('ml', (v) => v + ' %', (v) => { st.ml = v / 100; reset(); });
+range('tu', (v) => nf(v, 1) + ' s', (v) => { st.tu = v; reset(); });
+range('u0', (v) => v + ' %', (v) => { st.u0 = v / 100; reset(); });
+range('tr', (v) => nf(v, 1) + ' s', (v) => { st.tr = v; reset(); });
+$('#go').addEventListener('click', () => { if (st.run) reset(); else { reset(); st.run = true; } });
+$('#umsch').addEventListener('click', () => { st.tu = st.t; });
+$('#cSa').hidden = true; $('#cTr').hidden = true; $('#cSd').hidden = true; $('#verTxt').textContent = VTXT.d;
+requestAnimationFrame(loop);
+</script>
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span><a href="hinweise.html">Hinweise und Haftung · Nutzung auf eigene Gefahr</a></footer>
+<script src="hfs-app.js"></script>
+</body>
+</html>

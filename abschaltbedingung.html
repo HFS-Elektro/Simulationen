@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="abschaltbedingung|sim|7732816d69dc">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Abschaltbedingung und Sc">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Abschaltbedingung</title>
+<link rel="stylesheet" href="fonts/barlow.css">
+<link rel="stylesheet" href="fonts/ibmplexmono.css">
+<link rel="stylesheet" href="fonts/barlowsemicondensed.css">
+<style>
+:root {
+  --bg: #EDF2F5; --surface: #FFFFFF; --surface2: #F5F8FA; --ink: #13202A; --muted: #586B78; --line: #D2DDE4; --grid: #E3EAEF;
+  --accent: #0089C4; --accent-ink: #FFFFFF; --warn: #C8372D; --ok: #2E8B4A; --q: #D9822B;
+  --L: #8B5A2B; --N: #1E88E5; --pe1: #2E9B48; --pe2: #E8B90F; --fault: #E0352B; --dev: #DDE4E9;
+  --f-head: "Barlow Semi Condensed", "Arial Narrow", "Segoe UI", sans-serif; --f-body: "Barlow", "Segoe UI", system-ui, sans-serif; --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3; --line: #2A3B47; --grid: #1F2E38;
+  --accent: #29B6F0; --accent-ink: #062030; --warn: #FF6F62; --ok: #5BD488; --q: #F2A659; --L: #C98E55; --N: #4FA3FF; --fault: #FF6F62; --dev: #2A3A46; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0D151B; --surface: #142028; --surface2: #1A2832; --ink: #E2EBF1; --muted: #93A6B3; --line: #2A3B47; --grid: #1F2E38;
+  --accent: #29B6F0; --accent-ink: #062030; --warn: #FF6F62; --ok: #5BD488; --q: #F2A659; --L: #C98E55; --N: #4FA3FF; --fault: #FF6F62; --dev: #2A3A46; color-scheme: dark }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--f-body); padding: 18px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left)) }
+.wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px }
+h1, h2 { font-family: var(--f-head); margin: 0; line-height: 1.15; text-wrap: balance }
+h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 700 } h2 { font-size: 1.15rem; font-weight: 600 }
+p { margin: 0 }
+.top { display: flex; flex-direction: column; gap: 6px; border-bottom: 2px solid var(--accent); padding-bottom: 12px }
+.tags { font: 600 .74rem/1 var(--f-head); text-transform: uppercase; letter-spacing: .09em; color: var(--muted) } .tags b { color: var(--accent) }
+.lead { color: var(--muted); max-width: 75ch }
+.lab { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 16px; align-items: start }
+@media (max-width: 900px) { .lab { grid-template-columns: minmax(0, 1fr) } }
+@media (min-width: 901px) { .lab > .col:last-child { position: sticky; top: 12px } }
+.col { display: flex; flex-direction: column; gap: 16px; min-width: 0 }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.panel > header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+.panel > header small { color: var(--muted); font-size: .8rem }
+.stage { background: var(--surface2); border-radius: 8px; padding: 6px; overflow-x: auto }
+svg.gfx { display: block; width: 100%; height: auto; min-width: 560px }
+svg.gfx text { font: 500 12px var(--f-body); fill: var(--ink) }
+svg .t-m { fill: var(--muted); font-size: 11px } svg .t-b { font-weight: 700; font-family: var(--f-head); font-size: 13px; letter-spacing: .04em }
+svg .t-mono { font-family: var(--f-mono); font-size: 12px }
+svg .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5 }
+svg .wL { stroke: var(--L); stroke-width: 3; fill: none } svg .wN { stroke: var(--N); stroke-width: 3; fill: none } svg .wPE { stroke: var(--pe1); stroke-width: 3; fill: none } svg .wPE2 { stroke: var(--pe2); stroke-width: 3; fill: none; stroke-dasharray: 6 6 }
+svg .loop { stroke: var(--fault); stroke-width: 6; fill: none; opacity: .35; stroke-linejoin: round }
+svg .flow { stroke: #FFD54A; stroke-width: 3.5; fill: none; stroke-dasharray: 3 13; animation: fl .5s linear infinite; stroke-linejoin: round }
+@keyframes fl { to { stroke-dashoffset: -32 } }
+@media (prefers-reduced-motion: reduce) { svg .flow { animation: none } }
+.ctls { display: flex; flex-direction: column; gap: 12px }
+.ctl { display: flex; flex-direction: column; gap: 4px }
+.ctl label { display: flex; justify-content: space-between; gap: 8px; font-size: .88rem; color: var(--muted) }
+.ctl .lbl { display: block; font-size: .88rem; color: var(--muted) }
+.ctl output { font: 500 .9rem var(--f-mono); color: var(--ink) }
+input[type=range] { width: 100%; accent-color: var(--accent); height: 28px }
+.seg { display: flex; flex-wrap: wrap; gap: 6px }
+button { font: 600 .9rem var(--f-head); letter-spacing: .02em; border-radius: 8px; border: 1px solid var(--line); background: var(--surface2); color: var(--ink); padding: 7px 12px; cursor: pointer; min-height: 38px }
+button:hover { border-color: var(--accent) } button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+button.fault { background: var(--fault); color: #fff; border-color: var(--fault); font-size: 1rem; min-height: 46px; padding: 10px 16px }
+button.fault[aria-pressed="true"] { background: var(--surface2); color: var(--ink); border-color: var(--line) }
+.vals { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 0 }
+.vals div { background: var(--surface2); border-radius: 8px; padding: 8px 10px; min-width: 0; border-left: 3px solid var(--accent) }
+.vals dt { font-size: .76rem; color: var(--muted) } .vals dd { margin: 0; font: 500 1.02rem var(--f-mono); white-space: nowrap } .vals small { display: block; font-size: .74rem; color: var(--muted) }
+.verdict { font-size: .95rem; padding: 10px 12px; border-radius: 8px; border: 2px solid var(--ok); background: color-mix(in srgb, var(--ok) 8%, var(--surface)) }
+.verdict.no { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 8%, var(--surface)) }
+.verdict b.big { font-family: var(--f-head); font-size: 1.1rem; display: block; margin-bottom: 2px }
+.verdict.ok b.big { color: var(--ok) } .verdict.no b.big { color: var(--warn) }
+.formula { font: 500 .9rem var(--f-mono); background: var(--surface2); border-radius: 8px; padding: 8px 10px; overflow-wrap: anywhere; line-height: 1.7 }
+.note { font-size: .86rem; color: var(--muted) }
+.tasks ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; max-width: 85ch }
+.tasks details { border-top: 1px solid var(--line); padding-top: 8px } .tasks summary { cursor: pointer; color: var(--accent); font-weight: 600 } .tasks details p { margin-top: 6px; color: var(--muted) }
+footer.foot { font-size: .8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 16px; border-top: 1px solid var(--line); padding-top: 10px }
+</style>
+<link rel="stylesheet" href="hfs-app.css">
+</head>
+<body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Abschaltbedingung und Schleifenimpedanz</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="tags"><span><b>Simulation</b> · Schutz durch automatische Abschaltung · TN-S-System 230/400 V</span></div>
+    <h1>Abschaltbedingung und Schleifenimpedanz</h1>
+    <p class="lead">Ein Gerät bekommt einen Körperschluss: Die Phase berührt das Metallgehäuse. Jetzt muss das Schutzorgan schnell genug abschalten, bevor jemand das Gehäuse anfasst. Das klappt nur, wenn die Fehlerschleife einen kleinen Widerstand hat und deshalb ein großer Kurzschlussstrom fließt. Stell Schutzorgan, Leitung und Netz ein und löse den Fehler aus.</p>
+  </header>
+
+  <div class="lab">
+    <div class="col">
+      <section class="panel">
+        <header><h2>Fehlerschleife im TN-S-System</h2><small id="loopTxt">rot = Weg des Fehlerstroms</small></header>
+        <div class="stage"><svg id="net" class="gfx" viewBox="0 0 720 330" role="img" aria-label="Schaltbild: Trafo, Verteiler mit Schutzorgan, Leitung und Gerät mit Körperschluss"></svg></div>
+        <div class="row" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button type="button" class="fault" id="fault" aria-pressed="false">⚡ Körperschluss auslösen</button>
+          <span class="note" id="faultTxt">Simuliert, was nach dem Fehler passiert – in Zeitlupe.</span>
+        </div>
+        <div class="verdict" id="verdict" aria-live="polite"></div>
+      </section>
+
+      <section class="panel">
+        <header><h2>Rechenweg</h2><small>U<sub>0</sub> = 230 V · κ = 56 m/(Ω·mm²)</small></header>
+        <dl class="vals">
+          <div><dt>1 · Leitungswiderstand R<sub>L</sub></dt><dd id="vRL"></dd><small>2 · l / (κ · A), Hin- und Rückleiter</small></div>
+          <div><dt>2 · Schleifenimpedanz Z<sub>s</sub></dt><dd id="vZs"></dd><small>Z<sub>v</sub> + R<sub>L</sub></small></div>
+          <div><dt>3 · Kurzschlussstrom I<sub>k</sub></dt><dd id="vIk"></dd><small>U<sub>0</sub> / Z<sub>s</sub></small></div>
+          <div><dt>4 · Abschaltstrom I<sub>a</sub></dt><dd id="vIa"></dd><small id="vIaF"></small></div>
+          <div><dt>5 · Z<sub>s,max</sub></dt><dd id="vZm"></dd><small id="vZmF"></small></div>
+          <div><dt>6 · größte Länge l<sub>max</sub></dt><dd id="vLm"></dd><small>(Z<sub>s,max</sub> − Z<sub>v</sub>) · κ · A / 2</small></div>
+          <div><dt>Abschaltzeit</dt><dd id="vT"></dd><small id="vTF"></small></div>
+          <div><dt>Berührungsspannung</dt><dd id="vUB"></dd><small>U<sub>B</sub> ≈ I<sub>k</sub> · R<sub>PE</sub> (bis zur Abschaltung)</small></div>
+        </dl>
+        <p class="formula" id="formula"></p>
+      </section>
+
+      <section class="panel">
+        <header><h2>Z<sub>s</sub> über der Leitungslänge</h2><small>Schnittpunkt = größte zulässige Länge</small></header>
+        <div class="stage"><svg id="chart" class="gfx" viewBox="0 0 640 260" role="img" aria-label="Diagramm Schleifenimpedanz über Leitungslänge"></svg></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="panel">
+        <header><h2>Schutzorgan</h2></header>
+        <div class="ctls">
+          <div class="ctl"><span class="lbl">Art</span><div class="seg" id="typ"><button type="button" data-v="B" aria-pressed="true">LS B</button><button type="button" data-v="C">LS C</button><button type="button" data-v="gG">Schmelzsicherung gG</button></div></div>
+          <div class="ctl"><span class="lbl">Nennstrom I<sub>n</sub></span><div class="seg" id="inn"></div></div>
+          <div class="ctl"><span class="lbl">Stromkreis</span><div class="seg" id="kreis"><button type="button" data-v="0.4" aria-pressed="true">Endstromkreis ≤ 32 A (0,4 s)</button><button type="button" data-v="5">Verteilerstromkreis (5 s)</button></div></div>
+          <div class="ctl"><span class="lbl">Zusätzlich RCD 30 mA</span><div class="seg" id="rcd"><button type="button" data-v="0" aria-pressed="true">nein</button><button type="button" data-v="1">ja</button></div></div>
+        </div>
+      </section>
+      <section class="panel">
+        <header><h2>Netz und Leitung</h2></header>
+        <div class="ctls">
+          <div class="ctl"><label for="zv"><span>Vorimpedanz Z<sub>v</sub> (Netz bis Verteiler)</span> <output for="zv"></output></label><input type="range" id="zv" min="0.05" max="1.5" step="0.01" value="0.4"></div>
+          <div class="ctl"><span class="lbl">Querschnitt A (Cu)</span><div class="seg" id="qa"><button type="button" data-v="1.5" aria-pressed="true">1,5 mm²</button><button type="button" data-v="2.5">2,5 mm²</button><button type="button" data-v="4">4 mm²</button><button type="button" data-v="6">6 mm²</button><button type="button" data-v="10">10 mm²</button></div></div>
+          <div class="ctl"><label for="len"><span>Leitungslänge l</span> <output for="len"></output></label><input type="range" id="len" min="1" max="200" step="1" value="30"></div>
+          <div class="ctl"><span class="lbl">Bewertung</span><div class="seg" id="bew"><button type="button" data-v="r" aria-pressed="true">Rechnung</button><button type="button" data-v="m">Messung (⅔-Regel)</button></div></div>
+        </div>
+        <p class="note">⅔-Regel: Bei der Messung im kalten Zustand muss Z<sub>s</sub> ≤ ⅔ · U<sub>0</sub> / I<sub>a</sub> sein. Die Reserve deckt die Erwärmung der Leiter im Kurzschluss und Messfehler ab.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel tasks">
+    <h2>Arbeitsaufträge</h2>
+    <ol>
+      <li>LS B16, 1,5 mm², Z<sub>v</sub> = 0,5 Ω, Endstromkreis, Rechnung. Berechne Z<sub>s,max</sub> und die größte zulässige Leitungslänge. Prüfe im Diagramm.</li>
+      <li>Wechsle auf LS C16 und dann auf eine Schmelzsicherung gG 16 A. Wie ändert sich l<sub>max</sub>? Begründe.</li>
+      <li>LS C16, 1,5 mm², 40 m, Z<sub>v</sub> = 0,5 Ω. Löse den Körperschluss aus. Was passiert und warum ist das gefährlich? Nenne drei Abhilfen.</li>
+      <li>Warum ist die Abschaltbedingung mit einem RCD 30 mA praktisch immer erfüllt? Warum braucht man trotzdem einen LS-Schalter?</li>
+    </ol>
+    <details><summary>Lösungen anzeigen</summary>
+      <p>1. I<sub>a</sub> = 5 · 16 A = 80 A. Z<sub>s,max</sub> = 230 V / 80 A = 2,875 Ω. Für die Leitung bleiben R<sub>L,max</sub> = 2,875 Ω − 0,5 Ω = 2,375 Ω. l<sub>max</sub> = R<sub>L,max</sub> · κ · A / 2 = 2,375 Ω · 56 m/(Ω·mm²) · 1,5 mm² / 2 ≈ 99,8 m.
+      2. LS C16: I<sub>a</sub> = 10 · 16 A = 160 A, Z<sub>s,max</sub> ≈ 1,44 Ω, l<sub>max</sub> ≈ (1,44 Ω − 0,5 Ω) · 42 ≈ 39 m. gG 16 A (0,4 s): I<sub>a</sub> ≈ 107 A, Z<sub>s,max</sub> ≈ 2,15 Ω, l<sub>max</sub> ≈ 69 m. Je größer der nötige Abschaltstrom, desto kleiner muss Z<sub>s</sub> sein und desto kürzer darf die Leitung werden.
+      3. R<sub>L</sub> = 2 · 40 m / (56 · 1,5) ≈ 0,95 Ω, Z<sub>s</sub> ≈ 1,45 Ω > 1,44 Ω, I<sub>k</sub> ≈ 158 A < 160 A. Der magnetische Auslöser spricht nicht an, nur das Bimetall: Abschaltung erst nach etwa 1 s statt 0,4 s. So lange liegt am Gehäuse eine gefährliche Berührungsspannung von rund 75 V (I<sub>k</sub> · R<sub>PE</sub> ≈ 158 A · 0,48 Ω). Abhilfen: größerer Querschnitt (2,5 mm²), LS mit Charakteristik B, kürzere Leitung oder zusätzlich ein RCD 30 mA.
+      4. Ein RCD löst schon bei 30 mA Fehlerstrom aus. Damit gilt Z<sub>s</sub> ≤ 230 V / 0,03 A ≈ 7667 Ω – das erreicht jede Leitung. Er schaltet bei 5 · I<sub>Δn</sub> in höchstens 40 ms ab. Der RCD erkennt aber keine Überlast und keinen Kurzschluss zwischen L und N, weil dabei kein Strom „fehlt“. Für den Leitungsschutz braucht man deshalb immer zusätzlich LS-Schalter oder Sicherungen.</p>
+    </details>
+  </section>
+
+  <footer class="foot"><span>Hans-Freudenberg-Schule Weinheim</span><span>Pablo Disson</span><span>Abschaltströme der gG-Sicherungen sind Richtwerte – immer mit Tabellenbuch und DIN VDE 0100-410/-600 abgleichen. Vereinfachte Rechnung ohne Blindanteile.</span></footer>
+</div>
+
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+function nf(v, d = 1) { if (!isFinite(v)) return '–'; return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false }); }
+const K = 56, U0 = 230;
+/* Abschaltströme I_a (A) für gG nach Richtwerten aus dem Tabellenbuch: [0,4 s, 5 s] */
+const GG = { 10: [82, 47], 16: [107, 65], 20: [145, 85], 25: [180, 110], 32: [265, 150], 35: [295, 173], 50: [470, 260], 63: [550, 320] };
+const LIST = { B: [10, 13, 16, 20, 25, 32], C: [10, 13, 16, 20, 25, 32], gG: [10, 16, 20, 25, 32, 35, 50, 63] };
+const s = { typ: 'B', In: 16, ta: 0.4, rcd: false, zv: 0.4, A: 1.5, l: 30, bew: 'r', fault: false, ft: 0 };
+
+function seg(id, cb) {
+  const box = document.getElementById(id), btns = () => [...box.querySelectorAll('button')];
+  box.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; btns().forEach((x) => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); });
+}
+function range(id, fmt, cb) { const el = document.getElementById(id), out = document.querySelector(`output[for="${id}"]`); const u = () => { out.textContent = fmt(+el.value); cb(+el.value); }; el.addEventListener('input', u); u(); }
+function inButtons() {
+  const box = $('#inn'); if (!LIST[s.typ].includes(s.In)) s.In = 16;
+  box.innerHTML = LIST[s.typ].map((v) => `<button type="button" data-v="${v}" aria-pressed="${v === s.In}">${v} A</button>`).join('');
+}
+seg('typ', (v) => { s.typ = v; inButtons(); reset(); calc(); });
+seg('inn', (v) => { s.In = +v; reset(); calc(); });
+seg('kreis', (v) => { s.ta = +v; reset(); calc(); });
+seg('rcd', (v) => { s.rcd = v === '1'; reset(); calc(); });
+seg('qa', (v) => { s.A = +v; reset(); calc(); });
+seg('bew', (v) => { s.bew = v; calc(); });
+inButtons();
+
+/* Auslösezeit eines Schutzorgans bei Strom I */
+function tripTime(I) {
+  const k = I / s.In;
+  if (s.typ === 'gG') { // Interpolation durch die zwei Tabellenpunkte (log-log)
+    const [i04, i5] = GG[s.In]; if (I <= i5 * 0.55) return Infinity;
+    const m = Math.log(5 / 0.4) / Math.log(i04 / i5); return 0.4 * Math.pow(i04 / I, m);
+  }
+  const mag = s.typ === 'B' ? 5 : 10;
+  if (k >= mag) return 0.01;
+  return k > 1.13 ? 120 / (k * k - 1.2) : Infinity;
+}
+function fmtT(t) { return !isFinite(t) ? 'keine' : t < 0.1 ? '< 0,1 s' : t < 10 ? nf(t, t < 1 ? 2 : 1) + ' s' : t < 120 ? nf(t, 0) + ' s' : nf(t / 60, 0) + ' min'; }
+
+let R = {};
+function calc() {
+  const RL = 2 * s.l / (K * s.A), Zs = s.zv + RL, Ik = U0 / Zs;
+  const Ia = s.typ === 'gG' ? GG[s.In][s.ta === 5 ? 1 : 0] : (s.typ === 'B' ? 5 : 10) * s.In;
+  const f = s.bew === 'm' ? 2 / 3 : 1, Zmax = f * U0 / Ia, lmax = Math.max(0, (Zmax - s.zv) * K * s.A / 2);
+  const t = tripTime(Ik), okZ = Zs <= Zmax, tR = s.rcd ? 0.04 : Infinity, tEff = Math.min(t, tR), ok = okZ || s.rcd;
+  const UB = Ik * (s.l / (K * s.A));   // Spannungsfall am Schutzleiter
+  R = { RL, Zs, Ik, Ia, Zmax, lmax, t, tEff, ok, okZ, UB, f };
+  const set = (id, v) => ($(id).innerHTML = v);
+  set('#vRL', nf(RL, 3) + ' Ω'); set('#vZs', nf(Zs, 3) + ' Ω'); set('#vIk', nf(Ik, 0) + ' A'); set('#vIa', nf(Ia, 0) + ' A');
+  set('#vIaF', s.typ === 'gG' ? `gG ${s.In} A, Abschaltung in ${s.ta === 5 ? '5' : '0,4'} s (Tabelle)` : `${s.typ === 'B' ? 5 : 10} · I<sub>n</sub> (magnetischer Auslöser)`);
+  set('#vZm', nf(Zmax, 3) + ' Ω'); set('#vZmF', (f < 1 ? '⅔ · ' : '') + 'U<sub>0</sub> / I<sub>a</sub>'); set('#vLm', nf(lmax, 0) + ' m');
+  set('#vT', s.rcd && tR < t ? '≤ 0,04 s' : fmtT(t)); set('#vTF', s.rcd && tR < t ? 'durch den RCD' : `zulässig: ${s.ta === 5 ? '5' : '0,4'} s`);
+  set('#vUB', nf(UB, 0) + ' V');
+  $('#formula').innerHTML = `Z<sub>s</sub> = ${nf(s.zv, 2)} Ω + 2 · ${s.l} m / (56 · ${nf(s.A, 1)} mm²) = <b>${nf(Zs, 3)} Ω</b> ${okZ ? '≤' : '>'} Z<sub>s,max</sub> = ${f < 1 ? '⅔ · ' : ''}230 V / ${nf(Ia, 0)} A = <b>${nf(Zmax, 3)} Ω</b>`;
+  const v = $('#verdict'); v.className = 'verdict ' + (ok ? 'ok' : 'no');
+  v.innerHTML = okZ ? `<b class="big">Abschaltbedingung erfüllt ✓</b>Z<sub>s</sub> ≤ Z<sub>s,max</sub>: Im Fehlerfall fließen ${nf(Ik, 0)} A ≥ I<sub>a</sub> = ${nf(Ia, 0)} A. ${s.typ === 'gG' ? 'Die Sicherung' : 'Der LS'} schaltet rechtzeitig ab. Die Leitung dürfte bis ${nf(lmax, 0)} m lang sein.`
+    : s.rcd ? `<b class="big">Erfüllt – aber nur durch den RCD</b>Z<sub>s</sub> ist zu groß für ${s.typ === 'gG' ? 'die Sicherung' : 'den LS'} (I<sub>k</sub> = ${nf(Ik, 0)} A < I<sub>a</sub> = ${nf(Ia, 0)} A). Der RCD 30 mA übernimmt den Fehlerschutz und schaltet in höchstens 40 ms ab.`
+    : `<b class="big">Abschaltbedingung NICHT erfüllt ✗</b>I<sub>k</sub> = ${nf(Ik, 0)} A ist kleiner als I<sub>a</sub> = ${nf(Ia, 0)} A. Abschaltung erst nach ${fmtT(t)} statt ${s.ta === 5 ? '5' : '0,4'} s – so lange liegt am Gehäuse eine Berührungsspannung von etwa ${nf(UB, 0)} V an. Abhilfe: Querschnitt erhöhen, Leitung kürzen, ${s.typ === 'C' ? 'Charakteristik B, ' : ''}RCD einsetzen.`;
+  drawNet(); drawChart();
+}
+range('zv', (v) => nf(v, 2) + ' Ω', (v) => { s.zv = v; reset(); calc(); });
+range('len', (v) => v + ' m', (v) => { s.l = v; reset(); calc(); });
+
+/* ---------- Schaltbild ---------- */
+function T(x, y, t, cls = '', anchor = 'middle', extra = '') { return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}" ${extra}>${t}</text>`; }
+function sub(a, b) { return `${a}<tspan dy="3" font-size="75%">${b}</tspan><tspan dy="-3"></tspan>`; }
+function drawNet() {
+  const tripped = s.fault && s.ft >= R.tEff, live = s.fault && !tripped, late = s.fault && s.ft > s.ta && !tripped;
+  const yL = 70, yN = 100, yPE = 130, xT = 70, xV1 = 210, xV2 = 330, xD = 560;
+  let g = '';
+  // Trafo
+  g += `<circle cx="${xT - 14}" cy="105" r="26" fill="none" stroke="var(--muted)" stroke-width="2"/><circle cx="${xT + 14}" cy="105" r="26" fill="none" stroke="var(--muted)" stroke-width="2"/>` + T(xT, 158, 'Trafo / Netz', 't-m') + T(xT, 172, sub('Z', 'v') + ' = ' + nf(s.zv, 2) + ' Ω', 't-mono');
+  g += `<path d="M${xT + 40} ${yL}H${xV1}" class="wL"/><path d="M${xT + 40} ${yN}H${xV1}" class="wN"/><path d="M${xT + 40} 116 V${yPE} H${xV1}" class="wPE"/><path d="M${xT + 40} 116 V${yPE} H${xV1}" class="wPE2"/>`;
+  g += `<path d="M${xT + 40} ${yPE} v40" stroke="var(--muted)" stroke-width="2"/><path d="M${xT + 28} ${yPE + 40}h24M${xT + 32} ${yPE + 46}h16M${xT + 36} ${yPE + 52}h8" stroke="var(--muted)" stroke-width="2"/>`;
+  g += T(xT + 48, yL - 6, 'L1', 't-m', 'start') + T(xT + 48, yN - 6, 'N', 't-m', 'start') + T(xT + 48, yPE - 6, 'PE', 't-m', 'start');
+  // Verteiler
+  g += `<rect x="${xV1}" y="30" width="${xV2 - xV1}" height="140" rx="8" class="box"/>` + T((xV1 + xV2) / 2, 160, 'VERTEILER', 't-b');
+  const open = tripped; const bx = xV1 + 30;
+  g += `<path d="M${xV1} ${yL}H${bx}" class="wL"/><rect x="${bx}" y="${yL - 14}" width="40" height="28" rx="4" fill="var(--surface2)" stroke="var(--ink)" stroke-width="1.5"/>`;
+  g += open ? `<path d="M${bx + 6} ${yL + 6} L${bx + 32} ${yL - 10}" stroke="var(--warn)" stroke-width="2.5"/>` : `<path d="M${bx + 6} ${yL} H${bx + 34}" stroke="var(--ink)" stroke-width="2.5"/>`;
+  g += T(bx + 20, yL - 20, s.typ === 'gG' ? 'gG ' + s.In + ' A' : s.typ + s.In, 't-mono');
+  let x = bx + 40;
+  if (s.rcd) { const rx = x + 14, rOpen = tripped && R.tEff === 0.04 && R.t > 0.04; g += `<path d="M${x} ${yL}H${rx}" class="wL"/><rect x="${rx}" y="${yL - 14}" width="34" height="${yN - yL + 28}" rx="4" fill="var(--surface2)" stroke="var(--ink)" stroke-width="1.5"/>` + T(rx + 17, yN + 30, 'RCD 30 mA', 't-m') + `<circle cx="${rx + 17}" cy="${(yL + yN) / 2}" r="8" fill="none" stroke="var(--muted)" stroke-width="2"/>`; g += `<path d="M${xV1} ${yN}H${rx}" class="wN"/>`; x = rx + 34; if (rOpen) g += T(rx + 17, yL - 20, 'AUS', 't-b', 'middle', 'style="fill:var(--warn)"'); }
+  else g += `<path d="M${xV1} ${yN}H${x}" class="wN"/>`;
+  g += `<path d="M${x} ${yL}H${xV2}" class="wL"/><path d="M${x} ${yN}H${xV2}" class="wN"/><path d="M${xV1} ${yPE}H${xV2}" class="wPE"/><path d="M${xV1} ${yPE}H${xV2}" class="wPE2"/>`;
+  // Leitung
+  g += `<path d="M${xV2} ${yL}H${xD}" class="wL"/><path d="M${xV2} ${yN}H${xD}" class="wN"/><path d="M${xV2} ${yPE}H${xD - 20}V200" class="wPE"/><path d="M${xV2} ${yPE}H${xD - 20}V200" class="wPE2"/>`;
+  g += `<path d="M${xV2 + 10} 18H${xD - 10}" stroke="var(--muted)" stroke-width="1"/><path d="M${xV2 + 10} 13v10M${xD - 10} 13v10" stroke="var(--muted)"/>` + T((xV2 + xD) / 2, 14, `l = ${s.l} m · ${nf(s.A, 1)} mm² Cu · ` + sub('R', 'L') + ` = ${nf(R.RL, 3)} Ω`, 't-mono', 'middle', 'dy="-2"');
+  // Gerät
+  g += `<rect x="${xD - 40}" y="200" width="150" height="110" rx="10" fill="var(--dev)" stroke="var(--muted)" stroke-width="2"/>` + T(xD + 35, 225, 'GERÄT (Metallgehäuse)', 't-b') + `<circle cx="${xD + 35}" cy="265" r="26" fill="none" stroke="var(--muted)" stroke-width="3"/><circle cx="${xD + 35}" cy="265" r="16" fill="none" stroke="var(--muted)" stroke-width="1.5"/>`;
+  g += `<path d="M${xD} ${yL}H${xD + 70}V200" class="wL"/><path d="M${xD} ${yN}H${xD + 90}V200" class="wN"/>`;
+  g += T(xD - 26, 192, 'PE', 't-m', 'end');
+  // Fehlerstelle
+  g += `<path d="M${xD + 70} 200 l-10 14 h12 l-10 16" stroke="var(--fault)" stroke-width="3" fill="none"/>` + T(xD + 82, 196, 'Körperschluss', 't-m', 'start', 'style="fill:var(--fault)"');
+  // Fehlerschleife
+  const loop = `M${xT + 40} ${yL}H${bx}M${bx + 40} ${yL}H${xD + 70}V214 L${xD + 60} 214 L${xD - 20} 214 V${yPE} H${xT + 40} V${yL}`;
+  g += `<path d="${loop}" class="loop"/>`;
+  if (live) g += `<path d="${loop}" class="flow"/>`;
+  // Person
+  const px = xD - 95, py = 250, touch = s.fault && !tripped;
+  g += `<g stroke="${touch ? 'var(--fault)' : 'var(--muted)'}" stroke-width="3" fill="none" stroke-linecap="round"><circle cx="${px}" cy="${py - 32}" r="10"/><path d="M${px} ${py - 22}v34M${px} ${py + 12}l-12 26M${px} ${py + 12}l12 26M${px} ${py - 12}l36 6"/></g>`;
+  if (touch) g += T(px, py + 60, 'U<tspan dy="3" font-size="75%">B</tspan><tspan dy="-3"> ≈ ' + nf(R.UB, 0) + ' V!</tspan>', 't-b', 'middle', 'style="fill:var(--fault)"');
+  // Zeitanzeige
+  if (s.fault) {
+    const col = tripped ? 'var(--ok)' : late ? 'var(--warn)' : 'var(--q)';
+    g += `<rect x="12" y="215" width="200" height="98" rx="8" fill="var(--surface)" stroke="${col}" stroke-width="2"/>`;
+    g += T(24, 238, 'Zeit seit dem Fehler', 't-m', 'start') + T(24, 266, nf(Math.min(s.ft, R.tEff), s.ft < 1 ? 3 : 2) + ' s', 't-mono', 'start', 'style="font-size:22px"');
+    g += T(24, 290, sub('I', 'k') + ' = ' + nf(R.Ik, 0) + ' A', 't-mono', 'start');
+    g += T(24, 306, tripped ? 'abgeschaltet ✓' + (R.tEff > s.ta ? ' – zu spät!' : '') : late ? 'Grenze ' + (s.ta === 5 ? '5' : '0,4') + ' s überschritten!' : 'Strom fließt …', 't-b', 'start', `style="fill:${tripped && R.tEff <= s.ta ? 'var(--ok)' : late || R.tEff > s.ta ? 'var(--warn)' : 'var(--q)'}"`);
+  }
+  $('#net').innerHTML = g;
+  $('#fault').setAttribute('aria-pressed', String(s.fault)); $('#fault').textContent = s.fault ? 'Fehler beheben (zurücksetzen)' : '⚡ Körperschluss auslösen';
+}
+
+/* ---------- Diagramm Z_s(l) ---------- */
+function drawChart() {
+  const W = 640, H = 260, P = { l: 52, r: 16, t: 16, b: 34 }, lmax = 200;
+  const zTop = Math.max(R.Zmax / R.f * 1.15, s.zv + 2 * lmax / (K * s.A) * 0.5, 1);
+  const X = (l) => P.l + l / lmax * (W - P.l - P.r), Y = (z) => H - P.b - Math.min(z, zTop) / zTop * (H - P.t - P.b);
+  let g = '';
+  const zs = [0.25, 0.5, 1, 2, 5, 10].find((v) => zTop / v <= 6);
+  for (let z = 0; z <= zTop + 1e-9; z += zs) g += `<line x1="${P.l}" y1="${Y(z)}" x2="${W - P.r}" y2="${Y(z)}" stroke="var(--grid)"/>` + T(P.l - 6, Y(z) + 4, nf(z, zs < 1 ? 2 : 0), 't-m', 'end');
+  for (let l = 0; l <= lmax; l += 25) g += `<line x1="${X(l)}" y1="${P.t}" x2="${X(l)}" y2="${H - P.b}" stroke="var(--grid)"/>` + T(X(l), H - P.b + 16, l, 't-m');
+  g += T(W - P.r, H - 4, 'l in m', 't-m', 'end') + T(P.l + 4, P.t + 10, sub('Z', 's') + ' in Ω', 't-m', 'start');
+  // zulässiger Bereich
+  g += `<rect x="${P.l}" y="${Y(R.Zmax)}" width="${W - P.l - P.r}" height="${H - P.b - Y(R.Zmax)}" fill="var(--ok)" opacity=".07"/>`;
+  if (R.f < 1) g += `<line x1="${P.l}" y1="${Y(R.Zmax / R.f)}" x2="${W - P.r}" y2="${Y(R.Zmax / R.f)}" stroke="var(--warn)" stroke-dasharray="3 4" opacity=".6"/>` + T(W - P.r - 4, Y(R.Zmax / R.f) - 5, 'U₀ / Iₐ (ohne ⅔)', 't-m', 'end');
+  g += `<line x1="${P.l}" y1="${Y(R.Zmax)}" x2="${W - P.r}" y2="${Y(R.Zmax)}" stroke="var(--warn)" stroke-width="2" stroke-dasharray="7 4"/>` + T(W - P.r - 4, Y(R.Zmax) - 6, sub('Z', 's,max') + ' = ' + nf(R.Zmax, 2) + ' Ω', 't-mono', 'end', 'style="fill:var(--warn)"');
+  // Kennlinie
+  const zl = (l) => s.zv + 2 * l / (K * s.A);
+  const lEnd = Math.min(lmax, Math.max(0, (zTop - s.zv) * K * s.A / 2));
+  g += `<path d="M${X(0)} ${Y(zl(0))} L${X(lEnd)} ${Y(zl(lEnd))}" stroke="var(--accent)" stroke-width="2.6" fill="none"/>`;
+  if (R.lmax > 0 && R.lmax < lmax) g += `<line x1="${X(R.lmax)}" y1="${Y(R.Zmax)}" x2="${X(R.lmax)}" y2="${H - P.b}" stroke="var(--warn)" stroke-dasharray="3 3"/><circle cx="${X(R.lmax)}" cy="${Y(R.Zmax)}" r="5" fill="var(--warn)"/>` + T(X(R.lmax) + 6, H - P.b - 8, sub('l', 'max') + ' = ' + nf(R.lmax, 0) + ' m', 't-mono', 'start', 'style="fill:var(--warn)"');
+  g += `<circle cx="${X(s.l)}" cy="${Y(R.Zs)}" r="7" fill="${R.okZ ? 'var(--ok)' : 'var(--warn)'}" stroke="var(--surface)" stroke-width="2"/>` + T(X(s.l), Y(R.Zs) - 12, 'deine Leitung', 't-b', X(s.l) > W - 120 ? 'end' : 'middle');
+  $('#chart').innerHTML = g;
+}
+
+/* ---------- Fehler-Ablauf in Zeitlupe ---------- */
+let last = 0;
+function reset() { s.fault = false; s.ft = 0; }
+$('#fault').addEventListener('click', () => { if (s.fault) reset(); else { s.fault = true; s.ft = 0; } calc(); });
+function tick(ts) {
+  const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0; last = ts;
+  if (s.fault && s.ft < Math.min(R.tEff, 30)) {
+    // Zeitlupe: unter 1 s etwa 20-fach verlangsamt, danach schneller
+    const rate = s.ft < 0.5 ? 0.05 : s.ft < 2 ? 0.3 : 3;
+    s.ft = Math.min(s.ft + dt * rate, R.tEff); drawNet();
+  }
+  requestAnimationFrame(tick);
+}
+calc(); requestAnimationFrame(tick);
+</script>
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span><a href="hinweise.html">Hinweise und Haftung · Nutzung auf eigene Gefahr</a></footer>
+<script src="hfs-app.js"></script>
+</body>
+</html>

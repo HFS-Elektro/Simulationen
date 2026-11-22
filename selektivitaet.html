@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'self' data: blob:; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'unsafe-inline'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="hfs-app" content="selektivitaet|sim|b8602d00fcda">
+<meta name="theme-color" content="#13202A">
+<meta name="apple-mobile-web-app-title" content="Selektivität">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Selektivität</title>
+<link rel="stylesheet" href="fonts/barlow.css">
+<link rel="stylesheet" href="fonts/ibmplexmono.css">
+<link rel="stylesheet" href="fonts/barlowsemicondensed.css">
+<style>
+:root { --bg:#EDF2F5; --surface:#FFFFFF; --surface2:#F5F8FA; --ink:#13202A; --muted:#586B78; --line:#D2DDE4; --grid:#E3EAEF; --accent:#0089C4; --accent-ink:#FFFFFF; --warn:#C8372D; --ok:#2E8B4A; --q:#D9822B; --up:#7A4DB0; --down:#0089C4; --L:#8B5A2B; --lamp:#F2C230;
+  --f-head:"Barlow Semi Condensed","Arial Narrow","Segoe UI",sans-serif; --f-body:"Barlow","Segoe UI",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace; color-scheme:light }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0D151B; --surface:#142028; --surface2:#1A2832; --ink:#E2EBF1; --muted:#93A6B3; --line:#2A3B47; --grid:#1F2E38; --accent:#29B6F0; --accent-ink:#062030; --warn:#FF6F62; --ok:#5BD488; --q:#F2A659; --up:#B78CF0; --down:#29B6F0; --L:#C98E55; color-scheme:dark } }
+:root[data-theme="dark"] { --bg:#0D151B; --surface:#142028; --surface2:#1A2832; --ink:#E2EBF1; --muted:#93A6B3; --line:#2A3B47; --grid:#1F2E38; --accent:#29B6F0; --accent-ink:#062030; --warn:#FF6F62; --ok:#5BD488; --q:#F2A659; --up:#B78CF0; --down:#29B6F0; --L:#C98E55; color-scheme:dark }
+* { box-sizing:border-box } body { margin:0; background:var(--bg); color:var(--ink); font:400 16px/1.5 var(--f-body); padding:18px max(16px,env(safe-area-inset-right)) 32px max(16px,env(safe-area-inset-left)) }
+.wrap { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:16px } h1,h2 { font-family:var(--f-head); margin:0; line-height:1.15 } h1 { font-size:clamp(1.7rem,4.5vw,2.4rem) } h2 { font-size:1.15rem; font-weight:600 } p { margin:0 }
+.top { display:flex; flex-direction:column; gap:6px; border-bottom:2px solid var(--accent); padding-bottom:12px } .tags { font:600 .74rem/1 var(--f-head); text-transform:uppercase; letter-spacing:.09em; color:var(--muted) } .tags b { color:var(--accent) } .lead { color:var(--muted); max-width:80ch }
+.lab { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr); gap:16px; align-items:start } @media (max-width:900px) { .lab { grid-template-columns:minmax(0,1fr) } } @media (min-width:901px) { .lab > .col:last-child { position:sticky; top:12px } }
+.col { display:flex; flex-direction:column; gap:16px; min-width:0 } .panel { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:12px; min-width:0 }
+.panel > header { display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap } .panel > header small { color:var(--muted); font-size:.8rem }
+.stage { background:var(--surface2); border-radius:8px; padding:6px } svg.gfx { display:block; width:100%; height:auto } svg.gfx text { font:500 12px var(--f-body); fill:var(--ink) } svg .t-m { fill:var(--muted); font-size:11px } svg .t-b { font:700 13px var(--f-head) } svg .t-mono { font-family:var(--f-mono) }
+.seg { display:flex; flex-wrap:wrap; gap:6px } .ctl { display:flex; flex-direction:column; gap:4px } .ctl label { display:flex; justify-content:space-between; gap:8px; font-size:.88rem; color:var(--muted) } .ctl .lbl { display:block; font-size:.88rem; color:var(--muted) } .ctl output { font:500 .9rem var(--f-mono); color:var(--ink) }
+input[type=range] { width:100%; accent-color:var(--accent); height:28px }
+button { font:600 .9rem var(--f-head); letter-spacing:.02em; border-radius:8px; border:1px solid var(--line); background:var(--surface2); color:var(--ink); padding:7px 12px; cursor:pointer; min-height:38px } button:hover { border-color:var(--accent) } button:focus-visible { outline:2px solid var(--accent); outline-offset:2px } button[aria-pressed="true"] { background:var(--accent); color:var(--accent-ink); border-color:var(--accent) }
+button.go { background:var(--warn); border-color:var(--warn); color:#fff; font-size:1.02rem; min-height:46px; padding:10px 16px }
+.vals { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; margin:0 } .vals div { background:var(--surface2); border-radius:8px; padding:8px 10px; border-left:3px solid var(--accent) } .vals dt { font-size:.76rem; color:var(--muted) } .vals dd { margin:0; font:500 1.02rem var(--f-mono) }
+.verdict { font-size:.95rem; padding:10px 12px; border-radius:8px; border:2px solid var(--ok); background:color-mix(in srgb,var(--ok) 8%,var(--surface)) } .verdict.no { border-color:var(--warn); background:color-mix(in srgb,var(--warn) 8%,var(--surface)) } .verdict b.big { display:block; font:700 1.1rem var(--f-head) } .verdict.ok b.big { color:var(--ok) } .verdict.no b.big { color:var(--warn) }
+.note { font-size:.86rem; color:var(--muted) }
+.tasks ol { margin:0; padding-left:1.3em; display:flex; flex-direction:column; gap:6px; max-width:85ch } .tasks details { border-top:1px solid var(--line); padding-top:8px } .tasks summary { cursor:pointer; color:var(--accent); font-weight:600 } .tasks details p { margin-top:6px; color:var(--muted) }
+footer.foot { font-size:.8rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px 16px; border-top:1px solid var(--line); padding-top:10px }
+</style>
+<link rel="stylesheet" href="hfs-app.css">
+</head>
+<body>
+<div id="hfs-bar" class="hfs-bar" role="navigation" aria-label="HFS-Navigation"><a class="hfs-home" href="index.html" title="Zur Übersicht"><span class="hfs-back" aria-hidden="true">‹</span><span class="hfs-logo">HFS</span><span class="hfs-home-t">Simulationen</span></a><span class="hfs-title">Selektivität</span><button class="hfs-share" type="button" hidden title="QR-Code und Link teilen"><svg class="hfs-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4v-3" stroke-linecap="round"/></g></svg><span class="hfs-share-t">Teilen</span></button><a class="hfs-cc" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license" title="Lizenz: CC BY-NC-SA 4.0"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg><span class="hfs-cc-t">BY-NC-SA</span></a></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="tags"><span><b>Simulation</b> · Selektivität von Überstrom-Schutzeinrichtungen · Zeit-Strom-Kennlinien</span></div>
+    <h1>Selektivität: Wer schaltet zuerst ab?</h1>
+    <p class="lead">Bei einem Fehler soll nur das Schutzorgan direkt vor der Fehlerstelle abschalten – der Rest des Hauses bleibt versorgt. Das nennt man <b>Selektivität</b>. Vergleiche die Kennlinien von LS-Schalter und vorgeschalteter Sicherung bzw. selektivem Hauptschalter und finde die Selektivitätsgrenze.</p>
+  </header>
+  <div class="lab">
+    <div class="col">
+      <section class="panel">
+        <header><h2>Hausinstallation</h2><small>Fehler im Stromkreis „Küche“</small></header>
+        <div class="stage"><svg id="haus" class="gfx" viewBox="0 0 720 250" role="img" aria-label="Hausanschluss, vorgeschaltetes Schutzorgan und vier Stromkreise"></svg></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button type="button" class="go" id="go">⚡ Fehler auslösen</button><span class="note">Zeigt, welches Schutzorgan zuerst abschaltet.</span></div>
+        <div class="verdict" id="verdict"></div>
+      </section>
+      <section class="panel">
+        <header><h2>Zeit-Strom-Kennlinien</h2><small>doppelt logarithmisch · senkrechte Linie = Fehlerstrom</small></header>
+        <div class="stage"><svg id="kl" class="gfx" viewBox="0 0 640 380" role="img" aria-label="Auslösekennlinien beider Schutzorgane"></svg></div>
+        <p class="note">Selektiv ist es, solange die Kennlinie des LS-Schalters (blau) überall <b>links bzw. unterhalb</b> der Kennlinie des vorgeschalteten Schutzorgans (violett) liegt. Im roten Bereich schalten beide oder das falsche ab.</p>
+      </section>
+    </div>
+    <div class="col">
+      <section class="panel">
+        <header><h2>Vorgeschaltet (Hausanschluss / Zähler)</h2></header>
+        <div class="seg" id="upT"><button type="button" data-v="gG" aria-pressed="true">Schmelzsicherung gG</button><button type="button" data-v="SLS">SLS (selektiver Hauptschalter E)</button></div>
+        <div class="seg" id="upI"><button type="button" data-v="35">35 A</button><button type="button" data-v="50">50 A</button><button type="button" data-v="63" aria-pressed="true">63 A</button></div>
+      </section>
+      <section class="panel">
+        <header><h2>Nachgeschaltet (Stromkreis Küche)</h2></header>
+        <div class="seg" id="dn"><button type="button" data-v="B10">B10</button><button type="button" data-v="B16" aria-pressed="true">B16</button><button type="button" data-v="B20">B20</button><button type="button" data-v="C16">C16</button><button type="button" data-v="C32">C32</button></div>
+      </section>
+      <section class="panel">
+        <header><h2>Fehlerstrom</h2></header>
+        <div class="ctl"><label for="ik"><span>Strom an der Fehlerstelle</span> <output for="ik"></output></label><input type="range" id="ik" min="0" max="1000" step="1" value="760"></div>
+        <div class="seg" id="pre"><button type="button" data-v="30">Überlast 30 A</button><button type="button" data-v="400">Kurzschluss 400 A</button><button type="button" data-v="1500">Kurzschluss 1,5 kA</button><button type="button" data-v="4000">Kurzschluss 4 kA</button></div>
+        <dl class="vals"><div><dt>Auslösezeit LS</dt><dd id="tD"></dd></div><div><dt>Auslösezeit vorgeschaltet</dt><dd id="tU"></dd></div><div><dt>Selektivitätsgrenze</dt><dd id="iS"></dd></div></dl>
+      </section>
+    </div>
+  </div>
+  <section class="panel tasks">
+    <h2>Arbeitsaufträge</h2>
+    <ol>
+      <li>Erkläre den Begriff Selektivität mit dem Beispiel eines Kurzschlusses in der Küche. Warum ist sie im Wohnhaus wichtig?</li>
+      <li>gG 63 A und B16: Bis zu welchem Kurzschlussstrom ist die Anordnung selektiv? Was passiert bei 4 kA?</li>
+      <li>Ersetze die 63-A-Sicherung durch 35 A. Wie verändert sich die Selektivitätsgrenze? Warum?</li>
+      <li>Wähle den SLS-Schalter. Warum ist er gegenüber den LS-Schaltern auch bei großen Kurzschlussströmen selektiv?</li>
+      <li>Warum ist im Überlastbereich (z. B. 30 A) fast jede Kombination selektiv?</li>
+    </ol>
+    <details><summary>Lösungen anzeigen</summary>
+      <p>1. Selektivität bedeutet: Nur die Schutzeinrichtung unmittelbar vor der Fehlerstelle schaltet ab. Bei einem Kurzschluss in der Küche soll nur der LS der Küche auslösen, Licht, Kühlschrank und Heizung im restlichen Haus bleiben in Betrieb. Löst stattdessen die Hausanschlusssicherung aus, ist das ganze Haus dunkel, und nur der Netzbetreiber darf sie wechseln.
+      2. Etwa bis 1,1 kA (Richtwert in dieser Simulation). Darüber schmilzt die Sicherung so schnell (unter 10 ms), dass sie gleichzeitig mit oder vor dem LS abschaltet. Bei 4 kA löst deshalb auch die Hausanschlusssicherung aus.
+      3. Die Grenze sinkt deutlich (auf rund 0,6 kA), weil die kleinere Sicherung schon bei kleineren Strömen sehr schnell schmilzt. Faustregel: Die vorgeschaltete Sicherung sollte mindestens zwei Stufen größer sein, und für hohe Kurzschlussströme braucht man Herstellertabellen.
+      4. Der SLS hat im Kurzschlussbereich eine kurze Verzögerung: Er begrenzt den Strom zunächst nur, schaltet aber erst nach einigen zehn Millisekunden ab. Der nachgeschaltete LS ist dann längst ausgelöst (nach etwa 5–10 ms). Deshalb sind SLS bis zu ihrem Schaltvermögen voll selektiv.
+      5. Im Überlastbereich arbeitet der thermische Auslöser des LS. Bei 30 A ist der B16 nach einigen Sekunden aus, während die 63-A-Sicherung bei 30 A (unter ihrem Nennstrom) gar nicht auslöst. Die Kennlinien liegen hier weit auseinander.</p>
+    </details>
+  </section>
+  <footer class="foot"><span>Hans-Freudenberg-Schule Weinheim</span><span>Pablo Disson</span><span>Vereinfachte Kennlinien – die tatsächliche Selektivität im Kurzschlussbereich steht in den Selektivitätstabellen der Hersteller (I²t-Vergleich).</span></footer>
+</div>
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+function nf(v, d = 1) { if (!isFinite(v)) return '–'; return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false }); }
+function T(x, y, t, cls = '', a = 'middle', ex = '') { return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${a}" ${ex}>${t}</text>`; }
+const GG = { 35: [295, 173], 50: [470, 260], 63: [550, 320] };
+const s = { upT: 'gG', upI: 63, dn: 'B16', I: 0, fault: false };
+const fI = (i) => (i >= 1000 ? nf(i / 1000, i >= 10000 ? 0 : 1) + ' kA' : nf(i, 0) + ' A');
+const fT = (t) => (!isFinite(t) ? 'keine' : t < 0.01 ? '< 10 ms' : t < 1 ? nf(t * 1000, 0) + ' ms' : t < 120 ? nf(t, 1) + ' s' : nf(t / 60, 0) + ' min');
+const slider = (v) => 5 * Math.pow(10, v / 1000 * 3.5);   // 5 A … 15,8 kA
+function tLS(I, typ) { const In = +typ.slice(1), k = I / In, mag = typ[0] === 'B' ? 5 : 10; if (k >= mag) return 0.008; return k > 1.13 ? 120 / (k * k - 1.2) : Infinity; }
+function tUp(I) {
+  const In = s.upI, k = I / In;
+  if (s.upT === 'gG') { const [i04, i5] = GG[In], m = Math.log(12.5) / Math.log(i04 / i5); if (k < 1.3) return Infinity; const t = 0.4 * Math.pow(i04 / I, m); return Math.max(0.001, Math.min(t, 1e5)); }
+  if (k >= 5) return Math.max(0.03, 0.2 * 5 * In / I + 0.025);   // SLS: verzögert, strombegrenzend
+  return k > 1.13 ? 300 / (k * k - 1.2) : Infinity;
+}
+const selective = (I) => { const a = tLS(I, s.dn), b = tUp(I); return isFinite(a) && b > Math.max(1.6 * a, 0.012); };
+function grenze() { let last = null; for (let v = 0; v <= 1000; v++) { const I = slider(v); if (!isFinite(tLS(I, s.dn))) continue; if (selective(I)) last = I; else if (last) return last; } return last; }
+function upd() {
+  s.I = slider(+$('#ik').value); $('#ik').previousElementSibling.querySelector('output').textContent = fI(s.I);
+  const a = tLS(s.I, s.dn), b = tUp(s.I), sel = selective(s.I), Is = grenze();
+  $('#tD').textContent = fT(a); $('#tU').textContent = fT(b); $('#iS').textContent = Is && Is < 15000 ? '≈ ' + fI(Is) : 'voll selektiv';
+  const v = $('#verdict'), up = s.upT === 'gG' ? `Sicherung gG ${s.upI} A` : `SLS E ${s.upI} A`;
+  if (!isFinite(a) && !isFinite(b)) { v.className = 'verdict'; v.innerHTML = '<b class="big">Kein Fehler im Sinne des Schutzes</b>Der Strom ist so klein, dass keine Schutzeinrichtung auslöst.'; }
+  else if (sel) { v.className = 'verdict ok'; v.innerHTML = `<b class="big">Selektiv ✓</b>Der ${s.dn} schaltet nach ${fT(a)} ab, ${isFinite(b) ? `die ${up} bräuchte ${fT(b)}` : `die ${up} löst gar nicht aus`}. Nur die Küche ist ohne Strom.`; }
+  else { v.className = 'verdict no'; v.innerHTML = `<b class="big">Nicht selektiv ✗</b>Bei ${fI(s.I)} ${s.upT === 'gG' ? 'schmilzt die Sicherung' : 'schaltet der vorgeschaltete Schalter'} in ${fT(b)} – genauso schnell oder schneller als der ${s.dn} (${fT(a)}). Das <b>ganze Haus</b> ist dunkel.`; }
+  $('#go').textContent = s.fault ? 'Zurücksetzen' : '⚡ Fehler auslösen';
+  drawHaus(sel, a, b); drawKl(Is);
+}
+function drawHaus(sel, a, b) {
+  const tripUp = s.fault && !sel && isFinite(b), tripDn = s.fault && isFinite(a);
+  let g = `<rect x="20" y="40" width="90" height="70" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>` + T(65, 32, 'Netz / HAK', 't-m') + T(65, 80, '230/400 V', 't-mono');
+  const dev = (x, y, lbl, open, col) => `<rect x="${x}" y="${y - 16}" width="64" height="32" rx="5" fill="var(--surface)" stroke="${col}" stroke-width="2"/>` + (open ? `<path d="M${x + 8} ${y + 8}L${x + 54} ${y - 10}" stroke="var(--warn)" stroke-width="3"/>` : `<path d="M${x + 8} ${y}H${x + 56}" stroke="${col}" stroke-width="3"/>`) + T(x + 32, y - 22, lbl, 't-mono');
+  g += `<path d="M110 75 H160" stroke="var(--L)" stroke-width="3"/>` + dev(160, 75, s.upT === 'gG' ? 'gG ' + s.upI + ' A' : 'SLS E' + s.upI, tripUp, 'var(--up)');
+  g += `<path d="M224 75 H290 V215" stroke="var(--L)" stroke-width="4" fill="none"/>` + T(298, 225, 'Sammelschiene', 't-m', 'start');
+  const kreise = [['Küche (Fehler)', s.dn], ['Wohnen', 'B16'], ['Licht', 'B10'], ['Heizung', 'B16']];
+  kreise.forEach(([n, ls], i) => {
+    const y = 40 + i * 52, open = i === 0 && tripDn, dark = tripUp || open;
+    g += `<path d="M290 ${y} H330" stroke="var(--L)" stroke-width="3"/>` + dev(330, y, ls, open, 'var(--down)') + `<path d="M394 ${y} H560" stroke="var(--L)" stroke-width="3"/>`;
+    g += `<circle cx="580" cy="${y}" r="15" fill="${dark ? 'var(--surface2)' : 'var(--lamp)'}" stroke="var(--muted)" stroke-width="2"/>` + T(605, y + 4, n, 't-b', 'start', dark ? 'style="fill:var(--muted)"' : '');
+    if (i === 0 && s.fault) g += `<path d="M480 ${y - 18} l-8 14 h10 l-8 14" stroke="var(--warn)" stroke-width="3" fill="none"/>` + T(480, y + 26, fI(s.I), 't-mono', 'middle', 'style="fill:var(--warn)"');
+  });
+  if (s.fault && tripUp) g += `<rect x="20" y="200" width="250" height="40" rx="8" fill="var(--warn)" opacity=".12"/>` + T(30, 225, 'Ganzes Haus ohne Strom!', 't-b', 'start', 'style="fill:var(--warn)"');
+  $('#haus').innerHTML = g;
+}
+function drawKl(Is) {
+  const W = 640, H = 380, P = { l: 56, r: 14, t: 14, b: 34 }, lx = (i) => Math.log10(i), X = (i) => P.l + (lx(i) - 0) / 4.3 * (W - P.l - P.r), Y = (t) => P.t + (Math.log10(1e4) - Math.log10(Math.max(0.001, Math.min(t, 1e4)))) / 7 * (H - P.t - P.b);
+  let g = '';
+  [1, 10, 100, 1000, 10000].forEach((i) => (g += `<line x1="${X(i)}" y1="${P.t}" x2="${X(i)}" y2="${H - P.b}" stroke="var(--grid)"/>` + T(X(i), H - P.b + 15, fI(i), 't-m')));
+  [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000].forEach((t) => (g += `<line x1="${P.l}" y1="${Y(t)}" x2="${W - P.r}" y2="${Y(t)}" stroke="var(--grid)"/>` + T(P.l - 6, Y(t) + 4, t < 1 ? nf(t * 1000, 0) + ' ms' : nf(t, 0) + ' s', 't-m', 'end')));
+  if (Is && Is < 15000) g += `<rect x="${X(Is)}" y="${P.t}" width="${W - P.r - X(Is)}" height="${H - P.t - P.b}" fill="var(--warn)" opacity=".08"/>` + `<line x1="${X(Is)}" y1="${P.t}" x2="${X(Is)}" y2="${H - P.b}" stroke="var(--warn)" stroke-dasharray="5 4"/>` + T(X(Is) + 4, P.t + 14, 'Selektivitätsgrenze ' + fI(Is), 't-m', 'start', 'style="fill:var(--warn)"');
+  const path = (f, col, lbl) => { let d = '', on = false; for (let v = 0; v <= 430; v++) { const I = Math.pow(10, v / 100), t = f(I); if (!isFinite(t) || t > 1e4) { on = false; continue; } d += (on ? 'L' : 'M') + X(I).toFixed(1) + ' ' + Y(t).toFixed(1); on = true; } return `<path d="${d}" fill="none" stroke="var(${col})" stroke-width="3"/>`; };
+  g += path((I) => tLS(I, s.dn), '--down') + path(tUp, '--up');
+  g += T(W - P.r - 4, P.t + 30, 'LS ' + s.dn, 't-b', 'end', 'style="fill:var(--down)"') + T(W - P.r - 4, P.t + 48, (s.upT === 'gG' ? 'gG ' : 'SLS E') + s.upI + ' A', 't-b', 'end', 'style="fill:var(--up)"');
+  g += `<line x1="${X(s.I)}" y1="${P.t}" x2="${X(s.I)}" y2="${H - P.b}" stroke="var(--ink)" stroke-width="2"/>`;
+  const a = tLS(s.I, s.dn), b = tUp(s.I); if (isFinite(a)) g += `<circle cx="${X(s.I)}" cy="${Y(a)}" r="6" fill="var(--down)" stroke="var(--surface)" stroke-width="2"/>`; if (isFinite(b) && b < 1e4) g += `<circle cx="${X(s.I)}" cy="${Y(b)}" r="6" fill="var(--up)" stroke="var(--surface)" stroke-width="2"/>`;
+  g += T(W - P.r, H - 3, 'Strom I', 't-m', 'end') + T(P.l + 4, P.t + 10, 'Auslösezeit t', 't-m', 'start');
+  $('#kl').innerHTML = g;
+}
+function seg(id, cb) { const box = document.getElementById(id); box.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; box.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); }); }
+seg('upT', (v) => { s.upT = v; s.fault = false; upd(); }); seg('upI', (v) => { s.upI = +v; s.fault = false; upd(); }); seg('dn', (v) => { s.dn = v; s.fault = false; upd(); });
+seg('pre', (v) => { $('#ik').value = Math.round(Math.log10(+v / 5) / 3.5 * 1000); s.fault = false; upd(); });
+$('#ik').addEventListener('input', () => { s.fault = false; upd(); });
+$('#go').addEventListener('click', () => { s.fault = !s.fault; $('#go').textContent = s.fault ? 'Zurücksetzen' : '⚡ Fehler auslösen'; upd(); });
+upd();
+</script>
+
+<footer id="hfs-foot" class="hfs-foot"><a class="hfs-ccb" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener license"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10.4 9.7a2.8 2.8 0 1 0 0 4.6M16.6 9.7a2.8 2.8 0 1 0 0 4.6" stroke-linecap="round"/></g></svg>CC BY-NC-SA 4.0</a><span>Idee und Design: Pablo Disson · Hans-Freudenberg-Schule Weinheim · umgesetzt mit Claude (KI von Anthropic)</span><a href="hinweise.html">Hinweise und Haftung · Nutzung auf eigene Gefahr</a></footer>
+<script src="hfs-app.js"></script>
+</body>
+</html>
